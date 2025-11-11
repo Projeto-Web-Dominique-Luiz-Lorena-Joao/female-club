@@ -63,3 +63,7 @@ group :test do
   gem "capybara"
   gem "selenium-webdriver"
 end
+
+# Autenticação
+gem 'devise'
+gem 'devise-i18n'
