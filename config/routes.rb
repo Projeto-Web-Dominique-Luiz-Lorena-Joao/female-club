@@ -1,22 +1,15 @@
 Rails.application.routes.draw do
-  get "home/index"
   devise_for :users
 
   authenticated :user do
-    root to: 'home#index', as: :authenticated
+    root to: "home#dashboard", as: :authenticated_root
   end
 
   unauthenticated do
-    root to: redirect('/users/sign_in')
+    root to: redirect("/users/sign_in")
   end
 
+  get "dashboard", to: "home#dashboard"
 
-  # root 'devise/sessions#new'
-
-  # root 'home#index'
-
-  get 'dashboard', to: 'home#dashboard'
-  
   # get "up" => "rails/health#show", as: :rails_health_check
-
 end
