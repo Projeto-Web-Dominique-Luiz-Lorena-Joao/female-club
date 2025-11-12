@@ -1,0 +1,82 @@
+<div class="max-w-4xl mx-auto space-y-6">
+  <div class="flex justify-between items-start">
+    <div>
+      <h1 class="text-3xl font-bold text-gray-900"><%= @employee.full_name %></h1>
+      <p class="mt-2 text-gray-600"><%= @employee.position&.titleize || 'Cargo não definido' %></p>
+    </div>
+    <div class="flex space-x-3">
+      <%= link_to edit_employee_path(@employee), class: "bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg font-medium" do %>
+        ✏️ Editar
+      <% end %>
+      <%= link_to employees_path, class: "bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-lg font-medium" do %>
+        ← Voltar
+      <% end %>
+    </div>
+  </div>
+
+  <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+    <div class="px-6 py-4 bg-gradient-to-r from-pink-500 to-purple-600">
+      <h2 class="text-xl font-bold text-white">Informações Pessoais</h2>
+    </div>
+    <div class="p-6 grid grid-cols-2 gap-6">
+      <div>
+        <p class="text-sm font-medium text-gray-500">CPF</p>
+        <p class="mt-1 text-lg text-gray-900"><%= @employee.formatted_cpf %></p>
+      </div>
+      <div>
+        <p class="text-sm font-medium text-gray-500">Telefone</p>
+        <p class="mt-1 text-lg text-gray-900"><%= @employee.formatted_phone %></p>
+      </div>
+      <div>
+        <p class="text-sm font-medium text-gray-500">E-mail</p>
+        <p class="mt-1 text-lg text-gray-900"><%= @employee.email || '-' %></p>
+      </div>
+      <div>
+        <p class="text-sm font-medium text-gray-500">Status</p>
+        <span class="inline-block mt-1 px-3 py-1 text-sm font-medium rounded-full <%= @employee.status_color %>">
+          <%= @employee.status&.titleize %>
+        </span>
+      </div>
+
+      <% if @employee.address.present? %>
+        <div class="col-span-2">
+          <p class="text-sm font-medium text-gray-500">Endereço</p>
+          <p class="mt-1 text-gray-900"><%= @employee.address %></p>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+    <div class="px-6 py-4 bg-gray-50">
+      <h2 class="text-xl font-bold text-gray-900">Informações Profissionais</h2>
+    </div>
+    <div class="p-6 grid grid-cols-2 gap-6">
+      <div>
+        <p class="text-sm font-medium text-gray-500">Data de Admissão</p>
+        <p class="mt-1 text-lg text-gray-900">
+          <%= @employee.admission_date ? I18n.l(@employee.admission_date, format: :short) : '-' %>
+        </p>
+      </div>
+      <div>
+        <p class="text-sm font-medium text-gray-500">Tempo de Serviço</p>
+        <p class="mt-1 text-lg text-gray-900"><%= @employee.years_of_service %> anos</p>
+      </div>
+      <div>
+        <p class="text-sm font-medium text-gray-500">Salário</p>
+        <p class="mt-1 text-lg font-bold text-green-600"><%= @employee.formatted_salary %></p>
+      </div>
+      <div>
+        <p class="text-sm font-medium text-gray-500">Dias de Trabalho</p>
+        <p class="mt-1 text-lg text-gray-900"><%= @employee.work_days || '-' %></p>
+      </div>
+
+      <% if @employee.notes.present? %>
+        <div class="col-span-2">
+          <p class="text-sm font-medium text-gray-500">Observações</p>
+          <p class="mt-1 text-gray-900"><%= @employee.notes %></p>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
