@@ -5,8 +5,7 @@
       <h1 class="text-3xl font-bold text-gray-900">👥 Funcionários</h1>
       <p class="mt-2 text-gray-600">Gerenciar equipe</p>
     </div>
-    <%= link_to new_employee_path, class: "bg-pink-600 hover:bg-pink-700 text-white px-6 py-3 rounded-lg font-medium shadow-lg transition inline-flex items-center" do %>
-      <span class="text-xl mr-2">➕</span>
+    <%= link_to new_employee_path, class: "bg-gray-900 hover:bg-gray-400 text-white px-6 py-3 rounded-lg font-medium shadow-lg transition inline-flex items-center" do %>
       Novo Funcionário
     <% end %>
   </div>
@@ -68,7 +67,7 @@
         </div>
 
         <div class="flex space-x-2">
-          <%= submit_tag "🔍 Buscar", class: "flex-1 bg-pink-600 hover:bg-pink-700 text-white px-6 py-2 rounded-lg font-medium transition" %>
+          <%= submit_tag "Buscar", class: "flex-1 bg-blue-900 hover:bg-blue-400 text-white px-6 py-2 rounded-lg font-medium transition" %>
           <%= link_to "Limpar", employees_path, class: "bg-gray-200 hover:bg-gray-300 text-gray-700 px-6 py-2 rounded-lg font-medium transition" %>
         </div>
       </div>
