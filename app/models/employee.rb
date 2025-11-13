@@ -32,9 +32,14 @@ class Employee < ApplicationRecord
   validates :salary, numericality: { greater_than: 0 }, allow_nil: true
   validates :phone, presence: true
 
-  before_validation :clean_cpf
 
-  scope :active, -> { where(status: 'ativo') }
+  before_validation :clean_cpf
+  before_validation :clean_phone
+
+
+  scope :active, -> { where(status: ['ativo', 'ferias']) }
+  scope :on_payroll, -> { where(status: ['ativo', 'ferias']) }
+  scope :working, -> { where(status: 'ativo') }
   scope :recent, -> { order(created_at: :desc) }
   scope :by_position, ->(position) { where(position: position) if position.present? }
 
@@ -42,14 +47,27 @@ class Employee < ApplicationRecord
     self.cpf = cpf.gsub(/\D/, '') if cpf.present?
   end
 
+  def clean_phone
+  self.phone = phone.gsub(/\D/, '') if phone.present?
+  end
+
   def formatted_cpf
     return '-' if cpf.blank?
     cpf.gsub(/(\d{3})(\d{3})(\d{3})(\d{2})/, '\1.\2.\3-\4')
   end
 
+
   def formatted_phone
     return '-' if phone.blank?
-    phone.gsub(/(\d{2})(\d{5})(\d{4})/, '(\1) \2-\3')
+    clean = phone.gsub(/\D/, '')
+
+    if clean.length == 11
+      clean.gsub(/(\d{2})(\d{5})(\d{4})/, '(\1) \2-\3')  # Celular
+    elsif clean.length == 10
+      clean.gsub(/(\d{2})(\d{4})(\d{4})/, '(\1) \2-\3')  # Fixo
+    else
+      phone
+    end
   end
 
   def formatted_salary
@@ -70,5 +88,10 @@ class Employee < ApplicationRecord
     when 'afastado' then 'bg-yellow-100 text-yellow-800'
     else 'bg-gray-100 text-gray-800'
     end
+  end
+
+
+  def on_payroll?
+    ['ativo', 'ferias'].include?(status)
   end
 end

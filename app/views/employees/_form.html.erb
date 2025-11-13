@@ -135,4 +135,55 @@
     <%= form.submit "Salvar Funcionário",
         class: "px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium shadow-lg transition" %>
   </div>
+  <div class="flex justify-end space-x-4 pt-6 border-t">
+    <%= link_to "Cancelar", employees_path, class: "..." %>
+    <%= form.submit "Salvar Funcionário", class: "..." %>
+  </div>
+
+
+  <script>
+  (function() {
+    console.log('🎭 Máscaras ativadas!');
+
+    function aplicar() {
+      const cpf = document.querySelector('input[name="employee[cpf]"]');
+      if (cpf && !cpf.dataset.m) {
+        cpf.dataset.m = '1';
+        cpf.addEventListener('input', function(e) {
+          let v = e.target.value.replace(/\D/g, '');
+          if (v.length > 11) v = v.slice(0, 11);
+          if (v.length > 9) v = v.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+          else if (v.length > 6) v = v.replace(/(\d{3})(\d{3})(\d{1,3})/, '$1.$2.$3');
+          else if (v.length > 3) v = v.replace(/(\d{3})(\d{1,3})/, '$1.$2');
+          e.target.value = v;
+        });
+        console.log('✅ CPF ok');
+      }
+
+      const tel = document.querySelector('input[name="employee[phone]"]');
+      if (tel && !tel.dataset.m) {
+        tel.dataset.m = '1';
+        tel.addEventListener('input', function(e) {
+          let v = e.target.value.replace(/\D/g, '');
+          if (v.length > 11) v = v.slice(0, 11);
+          if (v.length > 10) v = v.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+          else if (v.length === 10) v = v.replace(/(\d{2})(\d{4})(\d{4})/, '($1) $2-$3');
+          else if (v.length > 6) v = v.replace(/(\d{2})(\d{4,5})(\d{0,4})/, '($1) $2-$3');
+          else if (v.length > 2) v = v.replace(/(\d{2})(\d{0,5})/, '($1) $2');
+          else if (v.length > 0) v = v.replace(/(\d{0,2})/, '($1');
+          e.target.value = v;
+        });
+        console.log('✅ Tel ok');
+      }
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', aplicar);
+    } else {
+      aplicar();
+    }
+    document.addEventListener('turbo:load', aplicar);
+    setTimeout(aplicar, 100);
+  })();
+  </script>
 <% end %>

@@ -16,16 +16,21 @@ class EmployeesController < ApplicationController
     end
 
 
-    if params[:search].present?
-      @employees = @employees.where('full_name ILIKE ? OR cpf ILIKE ?',
-                                   "%#{params[:search]}%",
-                                   "%#{params[:search]}%")
-    end
+  if params[:search].present?
+    search_term = params[:search].strip
+    clean_search = search_term.gsub(/\D/, '')
+
+    @employees = @employees.where(
+      'full_name ILIKE ? OR cpf LIKE ?',
+      "%#{search_term}%",
+      "%#{clean_search}%"
+    )
+  end
 
 
     @total_employees = @employees.count
-    @active_employees = Employee.active.count
-    @total_salary = Employee.active.sum(:salary)
+    @active_employees = Employee.where(status: ['ativo', 'ferias']).count
+    @total_salary = Employee.where(status: ['ativo', 'ferias']).sum(:salary)
   end
 
   def show
