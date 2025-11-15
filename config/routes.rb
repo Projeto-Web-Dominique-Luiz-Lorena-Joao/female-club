@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
   resources :employees
+  resources :customers
 
   devise_for :users
 
@@ -18,6 +19,7 @@ Rails.application.routes.draw do
   # root 'home#index'
   get 'employee', to: 'home#employees'
   get 'dashboard', to: 'home#dashboard'
+  get "customers", to: 'home#customers'
 
   # get "up" => "rails/health#show", as: :rails_health_check
 end
