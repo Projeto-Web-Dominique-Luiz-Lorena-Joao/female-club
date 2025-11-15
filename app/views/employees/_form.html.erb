@@ -136,51 +136,103 @@
         class: "px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium shadow-lg transition" %>
   </div>
 
+<script>
+(function() {
+  console.log('Máscaras ativadas!');
 
+  function aplicar() {
 
-  <script>
-  (function() {
-    console.log('Máscaras ativadas!');
+    const cpf = document.querySelector('input[name="employee[cpf]"]');
+    if (cpf && !cpf.dataset.m) {
+      cpf.dataset.m = '1';
 
-    function aplicar() {
-      const cpf = document.querySelector('input[name="employee[cpf]"]');
-      if (cpf && !cpf.dataset.m) {
-        cpf.dataset.m = '1';
-        cpf.addEventListener('input', function(e) {
-          let v = e.target.value.replace(/\D/g, '');
-          if (v.length > 11) v = v.slice(0, 11);
-          if (v.length > 9) v = v.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
-          else if (v.length > 6) v = v.replace(/(\d{3})(\d{3})(\d{1,3})/, '$1.$2.$3');
-          else if (v.length > 3) v = v.replace(/(\d{3})(\d{1,3})/, '$1.$2');
-          e.target.value = v;
-        });
-        console.log('CPF ok');
-      }
+    cpf.addEventListener("input", function(e) {
+    let cursor = e.target.selectionStart;
+    let old = e.target.value;
+    let clean = old.replace(/\D/g, '');
 
-      const tel = document.querySelector('input[name="employee[phone]"]');
-      if (tel && !tel.dataset.m) {
-        tel.dataset.m = '1';
-        tel.addEventListener('input', function(e) {
-          let v = e.target.value.replace(/\D/g, '');
-          if (v.length > 11) v = v.slice(0, 11);
-          if (v.length > 10) v = v.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
-          else if (v.length === 10) v = v.replace(/(\d{2})(\d{4})(\d{4})/, '($1) $2-$3');
-          else if (v.length > 6) v = v.replace(/(\d{2})(\d{4,5})(\d{0,4})/, '($1) $2-$3');
-          else if (v.length > 2) v = v.replace(/(\d{2})(\d{0,5})/, '($1) $2');
-          else if (v.length > 0) v = v.replace(/(\d{0,2})/, '($1');
-          e.target.value = v;
-        });
-        console.log('Tel ok');
+    const before = old.slice(0, cursor).replace(/\D/g, '').length;
+ 
+    const masked = formatCPF(clean);
+    e.target.value = masked;
+
+    let newCursor = masked.length;
+    let count = 0;
+
+    for (let i = 0; i < masked.length; i++) {
+      if (masked[i].match(/\d/)) count++;
+      if (count == before) {
+        newCursor = i + 1;
+        break;
       }
     }
 
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', aplicar);
-    } else {
-      aplicar();
+  e.target.setSelectionRange(newCursor, newCursor);
+  });
+
+
+      console.log("CPF ok");
     }
-    document.addEventListener('turbo:load', aplicar);
-    setTimeout(aplicar, 100);
-  })();
-  </script>
+
+    const tel = document.querySelector('input[name="employee[phone]"]');
+    if (tel && !tel.dataset.mtel) {
+      tel.dataset.mtel = '1';
+
+      tel.addEventListener('input', function(e) {
+        let cursor = e.target.selectionStart;
+        let clean = e.target.value.replace(/\D/g, '');
+
+        if (e.inputType === "deleteContentBackward") {
+          e.target.value = formatPhone(clean);
+          e.target.setSelectionRange(cursor, cursor);
+          return;
+        }
+
+        e.target.value = formatPhone(clean);
+        e.target.setSelectionRange(e.target.value.length, e.target.value.length);
+      });
+
+      console.log('Telefone ok');
+    }
+  }
+
+  function formatCPF(v) {
+    if (v.length > 11) v = v.slice(0, 11);
+
+    if (v.length > 9) {
+      return v.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
+    } else if (v.length > 6) {
+      return v.replace(/(\d{3})(\d{3})(\d{1,3})/, "$1.$2.$3");
+    } else if (v.length > 3) {
+      return v.replace(/(\d{3})(\d{1,3})/, "$1.$2");
+    }
+    return v;
+  }
+
+  function formatPhone(v) {
+    if (v.length > 11) v = v.slice(0, 11);
+
+    if (v.length > 10) {
+      return v.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+    } else if (v.length > 6) {
+      return v.replace(/(\d{2})(\d{4,5})(\d{0,4})/, '($1) $2-$3');
+    } else if (v.length > 2) {
+      return v.replace(/(\d{2})(\d{0,5})/, '($1) $2');
+    } else if (v.length > 0) {
+      return '(' + v;
+    }
+    return v;
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', aplicar);
+  } else {
+    aplicar();
+  }
+
+  document.addEventListener('turbo:load', aplicar);
+
+})();
+
+</script>
 <% end %>
