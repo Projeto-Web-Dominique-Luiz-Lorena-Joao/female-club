@@ -136,103 +136,75 @@
         class: "px-6 py-3 bg-green-600 hover:bg-green-500 text-white rounded-lg font-medium shadow-lg transition" %>
   </div>
 
+<% end %>
 <script>
-(function() {
-  console.log('Máscaras ativadas!');
+  (function() {
+    console.log('Máscaras ativadas!');
 
-  function aplicar() {
+    function aplicar() {
+      // --- MÁSCARA DE CPF (Corrigida) ---
+      const cpf = document.querySelector('input[name="employee[cpf]"]');
+      if (cpf && !cpf.dataset.m) {
+        cpf.dataset.m = '1';
+        cpf.addEventListener('input', function(e) {
+          let v = e.target.value.replace(/\D/g, ''); // Remove tudo que não é dígito
+          if (v.length > 11) v = v.slice(0, 11);     // Limita a 11 dígitos
 
-    const cpf = document.querySelector('input[name="employee[cpf]"]');
-    if (cpf && !cpf.dataset.m) {
-      cpf.dataset.m = '1';
+          // Aplica a máscara progressivamente
+          if (v.length > 9) {
+            // 10 ou 11 dígitos
+            v = v.replace(/(\d{3})(\d{3})(\d{3})(\d{1,2})/, '$1.$2.$3-$4');
+          } else if (v.length > 6) {
+            // 7 a 9 dígitos
+            v = v.replace(/(\d{3})(\d{3})(\d{1,3})/, '$1.$2.$3');
+          } else if (v.length > 3) {
+            // 4 a 6 dígitos
+            v = v.replace(/(\d{3})(\d{1,3})/, '$1.$2');
+          }
+          e.target.value = v;
+        });
+        console.log('CPF ok');
+      }
 
-    cpf.addEventListener("input", function(e) {
-    let cursor = e.target.selectionStart;
-    let old = e.target.value;
-    let clean = old.replace(/\D/g, '');
+      // --- MÁSCARA DE TELEFONE (Corrigida) ---
+      const tel = document.querySelector('input[name="employee[phone]"]');
+      if (tel && !tel.dataset.m) {
+        tel.dataset.m = '1';
+        tel.addEventListener('input', function(e) {
+          let v = e.target.value.replace(/\D/g, ''); // Remove tudo que não é dígito
+          if (v.length > 11) v = v.slice(0, 11);     // Limita a 11 dígitos
 
-    const before = old.slice(0, cursor).replace(/\D/g, '').length;
- 
-    const masked = formatCPF(clean);
-    e.target.value = masked;
+          // Esta lógica causa o "pulo" do 10º para o 11º dígito,
+          // mas é a única forma de suportar 10 e 11 dígitos com este método.
+          // O mais importante é que agora o "apagar" funciona.
 
-    let newCursor = masked.length;
-    let count = 0;
+          if (v.length > 10) {
+            // 11 dígitos: (XX) XXXXX-XXXX
+            v = v.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+          } else if (v.length > 6) {
+            // 7 a 10 dígitos: (XX) XXXX-XXXX (progressivo)
+            v = v.replace(/(\d{2})(\d{4})(\d{1,4})/, '($1) $2-$3');
+          } else if (v.length > 2) {
+            // 3 a 6 dígitos: (XX) XXXX (progressivo)
+            v = v.replace(/(\d{2})(\d{1,4})/, '($1) $2');
+          } else if (v.length > 0) {
+            // 1 a 2 dígitos: (XX (progressivo)
+            v = v.replace(/(\d{1,2})/, '($1');
+          }
 
-    for (let i = 0; i < masked.length; i++) {
-      if (masked[i].match(/\d/)) count++;
-      if (count == before) {
-        newCursor = i + 1;
-        break;
+          e.target.value = v;
+        });
+        console.log('Tel ok');
       }
     }
 
-  e.target.setSelectionRange(newCursor, newCursor);
-  });
-
-
-      console.log("CPF ok");
+    // --- Carregamento do script ---
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', aplicar);
+    } else {
+      aplicar();
     }
-
-    const tel = document.querySelector('input[name="employee[phone]"]');
-    if (tel && !tel.dataset.mtel) {
-      tel.dataset.mtel = '1';
-
-      tel.addEventListener('input', function(e) {
-        let cursor = e.target.selectionStart;
-        let clean = e.target.value.replace(/\D/g, '');
-
-        if (e.inputType === "deleteContentBackward") {
-          e.target.value = formatPhone(clean);
-          e.target.setSelectionRange(cursor, cursor);
-          return;
-        }
-
-        e.target.value = formatPhone(clean);
-        e.target.setSelectionRange(e.target.value.length, e.target.value.length);
-      });
-
-      console.log('Telefone ok');
-    }
-  }
-
-  function formatCPF(v) {
-    if (v.length > 11) v = v.slice(0, 11);
-
-    if (v.length > 9) {
-      return v.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
-    } else if (v.length > 6) {
-      return v.replace(/(\d{3})(\d{3})(\d{1,3})/, "$1.$2.$3");
-    } else if (v.length > 3) {
-      return v.replace(/(\d{3})(\d{1,3})/, "$1.$2");
-    }
-    return v;
-  }
-
-  function formatPhone(v) {
-    if (v.length > 11) v = v.slice(0, 11);
-
-    if (v.length > 10) {
-      return v.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
-    } else if (v.length > 6) {
-      return v.replace(/(\d{2})(\d{4,5})(\d{0,4})/, '($1) $2-$3');
-    } else if (v.length > 2) {
-      return v.replace(/(\d{2})(\d{0,5})/, '($1) $2');
-    } else if (v.length > 0) {
-      return '(' + v;
-    }
-    return v;
-  }
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', aplicar);
-  } else {
-    aplicar();
-  }
-
-  document.addEventListener('turbo:load', aplicar);
-
-})();
-
-</script>
-<% end %>
+    document.addEventListener('turbo:load', aplicar);
+    setTimeout(aplicar, 100);
+  })();
+  </script>

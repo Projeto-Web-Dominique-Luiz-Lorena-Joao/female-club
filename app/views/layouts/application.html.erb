@@ -37,11 +37,9 @@
 
     <div class="flex h-screen bg-gray-50">
       <%= render 'shared/menu' %>
-
-      <!-- AQUI: main virou relative e o modal vem DENTRO dele -->
       <main class="flex-1 relative p-8 overflow-y-auto">
         <%= yield %>
-        <%= render "customers/delete_modal" %>
+        <%= render "shared/delete_modal" %>
       </main>
     </div>
   </body>
