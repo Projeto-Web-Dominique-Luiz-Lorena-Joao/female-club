@@ -2,10 +2,10 @@
   <!-- Header -->
   <div class="flex justify-between items-center">
     <div>
-      <h1 class="text-3xl font-bold text-gray-900">👥 Funcionários</h1>
+      <h1 class="text-3xl font-bold text-gray-900">Funcionários</h1>
       <p class="mt-2 text-gray-600">Gerenciar equipe</p>
     </div>
-    <%= link_to new_employee_path, class: "bg-gray-900 hover:bg-gray-400 text-white px-6 py-3 rounded-lg font-medium shadow-lg transition inline-flex items-center" do %>
+    <%= link_to new_employee_path, class: "bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium shadow-lg transition inline-flex items-center" do %>
       Novo Funcionário
     <% end %>
   </div>
@@ -18,11 +18,11 @@
     </div>
     <div class="bg-white rounded-lg shadow p-6">
       <p class="text-gray-500 text-sm font-medium">Funcionários Ativos</p>
-      <p class="text-3xl font-bold text-green-600 mt-2"><%= @active_employees %></p>
+      <p class="text-3xl font-bold text-blue-600 mt-2"><%= @active_employees %></p>
     </div>
     <div class="bg-white rounded-lg shadow p-6">
       <p class="text-gray-500 text-sm font-medium">Folha Salarial</p>
-      <p class="text-2xl font-bold text-blue-600 mt-2">R$ <%= number_with_delimiter(@total_salary.to_f.round(2), delimiter: '.', separator: ',') %></p>
+      <p class="text-2xl font-bold text-green-600 mt-2">R$ <%= number_with_delimiter(@total_salary.to_f.round(2), delimiter: '.', separator: ',') %></p>
     </div>
   </div>
 
@@ -33,7 +33,7 @@
         <div>
           <%= text_field_tag :search, params[:search],
               placeholder: "Buscar por nome ou CPF...",
-              class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500" %>
+              class: "w-full px-4 py-2 border border-gray-300 rounded-lg" %>
         </div>
 
         <div>
@@ -45,7 +45,7 @@
                 ['Férias', 'ferias'],
                 ['Afastados', 'afastado']
               ], params[:status]),
-              class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500" %>
+              class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-black-900" %>
         </div>
 
         <div>
@@ -63,11 +63,11 @@
                 ['Atendente', 'atendente'],
                 ['Auxiliar', 'auxiliar']
               ], params[:position]),
-              class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500" %>
+              class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-black-900" %>
         </div>
 
         <div class="flex space-x-2">
-          <%= submit_tag "Buscar", class: "flex-1 bg-blue-900 hover:bg-blue-400 text-white px-6 py-2 rounded-lg font-medium transition" %>
+          <%= submit_tag "Buscar", class: "flex-1 bg-blue-700 hover:bg-blue-900 text-white px-6 py-2 rounded-lg font-medium transition" %>
           <%= link_to "Limpar", employees_path, class: "bg-gray-200 hover:bg-gray-300 text-gray-700 px-6 py-2 rounded-lg font-medium transition" %>
         </div>
       </div>
@@ -80,49 +80,61 @@
       <table class="min-w-full divide-y divide-gray-200">
         <thead class="bg-gray-50">
           <tr>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Funcionário</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">CPF</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Cargo</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Contato</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Salário</th>
+            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Funcionário</th>
+            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">CPF</th>
+            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Cargo</th>
+            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Contato</th>
+            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Salário</th>
             <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Status</th>
-            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Ações</th>
+            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Ações</th>
           </tr>
         </thead>
+
+    
         <tbody class="bg-white divide-y divide-gray-200">
           <% @employees.each do |employee| %>
+
             <tr class="hover:bg-gray-50">
+
               <td class="px-6 py-4">
-                <p class="text-sm font-medium text-gray-900"><%= employee.full_name %></p>
+                <p class="text-sm text-center font-medium text-gray-900"><%= employee.full_name %></p>
                 <% if employee.admission_date %>
-                  <p class="text-xs text-gray-500"><%= employee.years_of_service %> anos de serviço</p>
+                  <p class="text-xs text-center text-gray-500"><%= employee.years_of_service %> anos de serviço</p>
                 <% end %>
               </td>
-              <td class="px-6 py-4 text-sm text-gray-900"><%= employee.formatted_cpf %></td>
+
+              <td class="px-6 py-4 text-sm text-center text-gray-900"><%= employee.formatted_cpf %></td>
               <td class="px-6 py-4">
-                <span class="px-3 py-1 text-xs font-medium rounded-full bg-purple-100 text-purple-800">
+                <span class="px-3 py-1 text-xs text-center font-medium rounded-full bg-purple-100 text-purple-800">
                   <%= employee.position&.titleize || '-' %>
                 </span>
               </td>
-              <td class="px-6 py-4 text-sm text-gray-900">
+
+              <td class="px-6 py-4 text-sm text-center text-gray-900">
                 <p><%= employee.formatted_phone %></p>
-                <p class="text-xs text-gray-500"><%= employee.email || '-' %></p>
+                <p class="text-xs text-center text-gray-500"><%= employee.email || '-' %></p>
               </td>
-              <td class="px-6 py-4 text-sm font-medium text-gray-900">
+
+              <td class="px-6 py-4 text-sm text-center font-medium text-gray-900">
                 <%= employee.formatted_salary %>
               </td>
+
               <td class="px-6 py-4 text-center">
                 <span class="px-3 py-1 text-xs font-medium rounded-full <%= employee.status_color %>">
                   <%= employee.status&.titleize %>
                 </span>
               </td>
+
               <td class="px-6 py-4 text-right space-x-2">
-                <%= link_to "👁️", employee_path(employee), class: "text-blue-600 hover:text-blue-800" %>
-                <%= link_to "✏️", edit_employee_path(employee), class: "text-yellow-600 hover:text-yellow-800" %>
-                <%= button_to "🗑️", employee_path(employee),
+              <div class="flex flex-col items-end space-y-2 w-full">
+                <%= link_to "Visualizar", employee_path(employee), class: "bg-blue-200 text-blue-700 px-3 py-1 rounded-lg hover:bg-blue-100 w-full text-center text-sm font-medium" %>
+                <%= link_to "Editar", edit_employee_path(employee), class: "bg-orange-200 text-orange-700 px-3 py-1 rounded-lg hover:bg-orange-100 w-full text-center text-sm font-medium" %>
+                <%= button_to "Deletar", employee_path(employee),
                     method: :delete,
                     data: { confirm: "Tem certeza?" },
-                    class: "text-red-600 hover:text-red-800" %>
+                    form: { class: "w-full" },
+                    class: "bg-red-200 text-red-700 px-3 py-1 rounded-lg hover:bg-red-100 w-full text-center text-sm font-medium" %>
+                </div>
               </td>
             </tr>
           <% end %>
@@ -130,7 +142,6 @@
       </table>
     <% else %>
       <div class="text-center py-12">
-        <span class="text-6xl">👥</span>
         <p class="mt-4 text-xl text-gray-600">Nenhum funcionário cadastrado</p>
         <%= link_to "Cadastrar primeiro funcionário", new_employee_path,
             class: "mt-4 inline-block bg-pink-600 hover:bg-pink-700 text-white px-6 py-3 rounded-lg font-medium" %>
