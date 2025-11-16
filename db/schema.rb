@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_11_14_194233) do
+ActiveRecord::Schema[8.0].define(version: 2025_11_16_183147) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -48,6 +48,21 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_14_194233) do
     t.index ["full_name"], name: "index_employees_on_full_name"
     t.index ["position"], name: "index_employees_on_position"
     t.index ["status"], name: "index_employees_on_status"
+  end
+
+  create_table "suppliers", force: :cascade do |t|
+    t.string "legal_name", null: false
+    t.string "trade_name"
+    t.string "phone_number"
+    t.string "email"
+    t.text "full_address"
+    t.string "product_category"
+    t.text "notes"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["legal_name"], name: "index_suppliers_on_legal_name"
+    t.index ["product_category"], name: "index_suppliers_on_product_category"
+    t.index ["trade_name"], name: "index_suppliers_on_trade_name"
   end
 
   create_table "users", force: :cascade do |t|

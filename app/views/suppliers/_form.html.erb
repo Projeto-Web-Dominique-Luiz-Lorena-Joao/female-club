@@ -1,0 +1,156 @@
+<%= form_with(model: supplier, class: "space-y-6") do |form| %>
+  <% if supplier.errors.any? %>
+    <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded-md">
+      <div class="flex">
+        <span class="text-red-500 text-xl">⚠️</span>
+        <div class="ml-3">
+          <h3 class="text-sm font-medium text-red-800">
+            <%= pluralize(supplier.errors.count, "erro") %>:
+          </h3>
+          <ul class="mt-2 text-sm text-red-700 list-disc list-inside">
+            <% supplier.errors.full_messages.each do |message| %>
+              <li><%= message %></li>
+            <% end %>
+          </ul>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <!-- Razão Social -->
+    <div class="md:col-span-2">
+      <%= form.label :legal_name, "Razão Social *", class: "block text-sm font-medium text-gray-700 mb-2" %>
+      <%= form.text_field :legal_name,
+          class: "w-full px-4 py-2 border border-gray-300 rounded-lg ",
+          placeholder: "Ex: Cosméticos Exemplo LTDA",
+          required: true %>
+    </div>
+
+    <!-- Nome Fantasia -->
+    <div class="md:col-span-2">
+      <%= form.label :trade_name, "Nome Fantasia", class: "block text-sm font-medium text-gray-700 mb-2" %>
+      <%= form.text_field :trade_name,
+          class: "w-full px-4 py-2 border border-gray-300 rounded-lg ",
+          placeholder: "Ex: Beleza Total" %>
+      <p class="text-xs text-gray-500 mt-1">Se não informado, será usado a Razão Social</p>
+    </div>
+
+    <!-- Categoria -->
+    <div>
+      <%= form.label :product_category, "Categoria de Produtos", class: "block text-sm font-medium text-gray-700 mb-2" %>
+      <%= form.select :product_category,
+          options_for_select([
+            ['Selecione...', ''],
+            ['Cosméticos', 'cosmeticos'],
+            ['Maquiagem', 'maquiagem'],
+            ['Perfumaria', 'perfumaria'],
+            ['Cabelo', 'cabelo'],
+            ['Unhas', 'unhas'],
+            ['Pele', 'pele'],
+            ['Acessórios', 'acessorios'],
+            ['Equipamentos', 'equipamentos'],
+            ['Diversos', 'diversos']
+          ], supplier.product_category),
+          {},
+          class: "w-full px-4 py-2 border border-gray-300 rounded-lg " %>
+    </div>
+
+    <!-- Telefone -->
+    <div>
+      <%= form.label :phone_number, "Telefone", class: "block text-sm font-medium text-gray-700 mb-2" %>
+      <%= form.text_field :phone_number,
+          class: "w-full px-4 py-2 border border-gray-300 rounded-lg ",
+          placeholder: "(00) 0000-0000" %>
+    </div>
+
+    <!-- Email -->
+    <div class="md:col-span-2">
+      <%= form.label :email, "E-mail", class: "block text-sm font-medium text-gray-700 mb-2" %>
+      <%= form.email_field :email,
+          class: "w-full px-4 py-2 border border-gray-300 rounded-lg ",
+          placeholder: "contato@fornecedor.com.br" %>
+    </div>
+
+    <!-- Endereço Completo -->
+    <div class="md:col-span-2">
+      <%= form.label :full_address, "Endereço Completo", class: "block text-sm font-medium text-gray-700 mb-2" %>
+      <%= form.text_area :full_address,
+          rows: 2,
+          class: "w-full px-4 py-2 border border-gray-300 rounded-lg ",
+          placeholder: "Rua, número, complemento, bairro, cidade - CEP" %>
+    </div>
+
+    <!-- Observações -->
+    <div class="md:col-span-2">
+      <%= form.label :notes, "Observações", class: "block text-sm font-medium text-gray-700 mb-2" %>
+      <%= form.text_area :notes,
+          rows: 3,
+          class: "w-full px-4 py-2 border border-gray-300 rounded-lg ",
+          placeholder: "Informações sobre prazos, condições de pagamento, contatos, etc..." %>
+    </div>
+  </div>
+
+  <div class="flex justify-end space-x-4 pt-6">
+    <%= link_to "Cancelar", suppliers_path,
+        class: "px-6 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 font-medium transition" %>
+    <%= form.submit "Salvar Fornecedor",
+        class: "px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium shadow-lg transition" %>
+  </div>
+<% end %>
+
+<script>
+(function() {
+  function formatPhone(v) {
+    if (v.length > 11) v = v.slice(0, 11);
+
+    if (v.length > 10) {
+      return v.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+    } else if (v.length > 6) {
+      return v.replace(/(\d{2})(\d{4,5})(\d{0,4})/, '($1) $2-$3');
+    } else if (v.length > 2) {
+      return v.replace(/(\d{2})(\d{0,5})/, '($1) $2');
+    } else if (v.length > 0) {
+      return '(' + v;
+    }
+    return v;
+  }
+
+  function aplicarMascara() {
+    console.log('Máscara ativada!');
+
+    const tel = document.querySelector('input[name="supplier[phone_number]"]');
+
+    if (tel && !tel.dataset.mtel) {
+      tel.dataset.mtel = '1';
+
+      tel.addEventListener('input', function(e) {
+        let cursor = e.target.selectionStart;
+        let clean = e.target.value.replace(/\D/g, '');
+
+        if (e.inputType === "deleteContentBackward") {
+          e.target.value = formatPhone(clean);
+          e.target.setSelectionRange(cursor, cursor);
+          return;
+        }
+
+        e.target.value = formatPhone(clean);
+        e.target.setSelectionRange(e.target.value.length, e.target.value.length);
+      });
+
+      console.log('Telefone configurado com máscara!');
+    } else {
+      console.log('Campo de telefone não encontrado ou já tem máscara');
+    }
+  }
+
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', aplicarMascara);
+  } else {
+    aplicarMascara();
+  }
+
+  document.addEventListener('turbo:load', aplicarMascara);
+})();
+</script>
