@@ -27,8 +27,8 @@
     <%= form_with url: customers_path, method: :get, class: "space-y-4" do %>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div class="md:col-span-2">
-          <%= text_field_tag :search, params[:search], 
-              placeholder: "Buscar por nome, CPF ou telefone...", 
+          <%= text_field_tag :search, params[:search],
+              placeholder: "Buscar por nome, CPF, telefone ou e-mail ...",
               class: "w-full px-4 py-2 border border-gray-300 rounded-lg" %>
         </div>
 
@@ -69,8 +69,8 @@
                 <p class="text-xs text-center text-gray-500"><%= customer.email || '-' %></p>
               </td>
               <td class="px-6 py-4 text-center">
-               
-          
+
+
               </td>
 
               <td class="px-6 py-4 text-right w-32">
@@ -78,8 +78,8 @@
 
                 <%= link_to "Visualizar", customer_path(customer), class: "bg-blue-200 text-blue-700 px-3 py-1 rounded-lg hover:bg-blue-100 w-full text-center text-sm font-medium" %>
                 <%= link_to "Editar", edit_customer_path(customer), class: "bg-orange-200 text-orange-700 px-3 py-1 rounded-lg hover:bg-orange-100 w-full text-center text-sm font-medium" %>
-                <%= button_to "Deletar", customer_path(customer), 
-                    method: :delete, 
+                <%= button_to "Deletar", customer_path(customer),
+                    method: :delete,
                     data: { confirm: "Tem certeza?" },
                     form: { class: "w-full" },
                     class: "bg-red-200 text-red-700 px-3 py-1 rounded-lg hover:bg-red-100 w-full text-center text-sm font-medium" %>
@@ -93,7 +93,7 @@
     <% else %>
       <div class="text-center py-12">
         <p class="mt-4 text-xl text-gray-600">Nenhum cliente cadastrado</p>
-        <%= link_to "Cadastrar primeiro cliente", new_customer_path, 
+        <%= link_to "Cadastrar primeiro cliente", new_customer_path,
             class: "mt-4 inline-block bg-green-600 hover:bg-green-500 text-white px-6 py-3 rounded-lg font-medium" %>
       </div>
     <% end %>

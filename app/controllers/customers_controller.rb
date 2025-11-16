@@ -4,23 +4,33 @@ class CustomersController < ApplicationController
 
   def index
     @customers = Customer.all.order(created_at: :desc)
-    
+
     if params[:search].present?
-      @customers = @customers.where(
-        'full_name ILIKE ? OR cpf ILIKE ? OR phone_number ILIKE ?', 
-        "%#{params[:search]}%", 
-        "%#{params[:search]}%",
-        "%#{params[:search]}%"
-      )
+      search_term = params[:search].strip
+      clean_search = search_term.gsub(/\D/, '')
+
+      conditions = ['full_name ILIKE ? OR email ILIKE ?']
+      values = ["%#{search_term}%", "%#{search_term}%"]
+
+      if clean_search.present?
+        conditions << "REGEXP_REPLACE(phone_number, '[^0-9]', '', 'g') LIKE ?"
+        values << "%#{clean_search}%"
+
+        conditions << "REGEXP_REPLACE(cpf, '[^0-9]', '', 'g') LIKE ?"
+        values << "%#{clean_search}%"
+      end
+
+      @customers = @customers.where(conditions.join(' OR '), *values)
     end
-    
+
+
     case params[:tier]
     when 'vip'
       @customers = @customers.vip
     when 'active'
       @customers = @customers.active
     end
-    
+
 
     @total_customers = @customers.count
     # @active_customers = Customer.active.count
@@ -71,7 +81,7 @@ class CustomersController < ApplicationController
 
   def customer_params
     params.require(:customer).permit(
-      :full_name, :cpf, :birth_date, :phone_number, 
+      :full_name, :cpf, :birth_date, :phone_number,
       :email, :full_address, :notes
     )
   end
