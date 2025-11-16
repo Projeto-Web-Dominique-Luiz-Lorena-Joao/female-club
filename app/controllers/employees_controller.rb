@@ -20,11 +20,23 @@ class EmployeesController < ApplicationController
     search_term = params[:search].strip
     clean_search = search_term.gsub(/\D/, '')
 
-    @employees = @employees.where(
-      'full_name ILIKE ? OR cpf LIKE ?',
-      "%#{search_term}%",
-      "%#{clean_search}%"
-    )
+    if clean_search.present?
+
+      @employees = @employees.where(
+        'full_name ILIKE ? OR email ILIKE ? OR cpf LIKE ? OR phone LIKE ?',
+        "%#{search_term}%",
+        "%#{search_term}%",
+        "%#{clean_search}%",
+        "%#{clean_search}%"
+      )
+    else
+
+      @employees = @employees.where(
+        'full_name ILIKE ? OR email ILIKE ?',
+        "%#{search_term}%",
+        "%#{search_term}%"
+      )
+    end
   end
 
 
