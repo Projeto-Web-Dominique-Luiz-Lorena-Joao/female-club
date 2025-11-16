@@ -5,7 +5,7 @@
       <h1 class="text-3xl font-bold text-gray-900">Clientes</h1>
       <p class="mt-2 text-gray-600">Gerenciar base de clientes</p>
     </div>
-    <%= link_to new_customer_path, class: "bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium shadow-lg transition inline-flex items-center" do %>
+    <%= link_to new_customer_path, class: "bg-green-600 hover:bg-green-500 text-white px-6 py-3 rounded-lg font-medium shadow-lg transition inline-flex items-center" do %>
       Novo Cliente
     <% end %>
   </div>
@@ -33,8 +33,8 @@
         </div>
 
       <div class="flex justify-end space-x-2">
-        <%= submit_tag "Buscar", class: "bg-blue-700 hover:bg-blue-900 text-white px-6 py-2 rounded-lg font-medium transition" %>
-        <%= link_to "Limpar", customers_path, class: "bg-gray-200 hover:bg-gray-300 text-gray-700 px-6 py-2 rounded-lg font-medium transition" %>
+        <%= submit_tag "Buscar", class: "bg-blue-700 hover:bg-blue-500 text-white px-6 py-2 rounded-lg font-medium transition" %>
+        <%= link_to "Limpar", customers_path, class: "bg-gray-300 hover:bg-gray-200 text-gray-700 px-6 py-2 rounded-lg font-medium transition" %>
       </div>
     <% end %>
   </div>
@@ -94,7 +94,7 @@
       <div class="text-center py-12">
         <p class="mt-4 text-xl text-gray-600">Nenhum cliente cadastrado</p>
         <%= link_to "Cadastrar primeiro cliente", new_customer_path, 
-            class: "mt-4 inline-block bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium" %>
+            class: "mt-4 inline-block bg-green-600 hover:bg-green-500 text-white px-6 py-3 rounded-lg font-medium" %>
       </div>
     <% end %>
   </div>
