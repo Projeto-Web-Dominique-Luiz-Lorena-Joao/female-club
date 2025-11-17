@@ -5,7 +5,7 @@
       <p class="mt-2 text-gray-600"><%= @employee.position&.titleize || 'Cargo não definido' %></p>
     </div>
     <div class="flex space-x-3">
-      <%= link_to edit_employee_path(@employee), class: "bg-blue-900 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-medium" do %>
+      <%= link_to edit_employee_path(@employee), class: "bg-orange-200 hover:bg-orange-100 text-orange-700 px-8 py-2 rounded-lg font-medium" do %>
         Editar
       <% end %>
       <%= link_to employees_path, class: "bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-lg font-medium" do %>
