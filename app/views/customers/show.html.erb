@@ -1,0 +1,84 @@
+<div class="max-w-6xl mx-auto space-y-6">
+  <div class="flex justify-between items-start">
+    <div>
+      <h1 class="text-3xl font-bold text-gray-900"><%= @customer.full_name %></h1>
+      </span>
+    </div>
+    <div class="flex space-x-3">
+      <%= link_to edit_customer_path(@customer), class: "bg-orange-200 hover:bg-orange-100 text-orange-700 px-8 py-2 rounded-lg font-medium" do %>
+        Editar
+      <% end %>
+      <%= link_to customers_path, class: "bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-lg font-medium" do %>
+        ← Voltar
+      <% end %>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div class="bg-white rounded-lg shadow p-6">
+      <p class="text-gray-500 text-sm font-medium">Total de Compras</p>
+      <p class="text-4xl font-bold text-blue-600 mt-2"><%= @customer.purchases_count %></p>
+    </div>
+    <div class="bg-white rounded-lg shadow p-6">
+      <p class="text-gray-500 text-sm font-medium">Valor Total Gasto</p>
+      <p class="text-3xl font-bold text-green-600 mt-2">
+        R$ <%= number_with_delimiter(@customer.total_purchases.to_f.round(2), delimiter: '.', separator: ',') %>
+      </p>
+    </div>
+    <div class="bg-white rounded-lg shadow p-6">
+      <p class="text-gray-500 text-sm font-medium">Última Compra</p>
+      <p class="text-2xl font-bold text-gray-900 mt-2">
+        <%= @customer.last_purchase_date ? I18n.l(@customer.last_purchase_date, format: :short) : 'Nunca' rescue 'Nunca' %>
+      </p>
+    </div>
+  </div>
+
+  <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+    <div class="px-6 py-4 bg-gray-900">
+      <h2 class="text-xl font-bold text-white">Informações Pessoais</h2>
+    </div>
+    <div class="p-6 grid grid-cols-2 gap-6">
+      <div>
+        <p class="text-sm font-medium text-gray-500">CPF</p>
+        <p class="mt-1 text-lg text-gray-900"><%= @customer.formatted_cpf %></p>
+      </div>
+      <div>
+        <p class="text-sm font-medium text-gray-500">Data de Nascimento</p>
+        <p class="mt-1 text-lg text-gray-900">
+          <%= @customer.formatted_birth_date %>
+          <% if @customer.age %>
+            <span class="text-sm text-gray-500">(<%= @customer.age %> anos)</span>
+          <% end %>
+        </p>
+      </div>
+      <div>
+        <p class="text-sm font-medium text-gray-500">Telefone</p>
+        <p class="mt-1 text-lg text-gray-900"><%= @customer.formatted_phone %></p>
+      </div>
+      <div>
+        <p class="text-sm font-medium text-gray-500">E-mail</p>
+        <p class="mt-1 text-lg text-gray-900"><%= @customer.email || '-' %></p>
+      </div>
+      
+      <% if @customer.full_address.present? %>
+        <div class="col-span-2">
+          <p class="text-sm font-medium text-gray-500">Endereço</p>
+          <p class="mt-1 text-gray-900"><%= @customer.full_address %></p>
+        </div>
+      <% end %>
+      
+      <% if @customer.notes.present? %>
+        <div class="col-span-2 pt-4 border-t">
+          <p class="text-sm font-medium text-gray-500">Observações</p>
+          <p class="mt-1 text-gray-900"><%= @customer.notes %></p>
+        </div>
+      <% end %>
+    </div>
+  </div>
+  
+  <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+    <div class="px-6 py-4 bg-gray-900">
+      <h2 class="text-xl font-bold text-white">Histórico de Compras</h2>
+    </div>
+    <div class="p-6">
+</div>

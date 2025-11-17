@@ -1,0 +1,123 @@
+<div class="space-y-6">
+
+  <div class="flex justify-between items-center">
+    <div>
+      <h1 class="text-3xl font-bold text-gray-900">Clientes</h1>
+      <p class="mt-2 text-gray-600">Gerenciar base de clientes</p>
+    </div>
+    <%= link_to new_customer_path,
+      class: "bg-green-600 hover:bg-green-500 text-white px-6 py-3 rounded-lg font-medium shadow-lg transition inline-flex items-center" do %>
+      Novo Cliente
+    <% end %>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+    <div class="bg-white rounded-lg shadow p-6">
+      <p class="text-gray-500 text-sm font-medium">Total de Clientes</p>
+      <p class="text-3xl font-bold text-gray-900 mt-2"><%= @total_customers %></p>
+    </div>
+
+    <div class="bg-white rounded-lg shadow p-6">
+      <p class="text-gray-500 text-sm font-medium">Faturamento Total</p>
+      <p class="text-2xl font-bold text-green-600 mt-2">
+        R$ <%= number_with_delimiter(@total_revenue.to_f.round(2), delimiter: ".", separator: ",") %>
+      </p>
+    </div>
+  </div>
+
+  <div class="bg-white rounded-lg shadow p-6">
+    <%= form_with url: customers_path, method: :get, class: "space-y-4", local: true do %>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+        <div class="md:col-span-2">
+          <%= text_field_tag :search, params[:search],
+            placeholder: "Buscar por nome, CPF, telefone ou e-mail ...",
+            class: "w-full px-4 py-2 border border-gray-300 rounded-lg" %>
+        </div>
+
+        <div class="flex justify-end space-x-2 items-center">
+          <%= submit_tag "Buscar",
+              class: "bg-blue-700 hover:bg-blue-500 text-white px-6 py-2 rounded-lg font-medium transition" %>
+
+          <%= link_to "Limpar", customers_path,
+              class: "bg-gray-300 hover:bg-gray-200 text-gray-700 px-6 py-2 rounded-lg font-medium transition" %>
+        </div>
+
+      </div>
+    <% end %>
+  </div>
+
+  <div class="bg-white rounded-lg shadow overflow-hidden">
+    <% if @customers.any? %>
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+          <tr>
+            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Cliente</th>
+            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">CPF</th>
+            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Contato</th>
+            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Gasto Total</th>
+            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase w-32">Ações</th>
+          </tr>
+        </thead>
+
+        <tbody class="bg-white divide-y divide-gray-200">
+          <% @customers.each do |customer| %>
+            <tr class="hover:bg-gray-50">
+
+              <td class="px-6 py-4">
+                <p class="text-sm text-center font-medium text-gray-900">
+                  <%= customer.full_name %>
+                </p>
+                <% if customer.age.present? %>
+                  <p class="text-xs text-center text-gray-500"><%= customer.age %> anos</p>
+                <% end %>
+              </td>
+
+              <td class="px-6 py-4 text-sm text-center text-gray-900">
+                <%= customer.formatted_cpf %>
+              </td>
+
+              <td class="px-6 py-4 text-sm text-center text-gray-900">
+                <p><%= customer.formatted_phone %></p>
+                <p class="text-xs text-center text-gray-500"><%= customer.email || "-" %></p>
+              </td>
+
+              <td class="px-6 py-4 text-center text-sm text-gray-900">
+                -
+              </td>
+
+              <td class="px-6 py-4 text-right w-32">
+                <div class="flex flex-col items-end space-y-2 w-full">
+
+                  <%= link_to "Visualizar", customer_path(customer),
+                      class: "bg-blue-200 text-blue-700 px-3 py-1 rounded-lg hover:bg-blue-100 w-full text-center text-sm font-medium" %>
+
+                  <%= link_to "Editar", edit_customer_path(customer),
+                      class: "bg-orange-200 text-orange-700 px-3 py-1 rounded-lg hover:bg-orange-100 w-full text-center text-sm font-medium" %>
+
+                  <button
+                    onclick="openDeleteModal('/customers', <%= customer.id %>, '<%= j customer.full_name %>', 'cliente')"
+                    class="bg-red-200 text-red-700 px-3 py-1 rounded-lg hover:bg-red-100 w-full text-center text-sm font-medium">
+                    Deletar
+                  </button>
+
+                </div>
+              </td>
+
+            </tr>
+          <% end %>
+        </tbody>
+
+      </table>
+
+    <% else %>
+
+      <div class="text-center py-12">
+        <p class="mt-4 text-xl text-gray-600">Nenhum cliente cadastrado</p>
+        <%= link_to "Cadastrar primeiro cliente", new_customer_path,
+            class: "mt-4 inline-block bg-green-600 hover:bg-green-500 text-white px-6 py-3 rounded-lg font-medium" %>
+      </div>
+
+    <% end %>
+  </div>
+</div>

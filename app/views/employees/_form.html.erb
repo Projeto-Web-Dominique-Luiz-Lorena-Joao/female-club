@@ -1,0 +1,210 @@
+<%= form_with(model: employee, class: "space-y-6") do |form| %>
+  <% if employee.errors.any? %>
+    <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded-md">
+      <div class="flex">
+        <span class="text-red-500 text-xl">⚠️</span>
+        <div class="ml-3">
+          <h3 class="text-sm font-medium text-red-800">
+            <%= pluralize(employee.errors.count, "erro") %>:
+          </h3>
+          <ul class="mt-2 text-sm text-red-700 list-disc list-inside">
+            <% employee.errors.full_messages.each do |message| %>
+              <li><%= message %></li>
+            <% end %>
+          </ul>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+    <div class="md:col-span-2">
+      <%= form.label :full_name, "Nome Completo *", class: "block text-sm font-medium text-gray-700 mb-2" %>
+      <%= form.text_field :full_name,
+          class: "w-full px-4 py-2 border border-gray-300 rounded-lg",
+          required: true %>
+    </div>
+
+
+    <div>
+      <%= form.label :cpf, "CPF *", class: "block text-sm font-medium text-gray-700 mb-2" %>
+      <%= form.text_field :cpf,
+          class: "w-full px-4 py-2 border border-gray-300 rounded-lg",
+          placeholder: "000.000.000-00",
+          maxlength: 14,
+          required: true %>
+    </div>
+
+
+    <div>
+      <%= form.label :phone, "Telefone *", class: "block text-sm font-medium text-gray-700 mb-2" %>
+      <%= form.text_field :phone,
+          class: "w-full px-4 py-2 border border-gray-300 rounded-lg",
+          placeholder: "(00) 00000-0000",
+          required: true %>
+    </div>
+
+
+    <div>
+      <%= form.label :email, "E-mail", class: "block text-sm font-medium text-gray-700 mb-2" %>
+      <%= form.email_field :email,
+          class: "w-full px-4 py-2 border border-gray-300 rounded-lg",
+          placeholder: "email@exemplo.com" %>
+    </div>
+
+
+    <div>
+      <%= form.label :position, "Cargo", class: "block text-sm font-medium text-gray-700 mb-2" %>
+      <%= form.select :position,
+          options_for_select([
+            ['Selecione...', ''],
+            ['Gerente', 'gerente'],
+            ['Vendedor', 'vendedor'],
+            ['Caixa', 'caixa'],
+            ['Estoquista', 'estoquista'],
+            ['Manicure', 'manicure'],
+            ['Cabeleireira', 'cabeleireira'],
+            ['Esteticista', 'esteticista'],
+            ['Maquiador', 'maquiador'],
+            ['Atendente', 'atendente'],
+            ['Auxiliar', 'auxiliar']
+          ], employee.position),
+          {},
+          class: "w-full px-4 py-2 border border-gray-300 rounded-lg" %>
+    </div>
+
+
+    <div>
+      <%= form.label :admission_date, "Data de Admissão", class: "block text-sm font-medium text-gray-700 mb-2" %>
+      <%= form.date_field :admission_date,
+          class: "w-full px-4 py-2 border border-gray-300 rounded-lg" %>
+    </div>
+
+
+    <div>
+      <%= form.label :salary, "Salário (R$)", class: "block text-sm font-medium text-gray-700 mb-2" %>
+      <%= form.number_field :salary,
+          step: 0.01,
+          class: "w-full px-4 py-2 border border-gray-300 rounded-lg",
+          placeholder: "0.00" %>
+    </div>
+
+
+    <div>
+      <%= form.label :status, "Status", class: "block text-sm font-medium text-gray-700 mb-2" %>
+      <%= form.select :status,
+          options_for_select([
+            ['Ativo', 'ativo'],
+            ['Inativo', 'inativo'],
+            ['Férias', 'ferias'],
+            ['Afastado', 'afastado']
+          ], employee.status || 'ativo'),
+          {},
+          class: "w-full px-4 py-2 border border-gray-300 rounded-lg" %>
+    </div>
+
+
+    <div class="md:col-span-2">
+      <%= form.label :work_days, "Dias de Trabalho", class: "block text-sm font-medium text-gray-700 mb-2" %>
+      <%= form.text_field :work_days,
+          class: "w-full px-4 py-2 border border-gray-300 rounded-lg",
+          placeholder: "Ex: Segunda a Sexta, 8h às 18h" %>
+    </div>
+
+
+    <div class="md:col-span-2">
+      <%= form.label :address, "Endereço", class: "block text-sm font-medium text-gray-700 mb-2" %>
+      <%= form.text_area :address,
+          rows: 2,
+          class: "w-full px-4 py-2 border border-gray-300 rounded-lg" %>
+    </div>
+
+
+    <div class="md:col-span-2">
+      <%= form.label :notes, "Observações", class: "block text-sm font-medium text-gray-700 mb-2" %>
+      <%= form.text_area :notes,
+          rows: 3,
+          class: "w-full px-4 py-2 border border-gray-300 rounded-lg" %>
+    </div>
+  </div>
+
+  <div class="flex justify-end space-x-2 pt-6 ">
+    <%= link_to "Cancelar", employees_path,
+        class: "px-6 py-3 rounded-lg bg-gray-300 hover:bg-gray-200 text-gray-700 font-medium transition" %>
+    <%= form.submit "Salvar Funcionário",
+        class: "px-6 py-3 bg-green-600 hover:bg-green-500 text-white rounded-lg font-medium shadow-lg transition" %>
+  </div>
+
+<% end %>
+<script>
+  (function() {
+    console.log('Máscaras ativadas!');
+
+    function aplicar() {
+      // --- MÁSCARA DE CPF (Corrigida) ---
+      const cpf = document.querySelector('input[name="employee[cpf]"]');
+      if (cpf && !cpf.dataset.m) {
+        cpf.dataset.m = '1';
+        cpf.addEventListener('input', function(e) {
+          let v = e.target.value.replace(/\D/g, ''); // Remove tudo que não é dígito
+          if (v.length > 11) v = v.slice(0, 11);     // Limita a 11 dígitos
+
+          // Aplica a máscara progressivamente
+          if (v.length > 9) {
+            // 10 ou 11 dígitos
+            v = v.replace(/(\d{3})(\d{3})(\d{3})(\d{1,2})/, '$1.$2.$3-$4');
+          } else if (v.length > 6) {
+            // 7 a 9 dígitos
+            v = v.replace(/(\d{3})(\d{3})(\d{1,3})/, '$1.$2.$3');
+          } else if (v.length > 3) {
+            // 4 a 6 dígitos
+            v = v.replace(/(\d{3})(\d{1,3})/, '$1.$2');
+          }
+          e.target.value = v;
+        });
+        console.log('CPF ok');
+      }
+
+      // --- MÁSCARA DE TELEFONE (Corrigida) ---
+      const tel = document.querySelector('input[name="employee[phone]"]');
+      if (tel && !tel.dataset.m) {
+        tel.dataset.m = '1';
+        tel.addEventListener('input', function(e) {
+          let v = e.target.value.replace(/\D/g, ''); // Remove tudo que não é dígito
+          if (v.length > 11) v = v.slice(0, 11);     // Limita a 11 dígitos
+
+          // Esta lógica causa o "pulo" do 10º para o 11º dígito,
+          // mas é a única forma de suportar 10 e 11 dígitos com este método.
+          // O mais importante é que agora o "apagar" funciona.
+
+          if (v.length > 10) {
+            // 11 dígitos: (XX) XXXXX-XXXX
+            v = v.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+          } else if (v.length > 6) {
+            // 7 a 10 dígitos: (XX) XXXX-XXXX (progressivo)
+            v = v.replace(/(\d{2})(\d{4})(\d{1,4})/, '($1) $2-$3');
+          } else if (v.length > 2) {
+            // 3 a 6 dígitos: (XX) XXXX (progressivo)
+            v = v.replace(/(\d{2})(\d{1,4})/, '($1) $2');
+          } else if (v.length > 0) {
+            // 1 a 2 dígitos: (XX (progressivo)
+            v = v.replace(/(\d{1,2})/, '($1');
+          }
+
+          e.target.value = v;
+        });
+        console.log('Tel ok');
+      }
+    }
+
+    // --- Carregamento do script ---
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', aplicar);
+    } else {
+      aplicar();
+    }
+    document.addEventListener('turbo:load', aplicar);
+    setTimeout(aplicar, 100);
+  })();
+  </script>
