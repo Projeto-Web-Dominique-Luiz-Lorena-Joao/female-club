@@ -1,10 +1,9 @@
-<%= form_with(model: sale, class: "space-y-6") do |form| %>
+<%# app/views/sales/_form.html.erb %>
+<%= form_with(model: sale, local: true, id: "sale_form") do |form| %>
   <% if sale.errors.any? %>
-    <div class="bg-red-50 border-l-4 border-red-500 p-4">
-      <h3 class="text-red-800 font-medium">
-        <%= pluralize(sale.errors.count, "erro impediu", "erros impediram") %> que esta venda fosse salva:
-      </h3>
-      <ul class="mt-2 text-red-700 list-disc list-inside">
+    <div class="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded mb-4">
+      <h4 class="font-bold"><%= pluralize(sale.errors.count, "erro") %> impediram que esta venda fosse salva:</h4>
+      <ul class="list-disc list-inside mt-2">
         <% sale.errors.full_messages.each do |message| %>
           <li><%= message %></li>
         <% end %>
@@ -12,155 +11,99 @@
     </div>
   <% end %>
 
-  <div class="bg-white rounded-lg shadow-md p-6">
-    <h2 class="text-xl font-semibold text-gray-800 mb-4">Informações Básicas</h2>
-
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-      <div>
-        <%= form.label :customer_id, "Cliente", class: "block text-sm font-medium text-gray-700 mb-2" %>
-        <%= form.select :customer_id,
-            options_for_select([["Cliente Avulso", ""]] + @customers.map { |c| [c.full_name, c.id] }, sale.customer_id),
-            {},
-            class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500"
-        %>
-        <p class="mt-1 text-sm text-gray-500">Deixe em branco para venda avulsa</p>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <!-- Campo de Funcionário com Autocomplete -->
+    <div data-controller="sales-autocomplete"
+         data-sales-autocomplete-search-url-value="/sales/search_employees"
+         data-sales-autocomplete-allow-create-value="false"
+         id="employee_autocomplete">
+      <%= form.label :employee_id, "Funcionário *", class: "block text-sm font-medium text-gray-700 mb-1" %>
+      <div class="relative">
+        <%= form.hidden_field :employee_id, id: "sale_employee_id", data: { "sales-autocomplete-target": "hiddenInput" } %>
+        <input type="text"
+               id="employee_search"
+               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+               placeholder="Digite o nome do funcionário..."
+               autocomplete="off"
+               value="<%= sale.employee&.full_name %>"
+               data-sales-autocomplete-target="searchInput"
+               data-action="input->sales-autocomplete#search focus->sales-autocomplete#focus click->sales-autocomplete#focus"
+               required>
+        <div id="employee_results"
+             class="hidden absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto"
+             data-sales-autocomplete-target="results"></div>
       </div>
+      <small class="text-gray-500 text-xs">Selecionado: <span id="selected_employee" class="font-medium" data-sales-autocomplete-target="selectedDisplay"><%= sale.employee&.full_name || 'Nenhum' %></span></small>
+    </div>
 
-      <div>
-        <%= form.label :employee_id, "Funcionário *", class: "block text-sm font-medium text-gray-700 mb-2" %>
-        <%= form.select :employee_id,
-            options_for_select(@employees.map { |e| [e.full_name, e.id] }, sale.employee_id),
-            { prompt: "Selecione um funcionário" },
-            class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500"
-        %>
+    <!-- Campo de Cliente com Autocomplete -->
+    <div data-controller="sales-autocomplete"
+         data-sales-autocomplete-search-url-value="/sales/search_customers"
+         data-sales-autocomplete-allow-create-value="true"
+         id="customer_autocomplete">
+      <%= form.label :customer_id, "Cliente", class: "block text-sm font-medium text-gray-700 mb-1" %>
+      <div class="relative">
+        <%= form.hidden_field :customer_id, id: "sale_customer_id", data: { "sales-autocomplete-target": "hiddenInput" } %>
+        <input type="text"
+               id="customer_search"
+               name="customer_search"
+               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+               placeholder="Digite o nome do cliente ou deixe em branco..."
+               autocomplete="off"
+               value="<%= sale.customer&.full_name %>"
+               data-sales-autocomplete-target="searchInput"
+               data-action="input->sales-autocomplete#search focus->sales-autocomplete#focus click->sales-autocomplete#focus">
+        <div id="customer_results"
+             class="hidden absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto"
+             data-sales-autocomplete-target="results"></div>
       </div>
-
-      <div>
-        <%= form.label :sale_date, "Data da Venda *", class: "block text-sm font-medium text-gray-700 mb-2" %>
-        <%= form.date_field :sale_date, class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500" %>
-      </div>
-
-      <div>
-        <%= form.label :due_date, "Data de Vencimento", class: "block text-sm font-medium text-gray-700 mb-2" %>
-        <%= form.date_field :due_date, class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500" %>
-        <p class="mt-1 text-sm text-gray-500">Opcional - para vendas à prazo</p>
-      </div>
+      <small class="text-gray-500 text-xs">Selecionado: <span id="selected_customer" class="font-medium" data-sales-autocomplete-target="selectedDisplay"><%= sale.customer&.full_name || 'Cliente Avulso' %></span></small>
     </div>
   </div>
 
-  <div class="bg-white rounded-lg shadow-md p-6">
-    <h2 class="text-xl font-semibold text-gray-800 mb-4">Valores</h2>
-
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-      <div>
-        <%= form.label :total_amount, "Valor Total (R$) *", class: "block text-sm font-medium text-gray-700 mb-2" %>
-        <div class="relative">
-          <span class="absolute left-3 top-2.5 text-gray-500">R$</span>
-          <%= form.number_field :total_amount,
-              step: 0.01,
-              min: 0,
-              placeholder: "0,00",
-              class: "w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500",
-              id: "total_amount"
-          %>
-        </div>
-      </div>
-
-      <div>
-        <%= form.label :discount_percentage, "Desconto (%)", class: "block text-sm font-medium text-gray-700 mb-2" %>
-        <%= form.number_field :discount_percentage,
-            step: 0.01,
-            min: 0,
-            max: 100,
-            placeholder: "0",
-            class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500",
-            id: "discount_percentage"
-        %>
-        <p class="mt-1 text-sm text-gray-500" id="discount_info"></p>
-      </div>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+    <div>
+      <%= form.label :sale_date, "Data da Venda *", class: "block text-sm font-medium text-gray-700 mb-1" %>
+      <%= form.date_field :sale_date, class: "w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500", required: true %>
     </div>
 
-    <div id="final_value_preview" class="mt-4 p-4 bg-pink-50 rounded-lg hidden">
-      <div class="flex justify-between">
-        <span class="font-medium">Valor Final com Desconto:</span>
-        <span class="text-2xl font-bold text-pink-600" id="final_value">R$ 0,00</span>
-      </div>
+    <div>
+      <%= form.label :due_date, "Data de Vencimento", class: "block text-sm font-medium text-gray-700 mb-1" %>
+      <%= form.date_field :due_date, class: "w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" %>
     </div>
   </div>
 
-  <div class="bg-white rounded-lg shadow-md p-6">
-    <h2 class="text-xl font-semibold text-gray-800 mb-4">Pagamento</h2>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+    <div>
+      <%= form.label :payment_method, "Forma de Pagamento *", class: "block text-sm font-medium text-gray-700 mb-1" %>
+      <%= form.select :payment_method, @payment_methods, {}, class: "w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500", required: true %>
+    </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-      <div>
-        <%= form.label :payment_method, "Forma de Pagamento *", class: "block text-sm font-medium text-gray-700 mb-2" %>
-        <%= form.select :payment_method,
-            options_for_select(@payment_methods, sale.payment_method),
-            {},
-            class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500"
-        %>
-      </div>
-
-      <div>
-        <%= form.label :status, "Status *", class: "block text-sm font-medium text-gray-700 mb-2" %>
-        <%= form.select :status,
-            options_for_select(@statuses, sale.status),
-            {},
-            class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500"
-        %>
-      </div>
-
-      <div>
-        <%= form.label :paid_date, "Data do Pagamento", class: "block text-sm font-medium text-gray-700 mb-2" %>
-        <%= form.date_field :paid_date, class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500" %>
-      </div>
+    <div>
+      <%= form.label :status, "Status *", class: "block text-sm font-medium text-gray-700 mb-1" %>
+      <%= form.select :status, @statuses, {}, class: "w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500", required: true %>
     </div>
   </div>
 
-  <div class="bg-white rounded-lg shadow-md p-6">
-    <h2 class="text-xl font-semibold text-gray-800 mb-4">Observações</h2>
-    <%= form.text_area :notes,
-        rows: 4,
-        placeholder: "Digite observações sobre a venda...",
-        class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500"
-    %>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+    <div>
+      <%= form.label :discount_percentage, "Desconto (%)", class: "block text-sm font-medium text-gray-700 mb-1" %>
+      <%= form.number_field :discount_percentage, class: "w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500", step: "0.01", min: "0", max: "100" %>
+    </div>
+
+    <div>
+      <%= form.label :total_amount, "Valor Total *", class: "block text-sm font-medium text-gray-700 mb-1" %>
+      <%= form.number_field :total_amount, class: "w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500", step: "0.01", min: "0", required: true %>
+    </div>
   </div>
 
-  <div class="flex gap-4">
-    <%= form.submit "Salvar Venda", class: "bg-pink-500 hover:bg-pink-600 text-white font-semibold py-3 px-6 rounded-lg cursor-pointer" %>
-    <%= link_to "Cancelar", sales_path, class: "bg-gray-500 hover:bg-gray-600 text-white font-semibold py-3 px-6 rounded-lg" %>
+  <div class="mt-4">
+    <%= form.label :notes, "Observações", class: "block text-sm font-medium text-gray-700 mb-1" %>
+    <%= form.text_area :notes, rows: 3, class: "w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" %>
+  </div>
+
+  <div class="flex gap-3 mt-6">
+    <%= form.submit "Salvar Venda", class: "px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500" %>
+    <%= link_to "Cancelar", sales_path, class: "px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400" %>
   </div>
 <% end %>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-  const totalField = document.querySelector('#total_amount');
-  const discountField = document.querySelector('#discount_percentage');
-  const discountInfo = document.querySelector('#discount_info');
-  const preview = document.querySelector('#final_value_preview');
-  const finalValue = document.querySelector('#final_value');
-
-  function calculate() {
-    const total = parseFloat(totalField.value) || 0;
-    const discount = parseFloat(discountField.value) || 0;
-
-    if (total > 0 && discount > 0) {
-      const discountAmount = total * (discount / 100);
-      const finalAmount = total - discountAmount;
-
-      discountInfo.textContent = `Desconto de R$ ${discountAmount.toFixed(2).replace('.', ',')}`;
-      finalValue.textContent = `R$ ${finalAmount.toFixed(2).replace('.', ',')}`;
-      preview.classList.remove('hidden');
-    } else {
-      discountInfo.textContent = '';
-      preview.classList.add('hidden');
-    }
-  }
-
-  if (totalField && discountField) {
-    totalField.addEventListener('input', calculate);
-    discountField.addEventListener('input', calculate);
-    calculate();
-  }
-});
-</script>

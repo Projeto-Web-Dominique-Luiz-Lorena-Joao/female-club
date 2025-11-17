@@ -3,7 +3,15 @@ Rails.application.routes.draw do
   resources :suppliers
   resources :employees
   resources :customers
-  resources :sales
+  resources :sales do
+    collection do
+      get :search_employees
+      get :search_customers
+    end
+    member do
+      patch :mark_as_paid
+    end
+  end
 
   devise_for :users
 

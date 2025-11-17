@@ -55,7 +55,7 @@
         <% if @sale.customer.present? %>
           <div>
             <p class="text-sm text-gray-500">Telefone</p>
-            <p class="text-lg"><%= @sale.customer.phone %></p>
+            <p class="text-lg"><%= @sale.customer.formatted_phone %></p>
           </div>
           <div>
             <p class="text-sm text-gray-500">Email</p>
@@ -80,7 +80,7 @@
         </div>
         <div>
           <p class="text-sm text-gray-500">Cargo</p>
-          <p class="text-lg"><%= @sale.employee.role %></p>
+          <p class="text-lg"><%= @sale.employee.position.humanize %></p>
         </div>
         <%= link_to "Ver perfil", employee_path(@sale.employee), class: "text-pink-500 hover:text-pink-600" %>
       </div>
@@ -143,34 +143,6 @@
     </div>
   <% end %>
 
-  <!-- Itens da Venda -->
-  <% if @sale.sale_items.any? %>
-    <div class="bg-white rounded-lg shadow-md p-6 mt-6">
-      <h2 class="text-xl font-semibold mb-4">Itens da Venda</h2>
-      <div class="overflow-x-auto">
-        <table class="min-w-full divide-y divide-gray-200">
-          <thead class="bg-gray-50">
-            <tr>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Item</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Quantidade</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Valor Unit.</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Subtotal</th>
-            </tr>
-          </thead>
-          <tbody class="bg-white divide-y divide-gray-200">
-            <% @sale.sale_items.each do |item| %>
-              <tr>
-                <td class="px-6 py-4 text-sm text-gray-900"><%= item.description %></td>
-                <td class="px-6 py-4 text-sm text-gray-900"><%= item.quantity %></td>
-                <td class="px-6 py-4 text-sm text-gray-900">R$ <%= number_to_currency(item.unit_price, unit: "", precision: 2, delimiter: ".", separator: ",") %></td>
-                <td class="px-6 py-4 text-sm font-medium text-gray-900">R$ <%= number_to_currency(item.subtotal, unit: "", precision: 2, delimiter: ".", separator: ",") %></td>
-              </tr>
-            <% end %>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  <% end %>
 
   <!-- Ações -->
   <div class="flex gap-4 mt-6">

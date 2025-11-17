@@ -31,6 +31,12 @@ class SalesController < ApplicationController
   def create
     @sale = Sale.new(sale_params)
 
+    if params[:sale][:customer_id].blank? && params[:customer_search].present?
+    customer_name = params[:customer_search].strip
+    customer = Customer.create(full_name: customer_name)
+    @sale.customer = customer
+    end
+
     if @sale.save
       redirect_to @sale, notice: 'Venda criada com sucesso.'
     else
@@ -40,6 +46,13 @@ class SalesController < ApplicationController
   end
 
   def update
+
+    if params[:sale][:customer_id].blank? && params[:customer_search].present?
+    customer_name = params[:customer_search].strip
+    customer = Customer.create(full_name: customer_name)
+    @sale.customer = customer
+    end
+
     if @sale.update(sale_params)
       redirect_to @sale, notice: 'Venda atualizada com sucesso.'
     else
@@ -59,6 +72,25 @@ class SalesController < ApplicationController
     else
       redirect_to @sale, alert: 'Erro ao marcar venda como paga.'
     end
+  end
+
+  def search_employees
+    query = params[:query].to_s.strip
+    @employees = Employee.where(status: 'ativo')
+                        .where("full_name ILIKE ?", "%#{query}%")
+                        .order(:full_name)
+                        .limit(10)
+
+    render json: @employees.map { |e| { id: e.id, name: e.full_name } }
+  end
+
+  def search_customers
+    query = params[:query].to_s.strip
+    @customers = Customer.where("full_name ILIKE ?", "%#{query}%")
+                        .order(:full_name)
+                        .limit(10)
+
+    render json: @customers.map { |c| { id: c.id, name: c.full_name } }
   end
 
   private

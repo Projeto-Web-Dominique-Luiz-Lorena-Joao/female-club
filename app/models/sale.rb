@@ -2,7 +2,7 @@ class Sale < ApplicationRecord
 
   belongs_to :customer, optional: true
   belongs_to :employee
-  has_many :sale_items, dependent: :destroy
+  # has_many :sale_items, dependent: :destroy
 
   validates :sale_date, presence: true
   validates :total_amount, presence: true, numericality: { greater_than_or_equal_to: 0 }
@@ -17,14 +17,14 @@ class Sale < ApplicationRecord
     pix: "pix",
     transferencia: "transferencia",
     boleto: "boleto"
-   }, suffix: true
+   }
 
   enum :status, {
     pendente: "pendente",
     pago: "pago",
     cancelado: "cancelado",
     expirado: "expirado",
-   }, suffix: true
+   }
 
   scope :recent, -> { order(sale_date: :desc) }
   scope :by_status, ->(status) { where(status: status) }
@@ -38,7 +38,7 @@ class Sale < ApplicationRecord
   before_save :calculate_total_amount
 
   def overdue?
-    due_date.present? && due_date < Date.today && pending?
+    due_date.present? && due_date < Date.today && pendente?
   end
 
   def days_overdue
