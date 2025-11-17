@@ -1,0 +1,92 @@
+<div class="max-w-4xl mx-auto space-y-6">
+  <div class="flex justify-between items-start">
+    <div>
+      <h1 class="text-3xl font-bold text-gray-900"><%= @guarantor.full_name %></h1>
+      <% if @guarantor.customer.present? %>
+        <p class="mt-2 text-gray-600">Fiador de <%= link_to @guarantor.customer.full_name, customer_path(@guarantor.customer), class: "text-blue-600 hover:underline" %></p>
+      <% else %>
+        <p class="mt-2 text-gray-500 italic">Sem cliente associado</p>
+      <% end %>
+    </div>
+    <div class="flex space-x-3">
+      <%= link_to edit_guarantor_path(@guarantor), class: "bg-blue-900 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-medium" do %>
+        Editar
+      <% end %>
+      <%= link_to guarantors_path, class: "bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-lg font-medium" do %>
+        ← Voltar
+      <% end %>
+    </div>
+  </div>
+
+  <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+    <div class="px-6 py-4 bg-gray-900">
+      <h2 class="text-xl font-bold text-white">Informações Pessoais</h2>
+    </div>
+    <div class="p-6 grid grid-cols-2 gap-6">
+      <div>
+        <p class="text-sm font-medium text-gray-500">CPF</p>
+        <p class="mt-1 text-lg text-gray-900"><%= @guarantor.formatted_cpf || '-' %></p>
+      </div>
+      <div>
+        <p class="text-sm font-medium text-gray-500">Telefone</p>
+        <p class="mt-1 text-lg text-gray-900"><%= @guarantor.formatted_phone || '-' %></p>
+      </div>
+      <div>
+        <p class="text-sm font-medium text-gray-500">Parentesco</p>
+        <p class="mt-1 text-lg text-gray-900"><%= @guarantor.relationship&.titleize || '-' %></p>
+      </div>
+
+      <% if @guarantor.address.present? %>
+        <div class="col-span-2">
+          <p class="text-sm font-medium text-gray-500">Endereço</p>
+          <p class="mt-1 text-gray-900"><%= @guarantor.address %></p>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <% if @guarantor.customer.present? %>
+    <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+      <div class="px-6 py-4 bg-gray-50">
+        <h2 class="text-xl font-bold text-gray-900">Informações do Cliente</h2>
+      </div>
+      <div class="p-6 grid grid-cols-2 gap-6">
+        <div>
+          <p class="text-sm font-medium text-gray-500">Nome do Cliente</p>
+          <p class="mt-1 text-lg text-gray-900">
+            <%= link_to @guarantor.customer.full_name, customer_path(@guarantor.customer), class: "text-blue-600 hover:underline" %>
+          </p>
+        </div>
+        <div>
+          <p class="text-sm font-medium text-gray-500">CPF do Cliente</p>
+          <p class="mt-1 text-lg text-gray-900"><%= @guarantor.customer.formatted_cpf || '-' %></p>
+        </div>
+        <div>
+          <p class="text-sm font-medium text-gray-500">Telefone do Cliente</p>
+          <p class="mt-1 text-lg text-gray-900"><%= @guarantor.customer.formatted_phone || '-' %></p>
+        </div>
+        <div>
+          <p class="text-sm font-medium text-gray-500">E-mail do Cliente</p>
+          <p class="mt-1 text-lg text-gray-900"><%= @guarantor.customer.email || '-' %></p>
+        </div>
+      </div>
+    </div>
+  <% else %>
+    <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
+      <div class="flex items-center">
+        <svg class="w-6 h-6 text-yellow-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+        </svg>
+        <p class="text-yellow-800 font-medium">Este fiador não está associado a nenhum cliente no momento.</p>
+      </div>
+    </div>
+  <% end %>
+
+  <div class="flex justify-end">
+    <%= button_to "Excluir Fiador",
+                  guarantor_path(@guarantor),
+                  method: :delete,
+                  data: { confirm: "Tem certeza que deseja excluir este fiador?" },
+                  class: "bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium" %>
+  </div>
+</div>

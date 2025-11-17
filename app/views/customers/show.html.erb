@@ -75,6 +75,33 @@
           <p class="mt-1 text-gray-900"><%= @customer.notes %></p>
         </div>
       <% end %>
+
+      <!-- Seção de Fiador -->
+      <% if @customer.guarantor.present? %>
+        <div class="col-span-2 pt-4 border-t">
+          <div class="flex items-center justify-between">
+            <p class="text-sm font-medium text-gray-500 mb-2">Fiador</p>
+            <%= link_to guarantor_path(@customer.guarantor),
+                        class: "inline-flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-lg transition shadow" do %>
+              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+              </svg>
+              Ver Fiador
+            <% end %>
+          </div>
+          <div class="mt-2 p-4 bg-green-50 border border-green-200 rounded-lg">
+            <p class="text-lg font-semibold text-gray-900"><%= @customer.guarantor.full_name %></p>
+            <p class="text-sm text-gray-600 mt-1">
+              <span class="font-medium">Parentesco:</span> <%= @customer.guarantor.relationship.titleize %>
+            </p>
+            <% if @customer.guarantor.phone.present? %>
+              <p class="text-sm text-gray-600 mt-1">
+                <span class="font-medium">Telefone:</span> <%= @customer.guarantor.formatted_phone %>
+              </p>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
     </div>
   </div>
 

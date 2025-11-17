@@ -1,3 +1,4 @@
+<div data-controller="guarantor-modal">
 <%= form_with(model: customer, class: "space-y-6") do |form| %>
   <% if customer.errors.any? %>
     <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded-md">
@@ -71,6 +72,54 @@
           class: "w-full px-4 py-2 border border-gray-300 rounded-lg",
           placeholder: "Preferências, alergias, observações importantes..." %>
     </div>
+
+    <!-- Toggle para Fiador -->
+    <div class="md:col-span-2 border-t pt-6">
+      <div class="flex items-center justify-between">
+        <label class="text-sm font-medium text-gray-700">Deseja cadastrar fiador?</label>
+        <label class="relative inline-flex items-center cursor-pointer">
+          <input type="checkbox"
+                 class="sr-only peer"
+                 data-guarantor-modal-target="toggleSwitch"
+                 data-action="change->guarantor-modal#toggleGuarantor"
+                 <%= 'checked' if customer.guarantor.present? %>>
+          <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
+          <span class="ml-3 text-sm font-medium text-gray-900">
+            <span class="peer-checked:hidden">Não</span>
+            <span class="hidden peer-checked:inline">Sim</span>
+          </span>
+        </label>
+      </div>
+
+      <!-- Seção de informações do fiador (aparece quando cadastrado) -->
+      <div data-guarantor-modal-target="guarantorSection" class="mt-4 <%= 'hidden' unless customer.guarantor.present? %>">
+        <% if customer.guarantor.present? %>
+          <% guarantor = customer.guarantor %>
+          <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+            <h4 class="font-semibold text-green-800 mb-2">Fiador Cadastrado:</h4>
+            <p class="text-sm text-gray-700"><strong>Nome:</strong> <%= guarantor.full_name %></p>
+            <p class="text-sm text-gray-700"><strong>Parentesco:</strong> <%= guarantor.relationship %></p>
+            <% if guarantor.cpf.present? %>
+              <p class="text-sm text-gray-700"><strong>CPF:</strong> <%= guarantor.formatted_cpf %></p>
+            <% end %>
+            <% if guarantor.phone.present? %>
+              <p class="text-sm text-gray-700"><strong>Telefone:</strong> <%= guarantor.formatted_phone %></p>
+            <% end %>
+            <input type="hidden" name="guarantor[id]" value="<%= guarantor.id %>" data-guarantor-modal-target="guarantorId">
+            <input type="hidden" name="guarantor[full_name]" value="<%= guarantor.full_name %>">
+            <input type="hidden" name="guarantor[cpf]" value="<%= guarantor.cpf %>">
+            <input type="hidden" name="guarantor[phone]" value="<%= guarantor.phone %>">
+            <input type="hidden" name="guarantor[relationship]" value="<%= guarantor.relationship %>">
+            <input type="hidden" name="guarantor[address]" value="<%= guarantor.address %>">
+            <button type="button"
+                    class="mt-3 text-sm text-blue-600 hover:text-blue-800 underline"
+                    data-action="click->guarantor-modal#editGuarantor">
+              Editar Fiador
+            </button>
+          </div>
+        <% end %>
+      </div>
+    </div>
   </div>
 
   <div class="flex justify-end space-x-2 pt-6 ">
@@ -82,12 +131,100 @@
 
 <% end %>
 
+<!-- Modal de Cadastro de Fiador -->
+<div data-guarantor-modal-target="modal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+  <div class="relative top-20 mx-auto p-5 border w-11/12 md:w-3/4 lg:w-1/2 shadow-lg rounded-md bg-white">
+    <div class="flex justify-between items-center pb-3 border-b">
+      <h3 class="text-xl font-semibold text-gray-900">Cadastrar Fiador</h3>
+      <button type="button"
+              class="text-gray-400 hover:text-gray-600 text-2xl"
+              data-action="click->guarantor-modal#closeModal">
+        &times;
+      </button>
+    </div>
+
+    <div class="mt-4 space-y-4">
+      <!-- Nome do Fiador -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Nome Completo *</label>
+        <input type="text"
+               data-guarantor-modal-target="guarantorName"
+               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+               placeholder="Digite o nome completo do fiador"
+               required>
+      </div>
+
+      <!-- CPF -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">CPF</label>
+        <input type="text"
+               data-guarantor-modal-target="guarantorCpf"
+               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+               placeholder="000.000.000-00"
+               maxlength="14">
+      </div>
+
+      <!-- Telefone -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Telefone</label>
+        <input type="text"
+               data-guarantor-modal-target="guarantorPhone"
+               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+               placeholder="(00) 00000-0000">
+      </div>
+
+      <!-- Parentesco -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Parentesco *</label>
+        <select data-guarantor-modal-target="guarantorRelationship"
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                required>
+          <option value="">Selecione o parentesco</option>
+          <option value="pai">Pai</option>
+          <option value="mãe">Mãe</option>
+          <option value="irmão(a)">Irmão(a)</option>
+          <option value="esposo(a)">Esposo(a)</option>
+          <option value="avô(a)">Avô(a)</option>
+          <option value="tio(a)">Tio(a)</option>
+          <option value="primo(a)">Primo(a)</option>
+          <option value="amigo(a)">Amigo(a)</option>
+          <option value="outro">Outro</option>
+        </select>
+      </div>
+
+      <!-- Endereço -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Endereço</label>
+        <textarea data-guarantor-modal-target="guarantorAddress"
+                  rows="2"
+                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                  placeholder="Digite o endereço completo do fiador"></textarea>
+      </div>
+    </div>
+
+    <!-- Botões do Modal -->
+    <div class="flex justify-end space-x-2 mt-6 pt-4 border-t">
+      <button type="button"
+              class="px-6 py-2 bg-gray-300 hover:bg-gray-400 text-gray-700 rounded-lg font-medium transition"
+              data-action="click->guarantor-modal#closeModal">
+        Cancelar
+      </button>
+      <button type="button"
+              class="px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition"
+              data-action="click->guarantor-modal#saveGuarantor">
+        Salvar Fiador
+      </button>
+    </div>
+  </div>
+</div>
+</div>
+
 <script>
 (function() {
   console.log('Máscaras ativadas!');
 
   function aplicar() {
-
+    // Máscara para CPF do cliente
     const cpf = document.querySelector('input[name="customer[cpf]"]');
     if (cpf && !cpf.dataset.m) {
       cpf.dataset.m = '1';
@@ -139,6 +276,60 @@
       });
 
       console.log('Telefone ok');
+    }
+
+    // Máscara para CPF do fiador no modal
+    const guarantorCpf = document.querySelector('[data-guarantor-modal-target="guarantorCpf"]');
+    if (guarantorCpf && !guarantorCpf.dataset.m) {
+      guarantorCpf.dataset.m = '1';
+
+      guarantorCpf.addEventListener("input", function(e) {
+        let cursor = e.target.selectionStart;
+        let old = e.target.value;
+        let clean = old.replace(/\D/g, '');
+
+        const before = old.slice(0, cursor).replace(/\D/g, '').length;
+
+        const masked = formatCPF(clean);
+        e.target.value = masked;
+
+        let newCursor = masked.length;
+        let count = 0;
+
+        for (let i = 0; i < masked.length; i++) {
+          if (masked[i].match(/\d/)) count++;
+          if (count == before) {
+            newCursor = i + 1;
+            break;
+          }
+        }
+
+        e.target.setSelectionRange(newCursor, newCursor);
+      });
+
+      console.log("CPF do fiador ok");
+    }
+
+    // Máscara para Telefone do fiador no modal
+    const guarantorPhone = document.querySelector('[data-guarantor-modal-target="guarantorPhone"]');
+    if (guarantorPhone && !guarantorPhone.dataset.mtel) {
+      guarantorPhone.dataset.mtel = '1';
+
+      guarantorPhone.addEventListener('input', function(e) {
+        let cursor = e.target.selectionStart;
+        let clean = e.target.value.replace(/\D/g, '');
+
+        if (e.inputType === "deleteContentBackward") {
+          e.target.value = formatPhone(clean);
+          e.target.setSelectionRange(cursor, cursor);
+          return;
+        }
+
+        e.target.value = formatPhone(clean);
+        e.target.setSelectionRange(e.target.value.length, e.target.value.length);
+      });
+
+      console.log('Telefone do fiador ok');
     }
   }
 

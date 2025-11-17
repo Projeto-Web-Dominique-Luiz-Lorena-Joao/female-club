@@ -54,6 +54,11 @@ class CustomersController < ApplicationController
     @customer = Customer.new(customer_params)
 
     if @customer.save
+      # Processar fiador se os dados foram fornecidos
+      if params[:guarantor].present? && params[:guarantor][:full_name].present?
+        create_or_update_guarantor(@customer)
+      end
+
       redirect_to customers_path, notice: 'Cliente cadastrado com sucesso!'
     else
       render :new, status: :unprocessable_entity
@@ -62,6 +67,11 @@ class CustomersController < ApplicationController
 
   def update
     if @customer.update(customer_params)
+      # Processar fiador se os dados foram fornecidos
+      if params[:guarantor].present? && params[:guarantor][:full_name].present?
+        create_or_update_guarantor(@customer)
+      end
+
       redirect_to customers_path, notice: 'Cliente atualizado com sucesso!'
     else
       render :edit, status: :unprocessable_entity
@@ -84,5 +94,32 @@ class CustomersController < ApplicationController
       :full_name, :cpf, :birth_date, :phone_number,
       :email, :full_address, :notes
     )
+  end
+
+  def create_or_update_guarantor(customer)
+    guarantor_params = params[:guarantor]
+
+    if guarantor_params[:id].present?
+      # Atualizar fiador existente
+      guarantor = Guarantor.find(guarantor_params[:id])
+      guarantor.update(
+        full_name: guarantor_params[:full_name],
+        cpf: guarantor_params[:cpf],
+        phone: guarantor_params[:phone],
+        relationship: guarantor_params[:relationship],
+        address: guarantor_params[:address]
+      )
+      customer.update(guarantor: guarantor)
+    else
+      # Criar novo fiador
+      guarantor = Guarantor.create(
+        full_name: guarantor_params[:full_name],
+        cpf: guarantor_params[:cpf],
+        phone: guarantor_params[:phone],
+        relationship: guarantor_params[:relationship],
+        address: guarantor_params[:address]
+      )
+      customer.update(guarantor: guarantor)
+    end
   end
 end

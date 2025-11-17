@@ -2,6 +2,11 @@ Rails.application.routes.draw do
 
   resources :suppliers
   resources :employees
+  resources :guarantors do
+    collection do
+      get :search_customers
+    end
+  end
   resources :customers
   resources :sales do
     collection do
@@ -29,7 +34,6 @@ Rails.application.routes.draw do
 
   # root 'home#index'
   get 'employee', to: 'home#employees'
-  get 'dashboard', to: 'home#dashboard'
   get 'customers', to: 'home#customers'
   get 'suppliers', to: 'home#suppliers'
   get 'sales', to: 'home#sales'

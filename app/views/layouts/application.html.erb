@@ -19,21 +19,57 @@
       body {
         font-family: 'Inter', sans-serif;
       }
+
+      @keyframes slideDown {
+        from {
+          opacity: 0;
+          transform: translateY(-30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
     </style>
   </head>
 
   <body class="bg-gray-50 h-screen overflow-hidden">
-    <% if notice.present? %>
-      <div class="fixed top-4 right-4 z-50 bg-green-100 border border-green-400 text-green-700 px-6 py-4 rounded-lg shadow-lg" role="alert">
-        <span class="block sm:inline"><%= notice %></span>
-      </div>
-    <% end %>
-    
-    <% if alert.present? %>
-      <div class="fixed top-4 right-4 z-50 bg-red-100 border border-red-400 text-red-700 px-6 py-4 rounded-lg shadow-lg" role="alert">
-        <span class="block sm:inline"><%= alert %></span>
-      </div>
-    <% end %>
+    <!-- Container de Notificações Centralizado -->
+    <div class="fixed top-8 left-1/2 transform -translate-x-1/2 z-50 flex flex-col items-center space-y-4 pointer-events-none">
+      <% if notice.present? %>
+        <div data-controller="flash"
+             class="pointer-events-auto bg-green-600 text-white px-8 py-4 rounded-lg shadow-2xl flex items-center space-x-3 min-w-[400px] max-w-2xl"
+             style="animation: slideDown 0.3s ease-out;"
+             role="alert">
+          <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          <span class="font-medium text-center flex-1"><%= notice %></span>
+          <button data-action="click->flash#close" class="ml-4 hover:bg-green-700 rounded p-1 transition">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+          </button>
+        </div>
+      <% end %>
+
+      <% if alert.present? %>
+        <div data-controller="flash"
+             class="pointer-events-auto bg-red-600 text-white px-8 py-4 rounded-lg shadow-2xl flex items-center space-x-3 min-w-[400px] max-w-2xl"
+             style="animation: slideDown 0.3s ease-out;"
+             role="alert">
+          <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          <span class="font-medium text-center flex-1"><%= alert %></span>
+          <button data-action="click->flash#close" class="ml-4 hover:bg-red-700 rounded p-1 transition">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+          </button>
+        </div>
+      <% end %>
+    </div>
 
 
     <div class="flex h-screen bg-gray-50">

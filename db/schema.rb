@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_11_17_023721) do
+ActiveRecord::Schema[8.0].define(version: 2025_11_17_154344) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -52,9 +52,11 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_17_023721) do
     t.text "notes"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "guarantor_id"
     t.index ["cpf"], name: "index_customers_on_cpf", unique: true, where: "(cpf IS NOT NULL)"
     t.index ["email"], name: "index_customers_on_email", where: "(email IS NOT NULL)"
     t.index ["full_name"], name: "index_customers_on_full_name"
+    t.index ["guarantor_id"], name: "index_customers_on_guarantor_id"
     t.index ["phone_number"], name: "index_customers_on_phone_number"
   end
 
@@ -76,6 +78,19 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_17_023721) do
     t.index ["full_name"], name: "index_employees_on_full_name"
     t.index ["position"], name: "index_employees_on_position"
     t.index ["status"], name: "index_employees_on_status"
+  end
+
+  create_table "guarantors", force: :cascade do |t|
+    t.string "full_name", null: false
+    t.string "cpf"
+    t.string "phone"
+    t.text "address"
+    t.string "relationship"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["cpf"], name: "index_guarantors_on_cpf"
+    t.index ["phone"], name: "index_guarantors_on_phone"
+    t.index ["relationship"], name: "index_guarantors_on_relationship"
   end
 
   create_table "sales", force: :cascade do |t|
@@ -134,6 +149,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_17_023721) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "customers", "guarantors"
   add_foreign_key "sales", "customers"
   add_foreign_key "sales", "employees"
 end
