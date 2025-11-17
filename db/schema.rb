@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_11_17_011839) do
+ActiveRecord::Schema[8.0].define(version: 2025_11_17_023721) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -78,6 +78,31 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_17_011839) do
     t.index ["status"], name: "index_employees_on_status"
   end
 
+  create_table "sales", force: :cascade do |t|
+    t.bigint "customer_id"
+    t.bigint "employee_id", null: false
+    t.date "sale_date", null: false
+    t.date "due_date"
+    t.decimal "discount_percentage", precision: 5, scale: 2, default: "0.0"
+    t.decimal "total_amount", precision: 10, scale: 2, null: false
+    t.string "payment_method", null: false
+    t.text "notes"
+    t.string "status", null: false
+    t.date "paid_date"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["customer_id", "sale_date"], name: "index_sales_on_customer_id_and_sale_date"
+    t.index ["customer_id"], name: "index_sales_on_customer_id"
+    t.index ["due_date"], name: "index_sales_on_due_date"
+    t.index ["employee_id", "sale_date"], name: "index_sales_on_employee_id_and_sale_date"
+    t.index ["employee_id"], name: "index_sales_on_employee_id"
+    t.index ["paid_date"], name: "index_sales_on_paid_date"
+    t.index ["payment_method"], name: "index_sales_on_payment_method"
+    t.index ["sale_date"], name: "index_sales_on_sale_date"
+    t.index ["status", "due_date"], name: "index_sales_on_status_and_due_date"
+    t.index ["status"], name: "index_sales_on_status"
+  end
+
   create_table "suppliers", force: :cascade do |t|
     t.string "legal_name", null: false
     t.string "trade_name"
@@ -109,4 +134,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_17_011839) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "sales", "customers"
+  add_foreign_key "sales", "employees"
 end
