@@ -71,12 +71,11 @@
       <% end %>
     </div>
 
-
     <div class="flex h-screen bg-gray-50">
       <%= render 'shared/menu' %>
-
-      <main class="flex-1 p-8 overflow-y-auto">
+      <main class="flex-1 relative p-8 overflow-y-auto">
         <%= yield %>
+        <%= render "shared/delete_modal" %>
       </main>
     </div>
   </body>

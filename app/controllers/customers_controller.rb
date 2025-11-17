@@ -1,16 +1,16 @@
 class CustomersController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_customer, only: [:show, :edit, :update, :destroy]
+  before_action :set_customer, only: [ :show, :edit, :update, :destroy ]
 
   def index
     @customers = Customer.all.order(created_at: :desc)
 
     if params[:search].present?
       search_term = params[:search].strip
-      clean_search = search_term.gsub(/\D/, '')
+      clean_search = search_term.gsub(/\D/, "")
 
-      conditions = ['full_name ILIKE ? OR email ILIKE ?']
-      values = ["%#{search_term}%", "%#{search_term}%"]
+      conditions = [ "full_name ILIKE ? OR email ILIKE ?" ]
+      values = [ "%#{search_term}%", "%#{search_term}%" ]
 
       if clean_search.present?
         conditions << "REGEXP_REPLACE(phone_number, '[^0-9]', '', 'g') LIKE ?"
@@ -20,27 +20,20 @@ class CustomersController < ApplicationController
         values << "%#{clean_search}%"
       end
 
-      @customers = @customers.where(conditions.join(' OR '), *values)
+      @customers = @customers.where(conditions.join(" OR "), *values)
     end
 
-
     case params[:tier]
-    when 'vip'
+    when "vip"
       @customers = @customers.vip
-    when 'active'
+    when "active"
       @customers = @customers.active
     end
 
-
     @total_customers = @customers.count
-    # @active_customers = Customer.active.count
-    # @vip_customers = Customer.vip.count
-   # @total_revenue = Customer.joins(:sales).sum('sales.total_amount')
   end
 
   def show
-    # @recent_purchases = @customer.sales.recent.limit(10)
-    # @upcoming_appointments = @customer.service_appointments.upcoming.limit(5)
   end
 
   def new
@@ -54,12 +47,14 @@ class CustomersController < ApplicationController
     @customer = Customer.new(customer_params)
 
     if @customer.save
+
       # Processar fiador se os dados foram fornecidos
       if params[:guarantor].present? && params[:guarantor][:full_name].present?
         create_or_update_guarantor(@customer)
       end
 
       redirect_to customers_path, notice: 'Cliente cadastrado com sucesso!'
+      redirect_to customers_path, notice: "Cliente cadastrado com sucesso!"
     else
       render :new, status: :unprocessable_entity
     end
@@ -67,12 +62,15 @@ class CustomersController < ApplicationController
 
   def update
     if @customer.update(customer_params)
+
       # Processar fiador se os dados foram fornecidos
       if params[:guarantor].present? && params[:guarantor][:full_name].present?
         create_or_update_guarantor(@customer)
       end
 
       redirect_to customers_path, notice: 'Cliente atualizado com sucesso!'
+
+      redirect_to customers_path, notice: "Cliente atualizado com sucesso!"
     else
       render :edit, status: :unprocessable_entity
     end
@@ -80,7 +78,7 @@ class CustomersController < ApplicationController
 
   def destroy
     @customer.destroy
-    # redirect_to customers_path, notice: 'Cliente excluído com sucesso!'
+    redirect_to customers_path, notice: "Cliente excluído com sucesso!"
   end
 
   private
@@ -123,3 +121,6 @@ class CustomersController < ApplicationController
     end
   end
 end
+
+end
+
