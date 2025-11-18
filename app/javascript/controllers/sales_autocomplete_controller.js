@@ -249,13 +249,26 @@ export default class extends Controller {
         }
       })
     })
-    .then(response => {
+    .then(async response => {
+      const contentType = response.headers.get("content-type")
+      const isJson = contentType && contentType.includes("application/json")
+
       if (!response.ok) {
-        return response.json().then(data => {
+        if (isJson) {
+          const data = await response.json()
           throw new Error(data.errors ? data.errors.join(", ") : "Erro ao salvar cliente")
-        })
+        } else {
+          const text = await response.text()
+          console.error("Resposta não-JSON recebida:", text.substring(0, 500))
+          throw new Error("Erro ao salvar cliente. Verifique se você está autenticado.")
+        }
       }
-      return response.json()
+
+      if (isJson) {
+        return response.json()
+      } else {
+        throw new Error("Resposta não é JSON válido")
+      }
     })
     .then(data => {
       // Preenche dados no formulário de venda
@@ -270,7 +283,8 @@ export default class extends Controller {
       document.getElementById("createCustomerForm").reset()
     })
     .catch(error => {
-      console.error("Erro:", error)
+      console.error("Erro ao salvar cliente:", error)
+      console.error("Stack:", error.stack)
       alert(`Erro ao salvar cliente: ${error.message}`)
     })
   }

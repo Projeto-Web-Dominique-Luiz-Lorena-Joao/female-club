@@ -46,15 +46,19 @@ class CustomersController < ApplicationController
   def create
     @customer = Customer.new(customer_params)
 
-    if @customer.save
-      
-      if params[:guarantor].present? && params[:guarantor][:full_name].present?
-        create_or_update_guarantor(@customer)
-      end
+    respond_to do |format|
+      if @customer.save
 
-      redirect_to customers_path, notice: 'Cliente cadastrado com sucesso!'
-    else
-      render :new, status: :unprocessable_entity
+        if params[:guarantor].present? && params[:guarantor][:full_name].present?
+          create_or_update_guarantor(@customer)
+        end
+
+        format.json { render json: { id: @customer.id, full_name: @customer.full_name }, status: :created }
+        format.html { redirect_to customers_path, notice: 'Cliente cadastrado com sucesso!' }
+      else
+        format.json { render json: { errors: @customer.errors.full_messages }, status: :unprocessable_entity }
+        format.html { render :new, status: :unprocessable_entity }
+      end
     end
   end
 
@@ -83,10 +87,17 @@ class CustomersController < ApplicationController
   end
 
   def customer_params
-    params.require(:customer).permit(
+    permitted = params.require(:customer).permit(
       :full_name, :cpf, :birth_date, :phone_number,
-      :email, :full_address, :notes
+      :email, :full_address, :notes, :phone
     )
+
+    # Converte 'phone' para 'phone_number' se fornecido
+    if permitted.key?(:phone)
+      permitted[:phone_number] = permitted.delete(:phone)
+    end
+
+    permitted
   end
 
 
