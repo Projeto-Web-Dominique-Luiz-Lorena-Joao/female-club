@@ -55,8 +55,10 @@
 
 
     <div>
-      <%= form.label :position, "Cargo ", class: "block text-sm font-medium text-gray-700 mb-2" %>
-      <span class="text-red-500 font-bold">*</span>
+      <div class="flex items-center gap-1 mb-2">
+        <%= form.label :position, "Cargo", class: "block text-sm font-medium text-gray-700" %>
+        <span class="text-red-500 font-bold" id="position_indicator">*</span>
+      </div>
       <%= form.select :position,
           [
             ['Gerente', 'gerente'],
@@ -149,6 +151,29 @@
       const primeiraOpcao = selectPosition.querySelector('option[value=""]');
       if (primeiraOpcao) {
         primeiraOpcao.remove();
+      }
+
+      // Adiciona listener para mudança de cor do indicador
+      selectPosition.addEventListener('change', atualizarIndicador);
+
+      // Verifica se já tem um valor selecionado ao carregar
+      atualizarIndicador();
+    }
+  }
+
+  function atualizarIndicador() {
+    const selectPosition = document.getElementById('employee_position');
+    const indicator = document.getElementById('position_indicator');
+
+    if (selectPosition && indicator) {
+      if (selectPosition.value && selectPosition.value !== '') {
+        // Campo preenchido - indicador fica verde
+        indicator.classList.remove('text-red-500');
+        indicator.classList.add('text-green-500');
+      } else {
+        // Campo vazio - indicador fica vermelho
+        indicator.classList.remove('text-green-500');
+        indicator.classList.add('text-red-500');
       }
     }
   }
