@@ -54,11 +54,17 @@ class CustomersController < ApplicationController
         end
 
         format.json { render json: { id: @customer.id, full_name: @customer.full_name }, status: :created }
-        format.html { redirect_to customers_path, notice: 'Cliente cadastrado com sucesso!' }
+        format.html { redirect_to customers_path, notice: "Cliente cadastrado com sucesso!" }
       else
         format.json { render json: { errors: @customer.errors.full_messages }, status: :unprocessable_entity }
         format.html { render :new, status: :unprocessable_entity }
       end
+    end
+  rescue => e
+    Rails.logger.error("Erro ao criar cliente: #{e.message}\n#{e.backtrace.join("\n")}")
+    respond_to do |format|
+      format.json { render json: { errors: [e.message] }, status: :unprocessable_entity }
+      format.html { render :new, status: :unprocessable_entity }
     end
   end
 
