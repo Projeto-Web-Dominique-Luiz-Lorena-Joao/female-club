@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_11_18_031710) do
+ActiveRecord::Schema[8.0].define(version: 2025_11_18_084103) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -93,6 +93,28 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_18_031710) do
     t.index ["relationship"], name: "index_guarantors_on_relationship"
   end
 
+  create_table "products", force: :cascade do |t|
+    t.bigint "supplier_id"
+    t.string "name", null: false
+    t.text "description"
+    t.decimal "price", precision: 10, scale: 2
+    t.boolean "active", default: true
+    t.string "brand"
+    t.string "color"
+    t.float "quantity"
+    t.decimal "purchase_price", precision: 10, scale: 2
+    t.decimal "sale_price", precision: 10, scale: 2
+    t.string "category"
+    t.integer "min_stock"
+    t.text "location"
+    t.text "notes"
+    t.string "unit"
+    t.string "code"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["supplier_id"], name: "index_products_on_supplier_id"
+  end
+
   create_table "sales", force: :cascade do |t|
     t.bigint "customer_id"
     t.bigint "employee_id", null: false
@@ -152,6 +174,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_18_031710) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "customers", "guarantors"
+  add_foreign_key "products", "suppliers"
   add_foreign_key "sales", "customers"
   add_foreign_key "sales", "employees"
 end

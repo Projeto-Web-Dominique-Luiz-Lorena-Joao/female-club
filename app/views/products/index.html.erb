@@ -1,0 +1,200 @@
+<div class="space-y-6">
+
+  <div class="flex justify-between items-center">
+    <div>
+      <h1 class="text-3xl font-bold text-gray-900">Produtos</h1>
+      <p class="mt-2 text-gray-600">Gerenciar catálogo de produtos</p>
+    </div>
+    <%= link_to new_product_path,
+      class: "bg-green-600 hover:bg-green-500 text-white px-6 py-3 rounded-lg font-medium shadow-lg transition inline-flex items-center" do %>
+      + Novo Produto
+    <% end %>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+    <div class="bg-white rounded-lg shadow p-6">
+      <p class="text-gray-500 text-sm font-medium">Total de Produtos</p>
+      <p class="text-3xl font-bold text-gray-900 mt-2"><%= Product.count %></p>
+    </div>
+
+    <div class="bg-white rounded-lg shadow p-6">
+      <p class="text-gray-500 text-sm font-medium">Produtos Ativos</p>
+      <p class="text-3xl font-bold text-green-600 mt-2"><%= Product.active.count %></p>
+    </div>
+
+    <div class="bg-white rounded-lg shadow p-6">
+      <p class="text-gray-500 text-sm font-medium">Produtos Inativos</p>
+      <p class="text-3xl font-bold text-red-600 mt-2"><%= Product.inactive.count %></p>
+    </div>
+
+    <div class="bg-white rounded-lg shadow p-6">
+      <p class="text-gray-500 text-sm font-medium">Estoque Baixo</p>
+      <p class="text-3xl font-bold text-orange-600 mt-2"><%= Product.low_stock.count %></p>
+    </div>
+  </div>
+
+  <div class="bg-white rounded-lg shadow p-6">
+    <%= form_with url: products_path, method: :get, class: "space-y-4", local: true do %>
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+
+        <div>
+          <%= text_field_tag :search, params[:search],
+            placeholder: "Buscar por nome ou código...",
+            class: "w-full px-4 py-2 border border-gray-300 rounded-lg" %>
+        </div>
+
+        <div>
+          <%= select_tag :category,
+            options_for_select(Product.categories.keys.map { |k| [Product.categories[k], k] }, params[:category]),
+            { include_blank: "Todas as Categorias", class: "w-full px-4 py-2 border border-gray-300 rounded-lg" } %>
+        </div>
+
+        <div>
+          <%= select_tag :active,
+            options_for_select([["Todos", ""], ["Ativos", "true"], ["Inativos", "false"]], params[:active]),
+            { class: "w-full px-4 py-2 border border-gray-300 rounded-lg" } %>
+        </div>
+
+        <div class="flex justify-end space-x-2 items-center">
+          <%= submit_tag "Buscar",
+              class: "bg-blue-700 hover:bg-blue-500 text-white px-6 py-2 rounded-lg font-medium transition" %>
+
+          <%= link_to "Limpar", products_path,
+              class: "bg-gray-300 hover:bg-gray-200 text-gray-700 px-6 py-2 rounded-lg font-medium transition" %>
+        </div>
+
+      </div>
+
+      <div class="flex items-center space-x-2">
+        <%= check_box_tag :low_stock, "true", params[:low_stock] == "true" %>
+        <label for="low_stock" class="text-sm text-gray-700">Mostrar apenas estoque baixo</label>
+      </div>
+
+    <% end %>
+  </div>
+
+  <div class="bg-white rounded-lg shadow overflow-hidden">
+    <% if @products.any? %>
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+          <tr>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Imagem</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Código / Nome</th>
+            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Categoria</th>
+            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Preço</th>
+            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Estoque</th>
+            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Status</th>
+            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase w-40">Ações</th>
+          </tr>
+        </thead>
+
+        <tbody class="bg-white divide-y divide-gray-200">
+          <% @products.each do |product| %>
+            <tr class="hover:bg-gray-50">
+
+              <td class="px-6 py-4">
+                <% if product.cover_image.attached? %>
+                  <%= image_tag product.cover_image.variant(resize_to_limit: [100, 100], strip: false), class: "h-12 w-12 rounded object-cover", loading: "lazy" %>
+                <% else %>
+                  <div class="h-12 w-12 rounded bg-gray-200 flex items-center justify-center">
+                    <span class="text-gray-400 text-xs">Sem foto</span>
+                  </div>
+                <% end %>
+              </td>
+
+              <td class="px-6 py-4">
+                <p class="text-sm font-medium text-gray-900">
+                  <%= link_to product.name, product_path(product), class: "text-blue-600 hover:text-blue-800" %>
+                </p>
+                <% if product.code.present? %>
+                  <p class="text-xs text-gray-500">Código: <%= product.code %></p>
+                <% end %>
+                <% if product.brand.present? %>
+                  <p class="text-xs text-gray-500"><%= product.brand %></p>
+                <% end %>
+              </td>
+
+              <td class="px-6 py-4 text-sm text-center text-gray-900">
+                <% if product.category.present? %>
+                  <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                    <%= Product.categories[product.category] %>
+                  </span>
+                <% else %>
+                  <span class="text-gray-400">-</span>
+                <% end %>
+              </td>
+
+              <td class="px-6 py-4 text-center text-sm text-gray-900">
+                <% if product.sale_price.present? %>
+                  <p class="font-medium">R$ <%= number_with_precision(product.sale_price, precision: 2, delimiter: ",", separator: ".") %></p>
+                  <% if product.purchase_price.present? && product.purchase_price > 0 %>
+                    <p class="text-xs text-gray-500">Custo: R$ <%= number_with_precision(product.purchase_price, precision: 2, delimiter: ",", separator: ".") %></p>
+                    <p class="text-xs font-medium <%= product.profit_margin >= 0 ? 'text-green-600' : 'text-red-600' %>">
+                      Margem: <%= product.profit_margin %>%
+                    </p>
+                  <% end %>
+                <% else %>
+                  <span class="text-gray-400">-</span>
+                <% end %>
+              </td>
+
+              <td class="px-6 py-4 text-center">
+                <div class="flex flex-col items-center">
+                  <p class="text-sm font-medium text-gray-900"><%= product.quantity || 0 %></p>
+                  <% if product.min_stock.present? && product.low_stock? %>
+                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800 mt-1">
+                      Baixo (mín: <%= product.min_stock %>)
+                    </span>
+                  <% elsif product.min_stock.present? %>
+                    <p class="text-xs text-gray-500">Mín: <%= product.min_stock %></p>
+                  <% end %>
+                </div>
+              </td>
+
+              <td class="px-6 py-4 text-center">
+                <% if product.active? %>
+                  <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                    Disponível
+                  </span>
+                <% else %>
+                  <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                    Indisponível
+                  </span>
+                <% end %>
+              </td>
+
+              <td class="px-6 py-4 text-center w-40">
+                <div class="flex flex-col items-center space-y-2 w-full">
+
+                  <%= link_to "Visualizar", product_path(product),
+                      class: "bg-blue-200 text-blue-700 px-3 py-1 rounded-lg hover:bg-blue-100 w-full text-center text-sm font-medium" %>
+
+                  <%= link_to "Editar", edit_product_path(product),
+                      class: "bg-orange-200 text-orange-700 px-3 py-1 rounded-lg hover:bg-orange-100 w-full text-center text-sm font-medium" %>
+
+                  <button
+                    onclick="openDeleteModal('/products', <%= product.id %>, '<%= j product.name %>', 'produto')"
+                    class="bg-red-200 text-red-700 px-3 py-1 rounded-lg hover:bg-red-100 w-full text-center text-sm font-medium">
+                    Deletar
+                  </button>
+
+                </div>
+              </td>
+
+            </tr>
+          <% end %>
+        </tbody>
+
+      </table>
+
+    <% else %>
+
+      <div class="text-center py-12">
+        <p class="mt-4 text-xl text-gray-600">Nenhum produto encontrado</p>
+        <%= link_to "Cadastrar primeiro produto", new_product_path,
+            class: "mt-4 inline-block bg-green-600 hover:bg-green-500 text-white px-6 py-3 rounded-lg font-medium" %>
+      </div>
+
+    <% end %>
+  </div>
+</div>

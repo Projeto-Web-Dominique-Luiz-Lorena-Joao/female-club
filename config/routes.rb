@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
 
+
   resources :suppliers
   resources :employees
   resources :guarantors do
@@ -8,6 +9,7 @@ Rails.application.routes.draw do
     end
   end
   resources :customers
+  resources :products
   resources :sales do
     collection do
       get :search_employees
@@ -37,6 +39,7 @@ Rails.application.routes.draw do
   get 'customers', to: 'home#customers'
   get 'suppliers', to: 'home#suppliers'
   get 'sales', to: 'home#sales'
+  get 'products', to: 'home#products'
 
   # get "up" => "rails/health#show", as: :rails_health_check
 end
