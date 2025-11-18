@@ -1,32 +1,32 @@
 class CustomersController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_customer, only: [ :show, :edit, :update, :destroy ]
+  before_action :set_customer, only: [:show, :edit, :update, :destroy]
 
   def index
     @customers = Customer.all.order(created_at: :desc)
 
     if params[:search].present?
-      search_term = params[:search].strip
+      search_term  = params[:search].strip
       clean_search = search_term.gsub(/\D/, "")
 
-      conditions = [ "full_name ILIKE ? OR email ILIKE ?" ]
-      values = [ "%#{search_term}%", "%#{search_term}%" ]
+      conditions = ['full_name ILIKE ? OR email ILIKE ?']
+      values     = ["%#{search_term}%", "%#{search_term}%"]
 
       if clean_search.present?
         conditions << "REGEXP_REPLACE(phone_number, '[^0-9]', '', 'g') LIKE ?"
-        values << "%#{clean_search}%"
+        values     << "%#{clean_search}%"
 
         conditions << "REGEXP_REPLACE(cpf, '[^0-9]', '', 'g') LIKE ?"
-        values << "%#{clean_search}%"
+        values     << "%#{clean_search}%"
       end
 
-      @customers = @customers.where(conditions.join(" OR "), *values)
+      @customers = @customers.where(conditions.join(' OR '), *values)
     end
 
     case params[:tier]
-    when "vip"
+    when 'vip'
       @customers = @customers.vip
-    when "active"
+    when 'active'
       @customers = @customers.active
     end
 
@@ -47,14 +47,12 @@ class CustomersController < ApplicationController
     @customer = Customer.new(customer_params)
 
     if @customer.save
-
-      # Processar fiador se os dados foram fornecidos
+      
       if params[:guarantor].present? && params[:guarantor][:full_name].present?
         create_or_update_guarantor(@customer)
       end
 
       redirect_to customers_path, notice: 'Cliente cadastrado com sucesso!'
-      redirect_to customers_path, notice: "Cliente cadastrado com sucesso!"
     else
       render :new, status: :unprocessable_entity
     end
@@ -63,14 +61,11 @@ class CustomersController < ApplicationController
   def update
     if @customer.update(customer_params)
 
-      # Processar fiador se os dados foram fornecidos
       if params[:guarantor].present? && params[:guarantor][:full_name].present?
         create_or_update_guarantor(@customer)
       end
 
       redirect_to customers_path, notice: 'Cliente atualizado com sucesso!'
-
-      redirect_to customers_path, notice: "Cliente atualizado com sucesso!"
     else
       render :edit, status: :unprocessable_entity
     end
@@ -78,7 +73,7 @@ class CustomersController < ApplicationController
 
   def destroy
     @customer.destroy
-    redirect_to customers_path, notice: "Cliente excluído com sucesso!"
+    redirect_to customers_path, notice: 'Cliente excluído com sucesso!'
   end
 
   private
@@ -94,33 +89,31 @@ class CustomersController < ApplicationController
     )
   end
 
+
   def create_or_update_guarantor(customer)
     guarantor_params = params[:guarantor]
 
     if guarantor_params[:id].present?
-      # Atualizar fiador existente
+     
       guarantor = Guarantor.find(guarantor_params[:id])
       guarantor.update(
-        full_name: guarantor_params[:full_name],
-        cpf: guarantor_params[:cpf],
-        phone: guarantor_params[:phone],
-        relationship: guarantor_params[:relationship],
-        address: guarantor_params[:address]
+        full_name:     guarantor_params[:full_name],
+        cpf:           guarantor_params[:cpf],
+        phone:         guarantor_params[:phone],
+        relationship:  guarantor_params[:relationship],
+        address:       guarantor_params[:address]
       )
-      customer.update(guarantor: guarantor)
     else
-      # Criar novo fiador
+      
       guarantor = Guarantor.create(
-        full_name: guarantor_params[:full_name],
-        cpf: guarantor_params[:cpf],
-        phone: guarantor_params[:phone],
-        relationship: guarantor_params[:relationship],
-        address: guarantor_params[:address]
+        full_name:     guarantor_params[:full_name],
+        cpf:           guarantor_params[:cpf],
+        phone:         guarantor_params[:phone],
+        relationship:  guarantor_params[:relationship],
+        address:       guarantor_params[:address]
       )
-      customer.update(guarantor: guarantor)
     end
+
+    customer.update(guarantor: guarantor)
   end
 end
-
-end
-
