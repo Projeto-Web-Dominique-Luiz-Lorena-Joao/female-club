@@ -10,7 +10,7 @@ class Customer < ApplicationRecord
   validates :full_name, presence: true, length: { minimum: 3 }
   validates :cpf, uniqueness: true, allow_blank: true, length: { is: 11 }
   validates :email, format: { with: URI::MailTo::EMAIL_REGEXP }, allow_blank: true
-  validates :phone_number, allow_blank: true
+  validates :phone_number, length: { minimum: 10 }, allow_blank: true
 
   before_validation :clean_cpf
 
