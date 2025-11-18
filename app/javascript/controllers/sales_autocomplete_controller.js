@@ -115,7 +115,7 @@ export default class extends Controller {
     if (!modal) {
       modal = document.createElement("div")
       modal.id = "createCustomerModal"
-      modal.className = "fixed inset-0 bg-black bg-opacity-40 backdrop-blur-sm overflow-y-auto h-full w-full hidden z-50 flex items-center justify-center"
+      modal.className = "fixed inset-0 bg-black bg-opacity-20 backdrop-blur-md overflow-y-auto h-full w-full hidden z-50 flex items-center justify-center"
       modal.innerHTML = `
         <div class="relative w-full max-w-md shadow-2xl rounded-lg bg-white my-8">
           <div class="flex justify-between items-center p-6 border-b border-gray-200">
