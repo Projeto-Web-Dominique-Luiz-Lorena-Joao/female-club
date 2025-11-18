@@ -71,7 +71,8 @@
           ],
           {},
           class: "w-full px-4 py-2 border border-gray-300 rounded-lg",
-          required: true %>
+          required: true,
+          id: "employee_position" %>
     </div>
 
 
@@ -137,6 +138,30 @@
   </div>
 
 <% end %>
+
+<script>
+(function() {
+  function removerOpcaoVazia() {
+    const selectPosition = document.getElementById('employee_position');
+    if (selectPosition) {
+      // Remove a opção vazia (a primeira opção)
+      const primeiraOpcao = selectPosition.querySelector('option[value=""]');
+      if (primeiraOpcao) {
+        primeiraOpcao.remove();
+      }
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', removerOpcaoVazia);
+  } else {
+    removerOpcaoVazia();
+  }
+
+  document.addEventListener('turbo:load', removerOpcaoVazia);
+})();
+</script>
+
 <script>
   (function() {
     console.log('Máscaras ativadas!');
