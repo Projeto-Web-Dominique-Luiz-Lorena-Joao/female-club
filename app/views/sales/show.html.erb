@@ -32,12 +32,14 @@
 
       <div class="text-right">
         <p class="text-sm text-gray-500">Valor Total</p>
-        <p class="text-3xl font-bold text-gray-900">R$ <%= number_to_currency(@sale.total_amount, unit: "", precision: 2, delimiter: ".", separator: ",") %></p>
         <% if @sale.discount_percentage.present? && @sale.discount_percentage > 0 %>
-          <p class="text-green-600 mt-1">
-            Desconto <%= @sale.discount_percentage %>%:
-            R$ <%= number_to_currency(@sale.total_with_discount, unit: "", precision: 2, delimiter: ".", separator: ",") %>
+          <p class="text-lg text-gray-600 line-through">R$ <%= number_to_currency(@sale.total_amount, unit: "", precision: 2, delimiter: ".", separator: ",") %></p>
+          <p class="text-3xl font-bold text-green-600 mt-1">R$ <%= number_to_currency(@sale.total_with_discount, unit: "", precision: 2, delimiter: ".", separator: ",") %></p>
+          <p class="text-sm text-green-600 mt-1">
+            -<%= @sale.discount_percentage %>% (R$ <%= number_to_currency(@sale.total_amount - @sale.total_with_discount, unit: "", precision: 2, delimiter: ".", separator: ",") %>)
           </p>
+        <% else %>
+          <p class="text-3xl font-bold text-gray-900">R$ <%= number_to_currency(@sale.total_amount, unit: "", precision: 2, delimiter: ".", separator: ",") %></p>
         <% end %>
       </div>
     </div>

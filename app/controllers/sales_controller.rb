@@ -3,9 +3,6 @@ class SalesController < ApplicationController
 
   def index
     @sales = Sale.includes(:customer, :employee)
-                 .recent
-                 .page(params[:page])
-                 .per(20)
 
     @sales = @sales.by_status(params[:status]) if params[:status].present?
     @sales = @sales.where(payment_method: params[:payment_method]) if params[:payment_method].present?
@@ -15,6 +12,25 @@ class SalesController < ApplicationController
     if params[:start_date].present? && params[:end_date].present?
       @sales = @sales.by_period(params[:start_date], params[:end_date])
     end
+
+    # Ordenação por valor total
+    if params[:sort_amount].present?
+      @sales = @sales.order(total_amount: params[:sort_amount] == 'desc' ? :desc : :asc)
+    # Ordenação por valor descontado em reais (desconto em reais)
+    elsif params[:sort_discounted_amount].present?
+      # Ordenar por valor do desconto em reais (total_amount * discount_percentage / 100)
+      order_direction = params[:sort_discounted_amount] == 'desc' ? 'DESC' : 'ASC'
+      @sales = @sales.order(Arel.sql("total_amount * COALESCE(discount_percentage, 0)::float / 100 #{order_direction}"))
+    # Ordenação por desconto aplicado (percentual)
+    elsif params[:sort_discount].present?
+      @sales = @sales.order(discount_percentage: params[:sort_discount] == 'desc' ? :desc : :asc)
+    else
+      # Ordenação padrão (mais recente)
+      @sales = @sales.recent
+    end
+
+    # Aplicar paginação DEPOIS de todas as ordenações
+    @sales = @sales.page(params[:page]).per(20)
   end
 
   def show

@@ -6,7 +6,13 @@ class Sale < ApplicationRecord
 
   validates :sale_date, presence: true
   validates :total_amount, presence: true, numericality: { greater_than_or_equal_to: 0 }
-  validates :discount_percentage, numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: 100 }, allow_nil: true
+  validates :discount_percentage,
+            numericality: {
+              greater_than_or_equal_to: 0,
+              less_than_or_equal_to: 100,
+              only_integer: true
+            },
+            allow_nil: true
   validates :payment_method, presence: true
   validates :status, presence: true, inclusion: { in: %w[pendente pago cancelado expirado] }
 
@@ -47,7 +53,8 @@ class Sale < ApplicationRecord
   end
 
   def total_with_discount
-    total_amount * (1 - (discount_percentage || 0) / 100)
+    discount_pct = (discount_percentage || 0).to_f / 100
+    total_amount * (1 - discount_pct)
   end
 
   def mark_as_paid!
