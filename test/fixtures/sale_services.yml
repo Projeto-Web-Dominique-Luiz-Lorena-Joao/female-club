@@ -1,0 +1,13 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  sale: one
+  service: one
+  quantity: 1
+  unit_price: 50.00
+
+two:
+  sale: two
+  service: two
+  quantity: 2
+  unit_price: 100.00
