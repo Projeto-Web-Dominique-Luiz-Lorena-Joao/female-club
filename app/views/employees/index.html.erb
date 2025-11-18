@@ -73,6 +73,36 @@
     <% end %>
   </div>
 
+  <div class="bg-white rounded-lg shadow p-6">
+    <%= form_with url: employees_path, method: :get, class: "space-y-4" do %>
+      <!-- Preservar filtros anteriores -->
+      <% if params[:search].present? %>
+        <%= hidden_field_tag :search, params[:search] %>
+      <% end %>
+      <% if params[:status].present? %>
+        <%= hidden_field_tag :status, params[:status] %>
+      <% end %>
+      <% if params[:position].present? %>
+        <%= hidden_field_tag :position, params[:position] %>
+      <% end %>
+
+      <p class="text-sm font-medium text-gray-700 mb-3">Ordenar por Tempo de Admissão</p>
+      <div class="space-y-2">
+        <div class="flex items-center">
+          <%= radio_button_tag :sort_admission, 'desc', params[:sort_admission] == 'desc' %>
+          <%= label_tag :sort_admission_desc, "(A → a) - Maior p/ Menor (Mais Antigos)", for: "sort_admission_desc", class: "ml-2" %>
+        </div>
+        <div class="flex items-center">
+          <%= radio_button_tag :sort_admission, 'asc', params[:sort_admission] == 'asc' %>
+          <%= label_tag :sort_admission_asc, "(a → A) - Menor p/ Maior (Mais Novos)", for: "sort_admission_asc", class: "ml-2" %>
+        </div>
+        <div class="mt-4">
+          <%= submit_tag "Aplicar Filtro", class: "bg-pink-600 hover:bg-pink-500 text-white px-6 py-2 rounded-lg font-medium transition focus:ring-2 focus:ring-pink-500" %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
   <div class="bg-white rounded-lg shadow overflow-hidden">
     <% if @employees.any? %>
       <table class="min-w-full divide-y divide-gray-200">
@@ -83,6 +113,7 @@
             <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Cargo</th>
             <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Contato</th>
             <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Salário</th>
+            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Tempo de Admissão</th>
             <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Status</th>
             <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Ações</th>
           </tr>
@@ -113,6 +144,12 @@
 
               <td class="px-6 py-4 text-sm text-center font-medium text-gray-900">
                 <%= employee.formatted_salary %>
+              </td>
+
+              <td class="px-6 py-4 text-sm text-center text-gray-900">
+                <span class="px-3 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-800">
+                  <%= employee.formatted_admission_time %>
+                </span>
               </td>
 
               <td class="px-6 py-4 text-center">

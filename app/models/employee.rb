@@ -81,6 +81,27 @@ class Employee < ApplicationRecord
     ((Date.today - admission_date).to_i / 365.25).floor
   end
 
+  def formatted_admission_time
+    return '-' if admission_date.nil?
+
+    days_diff = (Date.today - admission_date).to_i
+    years = (days_diff / 365.25).floor
+    remaining_days = days_diff % 365
+    months = (remaining_days / 30.44).floor
+
+    if years > 0
+      if months > 0
+        "#{years} ano#{years > 1 ? 's' : ''} e #{months} mês#{months > 1 ? 'es' : ''}"
+      else
+        "#{years} ano#{years > 1 ? 's' : ''}"
+      end
+    elsif months > 0
+      "#{months} mês#{months > 1 ? 'es' : ''}"
+    else
+      "#{days_diff} dia#{days_diff > 1 ? 's' : ''}"
+    end
+  end
+
   def status_color
     case status
     when 'ativo' then 'bg-green-100 text-green-800'
