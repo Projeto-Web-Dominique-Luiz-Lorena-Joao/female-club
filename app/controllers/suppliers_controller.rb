@@ -11,9 +11,14 @@ class SuppliersController < ApplicationController
       @suppliers = @suppliers.by_category(params[:category])
     end
 
-    # Filtro por fornecedores ativos (que tem produtos)
-    if params[:status] == 'active'
-      @suppliers = @suppliers.active
+    # Filtro por status
+    if params[:status].present?
+      case params[:status]
+      when 'ativo'
+        @suppliers = @suppliers.active
+      when 'inativo'
+        @suppliers = @suppliers.inactive
+      end
     end
 
     if params[:search].present?
@@ -83,7 +88,7 @@ class SuppliersController < ApplicationController
   def supplier_params
     params.require(:supplier).permit(
       :legal_name, :trade_name, :phone_number, :email,
-      :full_address, :product_category, :notes
+      :full_address, :product_category, :status, :notes
     )
   end
 end

@@ -56,6 +56,19 @@
           class: "w-full px-4 py-2 border border-gray-300 rounded-lg " %>
     </div>
 
+    <!-- Status -->
+    <div>
+      <%= form.label :status, "Status *", class: "block text-sm font-medium text-gray-700 mb-2" %>
+      <%= form.select :status,
+          options_for_select([
+            ['Ativo', 'ativo'],
+            ['Inativo', 'inativo'],
+          ], supplier.status),
+          {},
+          class: "w-full px-4 py-2 border border-gray-300 rounded-lg ",
+          required: true %>
+    </div>
+
     <!-- Telefone -->
     <div>
       <%= form.label :phone_number, "Telefone", class: "block text-sm font-medium text-gray-700 mb-2" %>
