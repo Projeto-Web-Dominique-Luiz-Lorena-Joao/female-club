@@ -31,6 +31,7 @@ class Employee < ApplicationRecord
   validates :email, format: { with: URI::MailTo::EMAIL_REGEXP }, allow_blank: true
   validates :salary, numericality: { greater_than: 0 }, allow_nil: true
   validates :phone, presence: true
+  validates :position, presence: true, inclusion: { in: positions.keys }
 
 
   before_validation :clean_cpf
