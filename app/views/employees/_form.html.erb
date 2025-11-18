@@ -73,7 +73,7 @@
             ['Auxiliar', 'auxiliar']
           ],
           {},
-          class: "w-full px-4 py-2 border-2 border-red-300 rounded-lg focus:border-red-500 focus:ring-2 focus:ring-red-200",
+          class: "w-full px-4 py-2 border-2 border-red-300 rounded-lg focus:ring-2",
           required: true,
           id: "employee_position" %>
     </div>
@@ -167,13 +167,19 @@
 
     if (selectPosition && indicator) {
       if (selectPosition.value && selectPosition.value !== '') {
-        // Campo preenchido - indicador fica verde
+        // Campo preenchido - indicador e borda ficam verdes
         indicator.classList.remove('text-red-500');
         indicator.classList.add('text-green-500');
+
+        selectPosition.classList.remove('border-red-300', 'focus:ring-red-200');
+        selectPosition.classList.add('border-green-300', 'focus:ring-green-200');
       } else {
-        // Campo vazio - indicador fica vermelho
+        // Campo vazio - indicador e borda ficam vermelhos
         indicator.classList.remove('text-green-500');
         indicator.classList.add('text-red-500');
+
+        selectPosition.classList.remove('border-green-300', 'focus:ring-green-200');
+        selectPosition.classList.add('border-red-300', 'focus:ring-red-200');
       }
     }
   }
