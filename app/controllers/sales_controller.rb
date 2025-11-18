@@ -8,6 +8,7 @@ class SalesController < ApplicationController
                  .per(20)
 
     @sales = @sales.by_status(params[:status]) if params[:status].present?
+    @sales = @sales.where(payment_method: params[:payment_method]) if params[:payment_method].present?
     @sales = @sales.by_customer(params[:customer_id]) if params[:customer_id].present?
     @sales = @sales.by_employee(params[:employee_id]) if params[:employee_id].present?
 
@@ -127,7 +128,13 @@ class SalesController < ApplicationController
       ['Boleto', 'boleto']
     ]
 
-
-    @statuses = Sale.statuses.keys.map { |s| [s.capitalize, s] }
+    # Mapeia as opções de status para português e mantém a ordem
+    status_labels = {
+      'pendente' => 'Pendente',
+      'pago' => 'Pago',
+      'cancelado' => 'Cancelado',
+      'expirado' => 'Expirado'
+    }
+    @statuses = Sale.statuses.keys.map { |s| [status_labels[s], s] }
   end
 end

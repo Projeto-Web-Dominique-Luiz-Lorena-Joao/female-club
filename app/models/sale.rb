@@ -8,7 +8,7 @@ class Sale < ApplicationRecord
   validates :total_amount, presence: true, numericality: { greater_than_or_equal_to: 0 }
   validates :discount_percentage, numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: 100 }, allow_nil: true
   validates :payment_method, presence: true
-  validates :status, presence: true, inclusion: { in: %w[pendente pago cancelado] }
+  validates :status, presence: true, inclusion: { in: %w[pendente pago cancelado expirado] }
 
   enum :payment_method, {
     dinheiro: "dinheiro",
@@ -23,7 +23,7 @@ class Sale < ApplicationRecord
     pendente: "pendente",
     pago: "pago",
     cancelado: "cancelado",
-    expirado: "expirado",
+    expirado: "expirado"
    }
 
   scope :recent, -> { order(sale_date: :desc) }
