@@ -13,7 +13,8 @@ class ServiceAppointment < ApplicationRecord
   validates :service_id, presence: true
   validates :employee_id, presence: true
   validates :customer_id, presence: true
-  validates :appointment_date, presence: true, comparison: { greater_than: :now, message: "não pode ser no passado" }
+  validates :appointment_date, presence: true
+  validate :appointment_date_cannot_be_in_the_past
   validates :status, presence: true, inclusion: { in: %w[agendado concluido cancelado nao_compareceu] }
 
   scope :upcoming, -> { where('appointment_date > ?', Time.current).order(:appointment_date) }
@@ -39,6 +40,14 @@ class ServiceAppointment < ApplicationRecord
       'bg-yellow-100 text-yellow-800'
     else
       'bg-gray-100 text-gray-800'
+    end
+  end
+
+  private
+
+  def appointment_date_cannot_be_in_the_past
+    if appointment_date.present? && appointment_date <= Time.current
+      errors.add(:appointment_date, "não pode ser no passado")
     end
   end
 end
