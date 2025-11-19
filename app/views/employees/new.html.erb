@@ -1,7 +1,15 @@
 <div class="max-w-4xl mx-auto">
   <div class="mb-6">
-    <h1 class="text-3xl font-bold text-gray-900">Novo Funcionário</h1>
-    <p class="mt-2 text-gray-600">Cadastrar novo funcionário</p>
+    <div class="flex justify-between items-center">
+      <div>
+        <h1 class="text-3xl font-bold text-gray-900">Novo Funcionário</h1>
+        <p class="mt-2 text-gray-600">Cadastrar novo funcionário</p>
+      </div>
+
+      <%= link_to employees_path, class: "bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-lg font-medium" do %>
+        ← Voltar
+      <% end %>
+    </div>
   </div>
 
   <div class="bg-white rounded-lg shadow-lg p-6">
