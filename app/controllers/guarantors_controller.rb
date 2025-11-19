@@ -6,6 +6,7 @@ class GuarantorsController < ApplicationController
     @guarantors = Guarantor.left_joins(:customer).order(created_at: :desc)
 
     if params[:search].present?
+      
       search_term = params[:search].strip
       clean_search = search_term.gsub(/\D/, "")
 
