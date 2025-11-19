@@ -184,14 +184,18 @@ class SalesController < ApplicationController
   end
 
   def filter_empty_nested_attributes(sale)
-    # Remove empty sale_products
-    sale.sale_products.reject! do |product|
-      product.product_id.blank? && product.quantity.blank? && product.unit_price.blank?
+    # Remove empty sale_products by marking them for destruction
+    sale.sale_products.each do |product|
+      if product.product_id.blank? && product.quantity.blank? && product.unit_price.blank?
+        product.mark_for_destruction
+      end
     end
 
-    # Remove empty sale_services
-    sale.sale_services.reject! do |service|
-      service.service_id.blank? && service.quantity.blank? && service.unit_price.blank?
+    # Remove empty sale_services by marking them for destruction
+    sale.sale_services.each do |service|
+      if service.service_id.blank? && service.quantity.blank? && service.unit_price.blank?
+        service.mark_for_destruction
+      end
     end
   end
 
