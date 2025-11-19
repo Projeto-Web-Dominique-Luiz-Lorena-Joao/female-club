@@ -1,4 +1,4 @@
-<div class="max-w-4xl mx-auto space-y-6">
+<div class="max-w-6xl mx-auto space-y-6">
 
   <div class="flex justify-between items-start">
     <div>
@@ -18,20 +18,21 @@
 
     <div class="flex space-x-3">
       <%= link_to edit_guarantor_path(@guarantor),
-                  class: "bg-blue-900 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-medium" do %>
+                  class: "bg-orange-200 hover:bg-orange-100 text-orange-700 px-8 py-2 rounded-lg font-medium" do %>
         Editar
       <% end %>
 
-      <%= link_to guarantors_path,
-                  class: "bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-lg font-medium" do %>
-        ← Voltar
-      <% end %>
-
-      <%= button_to "Excluir Fiador",
+       <%= button_to "Deletar Fiador",
                     guarantor_path(@guarantor),
                     method: :delete,
                     data: { confirm: "Tem certeza que deseja excluir este fiador?" },
-                    class: "bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium" %>
+                    class: "bg-red-200 hover:bg-red-100 text-red-700 px-4 py-2 rounded-lg font-medium" %>
+
+      <%= link_to guarantors_path,
+                  class: "bg-gray-300 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg font-medium" do %>
+        ← Voltar
+      <% end %>
+
     </div> 
   </div>
 
@@ -67,8 +68,8 @@
 
   <% if @guarantor.customer.present? %>
     <div class="bg-white rounded-lg shadow-lg overflow-hidden">
-      <div class="px-6 py-4 bg-gray-50">
-        <h2 class="text-xl font-bold text-gray-900">Informações do Cliente</h2>
+      <div class="px-6 py-4 bg-gray-900">
+        <h2 class="text-xl font-bold text-white">Informações do Cliente</h2>
       </div>
 
       <div class="p-6 grid grid-cols-2 gap-6">
@@ -111,13 +112,5 @@
       </div>
     </div>
   <% end %>
-
-  <div class="flex justify-end">
-    <%= button_to "Excluir Fiador",
-                  guarantor_path(@guarantor),
-                  method: :delete,
-                  data: { confirm: "Tem certeza que deseja excluir este fiador?" },
-                  class: "bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium" %>
-  </div>
 
 </div>
