@@ -17,7 +17,7 @@ class GuarantorsController < ApplicationController
       values = ["%#{search_term}%", "%#{search_term}%"]
 
       if clean_search.present?
-        conditions << "REGEXP_REPLACE(cpf, '[^0-9]', '', 'g') LIKE ?"
+        conditions << "REGEXP_REPLACE(guarantors.cpf, '[^0-9]', '', 'g') LIKE ?"
         values << "%#{clean_search}%"
 
         conditions << "REGEXP_REPLACE(phone, '[^0-9]', '', 'g') LIKE ?"
