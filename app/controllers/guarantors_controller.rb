@@ -3,7 +3,28 @@ class GuarantorsController < ApplicationController
   before_action :set_guarantor, only: [:show, :edit, :update, :destroy]
 
   def index
-    @guarantors = Guarantor.recent
+    @guarantors = Guarantor.left_joins(:customer).order(created_at: :desc)
+
+    if params[:search].present?
+      search_term = params[:search].strip
+      clean_search = search_term.gsub(/\D/, "")
+
+      conditions = [
+        'guarantors.full_name ILIKE ?',
+        'customers.full_name ILIKE ?'
+      ]
+      values = ["%#{search_term}%", "%#{search_term}%"]
+
+      if clean_search.present?
+        conditions << "REGEXP_REPLACE(cpf, '[^0-9]', '', 'g') LIKE ?"
+        values << "%#{clean_search}%"
+
+        conditions << "REGEXP_REPLACE(phone, '[^0-9]', '', 'g') LIKE ?"
+        values << "%#{clean_search}%"
+      end
+
+      @guarantors = @guarantors.where(conditions.join(' OR '), *values)
+    end
   end
 
   def show
