@@ -31,7 +31,7 @@
 
         <div class="md:col-span-2">
           <%= text_field_tag :search, params[:search],
-            placeholder: "Buscar por nome, CPF, telefone ou e-mail ...",
+            placeholder: "Buscar por nome, CPF, telefone ou e-mail",
             class: "w-full px-4 py-2 border border-gray-300 rounded-lg" %>
         </div>
 
@@ -50,13 +50,13 @@
   <div class="bg-white rounded-lg shadow overflow-hidden">
     <% if @customers.any? %>
       <table class="min-w-full divide-y divide-gray-200">
-        <thead class="bg-gray-50">
+        <thead class="bg-gray-900">
           <tr>
-            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Cliente</th>
-            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">CPF</th>
-            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Contato</th>
-            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Gasto Total</th>
-            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase w-32">Ações</th>
+            <th class="px-6 py-3 text-center text-xs font-medium text-white uppercase">Cliente</th>
+            <th class="px-6 py-3 text-center text-xs font-medium text-white uppercase">CPF</th>
+            <th class="px-6 py-3 text-center text-xs font-medium text-white uppercase">Contato</th>
+            <th class="px-6 py-3 text-center text-xs font-medium text-white uppercase">Gasto Total</th>
+            <th class="px-6 py-3 text-center text-xs font-medium text-white uppercase w-32">Ações</th>
           </tr>
         </thead>
 
