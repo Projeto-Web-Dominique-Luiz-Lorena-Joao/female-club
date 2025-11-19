@@ -93,11 +93,15 @@ class Sale < ApplicationRecord
 
   def reject_product(attributes)
     # Reject if product_id is blank (unless it's marked for destruction)
-    attributes['product_id'].blank? && attributes['_destroy'] != 'true'
+    should_reject = attributes['product_id'].blank? && attributes['_destroy'].to_s != '1'
+    Rails.logger.info "REJECT PRODUCT: product_id=#{attributes['product_id']&.inspect}, _destroy=#{attributes['_destroy']&.inspect}, should_reject=#{should_reject}"
+    should_reject
   end
 
   def reject_service(attributes)
     # Reject if service_id is blank (unless it's marked for destruction)
-    attributes['service_id'].blank? && attributes['_destroy'] != 'true'
+    should_reject = attributes['service_id'].blank? && attributes['_destroy'].to_s != '1'
+    Rails.logger.info "REJECT SERVICE: service_id=#{attributes['service_id']&.inspect}, _destroy=#{attributes['_destroy']&.inspect}, should_reject=#{should_reject}"
+    should_reject
   end
 end

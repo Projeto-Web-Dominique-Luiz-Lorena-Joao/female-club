@@ -8,6 +8,12 @@ export default class extends Controller {
   }
 
   connect() {
+    try {
+      console.log(`[SALE ITEMS] ✓ CONTROLLER CONNECTED for itemType: ${this.itemTypeValue}`)
+    console.log(`[SALE ITEMS] this.element:`, this.element)
+    console.log(`[SALE ITEMS] searchInputTarget:`, this.searchInputTarget)
+    console.log(`[SALE ITEMS] resultsTarget:`, this.resultsTarget)
+
     this.searchTimeout = null
     this.selectedIndex = -1
     this.selectedItem = null
@@ -20,21 +26,44 @@ export default class extends Controller {
     this.attachQuantityListeners()
 
     // Inicializar o total se houver itens
-    setTimeout(() => {
-      this.updateGrandTotal()
-    }, 100)
+      setTimeout(() => {
+        this.updateGrandTotal()
+      }, 100)
+    } catch (e) {
+      console.error(`[SALE ITEMS] ❌ Error in connect:`, e)
+    }
   }
 
   attachQuantityListeners() {
     const quantityInputs = this.element.querySelectorAll('.quantity-input')
     quantityInputs.forEach(input => {
       input.addEventListener('input', () => {
+        this.updateRowTotal(input)
         this.updateGrandTotal()
       })
       input.addEventListener('change', () => {
+        this.updateRowTotal(input)
         this.updateGrandTotal()
       })
     })
+  }
+
+  updateRowTotal(quantityInput) {
+    const row = quantityInput.closest('tr')
+    if (!row) return
+
+    const quantity = parseInt(quantityInput.value) || 0
+    const unitPriceField = row.querySelector('input[name*="[unit_price]"]')
+    if (!unitPriceField) return
+
+    const unitPrice = parseFloat(unitPriceField.value) || 0
+    const total = quantity * unitPrice
+
+    // Update the total span in the row
+    const totalSpan = row.querySelector('td:nth-child(4) span')
+    if (totalSpan) {
+      totalSpan.textContent = this.formatPrice(total)
+    }
   }
 
   disconnect() {
@@ -177,45 +206,122 @@ export default class extends Controller {
   }
 
   selectItem(item) {
+    console.log(`[SALE ITEMS] ✓ Item selected:`, item)
+    console.log(`[SALE ITEMS] Setting selectedItem from null to:`, item)
     this.selectedItem = item
+    console.log(`[SALE ITEMS] ✓ selectedItem is now set:`, this.selectedItem)
+    console.log(`[SALE ITEMS] Setting searchInputTarget value to:`, item.name)
     this.searchInputTarget.value = item.name
+    console.log(`[SALE ITEMS] Hiding results`)
     this.resultsTarget.classList.add("hidden")
+    console.log(`[SALE ITEMS] ✓ selectItem complete. selectedItem:`, this.selectedItem, `searchInput value:`, this.searchInputTarget.value)
   }
 
   addItem(event) {
+    console.log(`[SALE ITEMS] ==========================================`)
+    console.log(`[SALE ITEMS] 🔴 addItem clicked!`)
+    console.log(`[SALE ITEMS] event:`, event)
+    console.log(`[SALE ITEMS] event.target:`, event.target)
+    console.log(`[SALE ITEMS] this:`, this)
     event.preventDefault()
 
+    console.log(`[SALE ITEMS] ✓ preventDefault called`)
+    console.log(`[SALE ITEMS] selectedItem:`, this.selectedItem)
     if (!this.selectedItem) {
       const itemTypeName = this.itemTypeValue === 'product' ? 'produto' : 'serviço'
+      console.error(`[SALE ITEMS] ❌ No item selected, showing alert for ${itemTypeName}`)
       alert(`Por favor, selecione um ${itemTypeName} primeiro`)
       return
     }
+    console.log(`[SALE ITEMS] ✓ Item is selected, proceeding to add`)
 
+    // Check if item already exists in the table
+    const itemType = this.itemTypeValue
+    const fieldId = itemType === "product" ? 'product_id' : 'service_id'
+    const tableBodyId = `${itemType === 'product' ? 'products' : 'services'}_table_body`
+    console.log(`[SALE ITEMS] Looking for tableBodyId: ${tableBodyId}`)
+    const tableBody = document.getElementById(tableBodyId)
+
+    if (tableBody) {
+      const rows = Array.from(tableBody.querySelectorAll('tr'))
+      console.log(`[SALE ITEMS] ✓ Found ${rows.length} rows, checking for duplicate ${fieldId}=${this.selectedItem.id}`)
+
+      const existingRow = rows.find(row => {
+        if (row.style.display === 'none') return false
+        const fieldInput = row.querySelector(`input[name*="[${fieldId}]"]`)
+        if (!fieldInput) return false
+        const matches = fieldInput.value === String(this.selectedItem.id)
+        if (matches) {
+          console.log(`[SALE ITEMS] ✓ Found duplicate: ${fieldId}=${fieldInput.value}`)
+        }
+        return matches
+      })
+
+      if (existingRow) {
+        console.log(`[SALE ITEMS] Item already exists, increasing quantity`)
+        // Item already exists - increase quantity instead
+        const quantityInput = existingRow.querySelector('.quantity-input')
+        if (quantityInput) {
+          const currentQty = parseInt(quantityInput.value) || 0
+          console.log(`[SALE ITEMS] Increasing quantity from ${currentQty} to ${currentQty + 1}`)
+          quantityInput.value = currentQty + 1
+          quantityInput.dispatchEvent(new Event('change', { bubbles: true }))
+          alert('Este item já existe na venda. A quantidade foi aumentada.')
+        }
+        this.searchInputTarget.value = ""
+        this.selectedItem = null
+        return
+      }
+    } else {
+      console.warn(`[SALE ITEMS] ⚠️ tableBody not found yet (might be okay if table doesn't exist)`)
+    }
+
+    console.log(`[SALE ITEMS] ✓ About to add NEW item to table:`, this.selectedItem)
     this.addItemToTable(this.selectedItem)
+    console.log(`[SALE ITEMS] ✓ addItemToTable returned`)
     this.searchInputTarget.value = ""
     this.selectedItem = null
 
     // Garantir que o total seja atualizado
     setTimeout(() => {
+      console.log(`[SALE ITEMS] Updating grand total after timeout`)
       this.updateGrandTotal()
     }, 50)
+    console.log(`[SALE ITEMS] ==========================================`)
   }
 
   addItemToTable(item) {
+    if (!item) {
+      console.error(`[SALE ITEMS] addItemToTable called with no item!`)
+      return
+    }
+
+    console.log(`[SALE ITEMS] addItemToTable called with item:`, item)
     const itemType = this.itemTypeValue
+    console.log(`[SALE ITEMS] itemType: ${itemType}`)
     const isProduct = itemType === "product"
     const tableBodyId = `${isProduct ? 'products' : 'services'}_table_body`
+    console.log(`[SALE ITEMS] Looking for table body with ID: ${tableBodyId}`)
     const tableBody = document.getElementById(tableBodyId)
 
     if (!tableBody) {
+      console.error(`[SALE ITEMS] ❌ Table body NOT found: ${tableBodyId}`)
+      console.error(`[SALE ITEMS] Available elements with table_body in ID:`, document.querySelectorAll('[id*="table_body"]'))
+      console.error(`[SALE ITEMS] this.element:`, this.element)
+      console.error(`[SALE ITEMS] All tables in DOM:`, document.querySelectorAll('table'))
       return
     }
+
+    console.log(`[SALE ITEMS] ✓ Table body found! Adding new item`)
+    const fieldId = isProduct ? 'product_id' : 'service_id'
+    console.log(`[SALE ITEMS] Adding new item: ${fieldId}=${item.id}, name="${item.name}"`)
 
     // Remove mensagem vazia se existir (procura em todo o elemento container)
     const table = tableBody.closest('table')
     if (table) {
       const emptyMessage = table.parentElement.querySelector('p.italic')
       if (emptyMessage) {
+        console.log(`[SALE ITEMS] Removing empty message`)
         emptyMessage.remove()
       }
     }
@@ -223,7 +329,7 @@ export default class extends Controller {
     // Calcular o novo índice baseado nas linhas existentes
     const currentRows = tableBody.querySelectorAll('tr').length
     const fieldPrefix = isProduct ? 'sale_products_attributes' : 'sale_services_attributes'
-    const fieldId = isProduct ? 'product_id' : 'service_id'
+    const itemIdField = isProduct ? 'product_id' : 'service_id'
 
     // Criar nova linha
     const tr = document.createElement('tr')
@@ -231,6 +337,8 @@ export default class extends Controller {
     tr.className = 'border-b hover:bg-gray-50'
 
     const price = parseFloat(item.price) || 0
+
+    console.log(`[SALE ITEMS] Creating row with index ${currentRows}, fieldPrefix: ${fieldPrefix}, itemIdField: ${itemIdField}`)
 
     tr.innerHTML = `
       <td class="px-3 py-2">${item.name}</td>
@@ -249,14 +357,14 @@ export default class extends Controller {
       </td>
       <td class="text-center px-3 py-2">
         <input type="hidden"
-               name="sale[${fieldPrefix}][${currentRows}][${fieldId}]"
+               name="sale[${fieldPrefix}][${currentRows}][${itemIdField}]"
                value="${item.id}">
         <input type="hidden"
                name="sale[${fieldPrefix}][${currentRows}][unit_price]"
                value="${price}">
         <input type="hidden"
                name="sale[${fieldPrefix}][${currentRows}][_destroy]"
-               value="false"
+               value="0"
                class="destroy_checkbox">
         <button type="button"
                 class="text-red-600 hover:text-red-800 font-bold"
@@ -266,19 +374,28 @@ export default class extends Controller {
       </td>
     `
 
+    console.log(`[SALE ITEMS] About to append row to tableBody. TR HTML:`, tr.outerHTML)
     tableBody.appendChild(tr)
+    console.log(`[SALE ITEMS] ✓ Row successfully appended to table! Table body now has ${tableBody.querySelectorAll('tr').length} rows`)
+    console.log(`[SALE ITEMS] Row element in DOM:`, document.getElementById(`${itemType}_row_${currentRows}`))
 
     // Adicionar listener para atualizar total quando mudar quantidade (em tempo real)
     const quantityInput = tr.querySelector('.quantity-input')
     if (quantityInput) {
-      quantityInput.addEventListener('input', () => {
-        this.updateTotal(itemType, currentRows, price)
-        this.updateGrandTotal()
+      console.log(`[SALE ITEMS] ✓ Found quantity input, adding change listeners`)
+      const self = this
+      quantityInput.addEventListener('input', function() {
+        console.log(`[SALE ITEMS] Quantity input changed`)
+        self.updateTotal(itemType, currentRows, price)
+        self.updateGrandTotal()
       })
-      quantityInput.addEventListener('change', () => {
-        this.updateTotal(itemType, currentRows, price)
-        this.updateGrandTotal()
+      quantityInput.addEventListener('change', function() {
+        console.log(`[SALE ITEMS] Quantity input changed (change event)`)
+        self.updateTotal(itemType, currentRows, price)
+        self.updateGrandTotal()
       })
+    } else {
+      console.error(`[SALE ITEMS] ❌ Could not find quantity input in row!`)
     }
   }
 
@@ -287,15 +404,17 @@ export default class extends Controller {
     let productsTotal = 0
     const productRows = document.querySelectorAll('#products_table_body tr')
     productRows.forEach(row => {
+      if (row.style.display === 'none') return
+
       const destroyCheckbox = row.querySelector('.destroy_checkbox')
-      if (!destroyCheckbox || destroyCheckbox.value !== 'true') {
-        const quantityInput = row.querySelector('.quantity-input')
-        const unitPriceInput = row.querySelector('[name$="[unit_price]"]')
-        if (quantityInput && unitPriceInput) {
-          const quantity = parseInt(quantityInput.value) || 0
-          const unitPrice = parseFloat(unitPriceInput.value) || 0
-          productsTotal += quantity * unitPrice
-        }
+      if (destroyCheckbox && destroyCheckbox.value === '1') return
+
+      const quantityInput = row.querySelector('.quantity-input')
+      const unitPriceInput = row.querySelector('[name*="[unit_price]"]')
+      if (quantityInput && unitPriceInput) {
+        const quantity = parseInt(quantityInput.value) || 0
+        const unitPrice = parseFloat(unitPriceInput.value) || 0
+        productsTotal += quantity * unitPrice
       }
     })
 
@@ -303,15 +422,17 @@ export default class extends Controller {
     let servicesTotal = 0
     const serviceRows = document.querySelectorAll('#services_table_body tr')
     serviceRows.forEach(row => {
+      if (row.style.display === 'none') return
+
       const destroyCheckbox = row.querySelector('.destroy_checkbox')
-      if (!destroyCheckbox || destroyCheckbox.value !== 'true') {
-        const quantityInput = row.querySelector('.quantity-input')
-        const unitPriceInput = row.querySelector('[name$="[unit_price]"]')
-        if (quantityInput && unitPriceInput) {
-          const quantity = parseInt(quantityInput.value) || 0
-          const unitPrice = parseFloat(unitPriceInput.value) || 0
-          servicesTotal += quantity * unitPrice
-        }
+      if (destroyCheckbox && destroyCheckbox.value === '1') return
+
+      const quantityInput = row.querySelector('.quantity-input')
+      const unitPriceInput = row.querySelector('[name*="[unit_price]"]')
+      if (quantityInput && unitPriceInput) {
+        const quantity = parseInt(quantityInput.value) || 0
+        const unitPrice = parseFloat(unitPriceInput.value) || 0
+        servicesTotal += quantity * unitPrice
       }
     })
 
@@ -347,7 +468,7 @@ window.removeRow = function(itemType, rowIndex) {
 
   const destroyCheckbox = row.querySelector('.destroy_checkbox')
   if (destroyCheckbox) {
-    destroyCheckbox.value = "true"
+    destroyCheckbox.value = '1'
   }
 
   row.style.display = 'none'
@@ -364,14 +485,16 @@ window.updateGrandTotalGlobal = function() {
   productRows.forEach(row => {
     if (row.style.display !== 'none') {
       const destroyCheckbox = row.querySelector('.destroy_checkbox')
-      if (!destroyCheckbox || destroyCheckbox.value !== 'true') {
-        const quantityInput = row.querySelector('.quantity-input')
-        const unitPriceInput = row.querySelector('[name$="[unit_price]"]')
-        if (quantityInput && unitPriceInput) {
-          const quantity = parseInt(quantityInput.value) || 0
-          const unitPrice = parseFloat(unitPriceInput.value) || 0
-          productsTotal += quantity * unitPrice
-        }
+      if (destroyCheckbox && destroyCheckbox.value === '1') {
+        return
+      }
+
+      const quantityInput = row.querySelector('.quantity-input')
+      const unitPriceInput = row.querySelector('[name*="[unit_price]"]')
+      if (quantityInput && unitPriceInput) {
+        const quantity = parseInt(quantityInput.value) || 0
+        const unitPrice = parseFloat(unitPriceInput.value) || 0
+        productsTotal += quantity * unitPrice
       }
     }
   })
@@ -382,14 +505,16 @@ window.updateGrandTotalGlobal = function() {
   serviceRows.forEach(row => {
     if (row.style.display !== 'none') {
       const destroyCheckbox = row.querySelector('.destroy_checkbox')
-      if (!destroyCheckbox || destroyCheckbox.value !== 'true') {
-        const quantityInput = row.querySelector('.quantity-input')
-        const unitPriceInput = row.querySelector('[name$="[unit_price]"]')
-        if (quantityInput && unitPriceInput) {
-          const quantity = parseInt(quantityInput.value) || 0
-          const unitPrice = parseFloat(unitPriceInput.value) || 0
-          servicesTotal += quantity * unitPrice
-        }
+      if (destroyCheckbox && destroyCheckbox.value === '1') {
+        return
+      }
+
+      const quantityInput = row.querySelector('.quantity-input')
+      const unitPriceInput = row.querySelector('[name*="[unit_price]"]')
+      if (quantityInput && unitPriceInput) {
+        const quantity = parseInt(quantityInput.value) || 0
+        const unitPrice = parseFloat(unitPriceInput.value) || 0
+        servicesTotal += quantity * unitPrice
       }
     }
   })

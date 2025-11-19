@@ -200,23 +200,55 @@ class SalesController < ApplicationController
   end
 
   def filter_empty_nested_attributes_from_params(params)
-    # Filter sale_products_attributes - only keep records with product_id or marked for destruction
+    # Filter sale_products_attributes
     if params[:sale_products_attributes].present?
-      params[:sale_products_attributes].each_value do |attrs|
-        # Mark records without product_id for destruction
-        if attrs[:product_id].blank?
+      # Handle both Array (from JSON) and Hash (from form submission) formats
+      is_array = params[:sale_products_attributes].is_a?(Array)
+      products_attrs = is_array ?
+                      params[:sale_products_attributes] :
+                      params[:sale_products_attributes].values
+
+      # Filter out records that shouldn't be saved
+      filtered_products = products_attrs.reject do |attrs|
+        # Mark records without product_id AND without quantity AND without unit_price for destruction
+        if attrs[:product_id].blank? && attrs[:quantity].blank? && attrs[:unit_price].blank?
           attrs[:_destroy] = true
         end
+
+        # If marked for destruction but has no ID, it was never saved - SKIP IT completely
+        attrs[:_destroy].to_s == '1' && attrs[:id].blank?
+      end
+
+      # Replace the attributes with filtered version
+      if is_array
+        params[:sale_products_attributes].clear
+        params[:sale_products_attributes].concat(filtered_products)
       end
     end
 
-    # Filter sale_services_attributes - only keep records with service_id or marked for destruction
+    # Filter sale_services_attributes
     if params[:sale_services_attributes].present?
-      params[:sale_services_attributes].each_value do |attrs|
-        # Mark records without service_id for destruction
-        if attrs[:service_id].blank?
+      # Handle both Array (from JSON) and Hash (from form submission) formats
+      is_array = params[:sale_services_attributes].is_a?(Array)
+      services_attrs = is_array ?
+                      params[:sale_services_attributes] :
+                      params[:sale_services_attributes].values
+
+      # Filter out records that shouldn't be saved
+      filtered_services = services_attrs.reject do |attrs|
+        # Mark records without service_id AND without quantity AND without unit_price for destruction
+        if attrs[:service_id].blank? && attrs[:quantity].blank? && attrs[:unit_price].blank?
           attrs[:_destroy] = true
         end
+
+        # If marked for destruction but has no ID, it was never saved - SKIP IT completely
+        attrs[:_destroy].to_s == '1' && attrs[:id].blank?
+      end
+
+      # Replace the attributes with filtered version
+      if is_array
+        params[:sale_services_attributes].clear
+        params[:sale_services_attributes].concat(filtered_services)
       end
     end
   end
