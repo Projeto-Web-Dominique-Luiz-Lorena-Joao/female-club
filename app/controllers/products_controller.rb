@@ -79,8 +79,7 @@ class ProductsController < ApplicationController
       :notes,
       :unit,
       :code,
-      :cover_image,
-      gallery_images: []
+      :cover_image
     )
 
     # Convert active string to boolean

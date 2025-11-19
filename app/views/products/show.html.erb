@@ -68,39 +68,15 @@
     </div>
   </div>
 
-  <!-- Seção de Imagens -->
-  <% if @product.cover_image.attached? || @product.gallery_images.attached? %>
+  <!-- Seção de Imagem de Capa -->
+  <% if @product.cover_image.attached? %>
     <div class="bg-white rounded-lg shadow-lg overflow-hidden">
       <div class="px-6 py-4 bg-gray-900">
-        <h2 class="text-xl font-bold text-white">Galeria de Imagens</h2>
+        <h2 class="text-xl font-bold text-white">Imagem do Produto</h2>
       </div>
       <div class="p-6">
-        <div class="space-y-6">
-          <!-- Imagem de Capa -->
-          <% if @product.cover_image.attached? %>
-            <div>
-              <h3 class="text-lg font-semibold text-gray-900 mb-4">Imagem Principal</h3>
-              <div class="flex justify-center">
-                <%= image_tag @product.cover_image.variant(resize_to_limit: [600, 600], strip: false), class: "max-h-96 rounded-lg object-cover shadow", loading: "lazy" %>
-              </div>
-            </div>
-          <% end %>
-
-          <!-- Galeria de Imagens -->
-          <% if @product.gallery_images.attached? %>
-            <div>
-              <h3 class="text-lg font-semibold text-gray-900 mb-4">
-                Galeria (<%= @product.gallery_images.count %> fotos)
-              </h3>
-              <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <% @product.gallery_images.each do |image| %>
-                  <div class="rounded-lg overflow-hidden shadow hover:shadow-lg transition">
-                    <%= image_tag image.variant(resize_to_limit: [400, 400], strip: false), class: "h-48 w-full object-cover cursor-pointer", loading: "lazy" %>
-                  </div>
-                <% end %>
-              </div>
-            </div>
-          <% end %>
+        <div class="flex justify-center">
+          <%= image_tag @product.cover_image.variant(resize_to_limit: [600, 600], strip: false), class: "max-h-96 rounded-lg object-cover shadow", loading: "lazy" %>
         </div>
       </div>
     </div>

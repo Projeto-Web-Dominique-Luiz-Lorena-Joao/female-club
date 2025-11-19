@@ -3,13 +3,10 @@ class Product < ApplicationRecord
 
   has_one_attached :cover_image
 
-  has_many_attached :gallery_images
-
   has_many :sale_products, dependent: :destroy
   has_many :sales, through: :sale_products
   has_many :stock_movements, dependent: :destroy
 
-  validate :gallery_images_limit
   validates :name, presence: true
   validates :code, uniqueness: true, allow_nil: true
   validates :price, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
@@ -66,11 +63,5 @@ class Product < ApplicationRecord
     self.code = code&.strip&.upcase
     self.brand = brand&.strip
     self.category = category&.strip
-  end
-
-  def gallery_images_limit
-    if gallery_images.attachments.size > 7
-      errors.add(:gallery_images, "você só pode enviar até 7 fotos")
-    end
   end
 end
