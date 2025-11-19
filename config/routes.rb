@@ -21,6 +21,8 @@ Rails.application.routes.draw do
     collection do
       get :search_employees
       get :search_customers
+      get :search_products
+      get :search_services
     end
     member do
       patch :mark_as_paid

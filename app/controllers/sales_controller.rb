@@ -48,6 +48,9 @@ class SalesController < ApplicationController
   def create
     @sale = Sale.new(sale_params)
 
+    # Filter out empty nested attributes
+    filter_empty_nested_attributes(@sale)
+
     if params[:sale][:customer_id].blank? && params[:customer_search].present?
     customer_name = params[:customer_search].strip
     customer = Customer.create(full_name: customer_name)
@@ -63,6 +66,10 @@ class SalesController < ApplicationController
   end
 
   def update
+    filtered_params = sale_params
+
+    # Filter out empty nested attributes
+    filter_empty_nested_attributes_from_params(filtered_params)
 
     if params[:sale][:customer_id].blank? && params[:customer_search].present?
     customer_name = params[:customer_search].strip
@@ -70,7 +77,7 @@ class SalesController < ApplicationController
     @sale.customer = customer
     end
 
-    if @sale.update(sale_params)
+    if @sale.update(filtered_params)
       redirect_to @sale, notice: 'Venda atualizada com sucesso.'
     else
       load_form_data
@@ -110,6 +117,26 @@ class SalesController < ApplicationController
     render json: @customers.map { |c| { id: c.id, name: c.full_name } }
   end
 
+  def search_products
+    query = params[:query].to_s.strip
+    @products = Product.where(active: true)
+                      .where("name ILIKE ? OR code ILIKE ?", "%#{query}%", "%#{query}%")
+                      .order(:name)
+                      .limit(10)
+
+    render json: @products.map { |p| { id: p.id, name: p.name, price: p.sale_price } }
+  end
+
+  def search_services
+    query = params[:query].to_s.strip
+    @services = Service.where(active: 'ativo')
+                      .where("name ILIKE ?", "%#{query}%")
+                      .order(:name)
+                      .limit(10)
+
+    render json: @services.map { |s| { id: s.id, name: s.name, price: s.price } }
+  end
+
   private
 
   def set_sale
@@ -127,7 +154,9 @@ class SalesController < ApplicationController
       :payment_method,
       :notes,
       :status,
-      :paid_date
+      :paid_date,
+      sale_products_attributes: [:id, :product_id, :quantity, :unit_price, :_destroy],
+      sale_services_attributes: [:id, :service_id, :quantity, :unit_price, :_destroy]
     )
   end
 
@@ -152,5 +181,39 @@ class SalesController < ApplicationController
       'expirado' => 'Expirado'
     }
     @statuses = Sale.statuses.keys.map { |s| [status_labels[s], s] }
+  end
+
+  def filter_empty_nested_attributes(sale)
+    # Remove empty sale_products
+    sale.sale_products.reject! do |product|
+      product.product_id.blank? && product.quantity.blank? && product.unit_price.blank?
+    end
+
+    # Remove empty sale_services
+    sale.sale_services.reject! do |service|
+      service.service_id.blank? && service.quantity.blank? && service.unit_price.blank?
+    end
+  end
+
+  def filter_empty_nested_attributes_from_params(params)
+    # Filter sale_products_attributes - only keep records with product_id or marked for destruction
+    if params[:sale_products_attributes].present?
+      params[:sale_products_attributes].each_value do |attrs|
+        # Mark records without product_id for destruction
+        if attrs[:product_id].blank?
+          attrs[:_destroy] = true
+        end
+      end
+    end
+
+    # Filter sale_services_attributes - only keep records with service_id or marked for destruction
+    if params[:sale_services_attributes].present?
+      params[:sale_services_attributes].each_value do |attrs|
+        # Mark records without service_id for destruction
+        if attrs[:service_id].blank?
+          attrs[:_destroy] = true
+        end
+      end
+    end
   end
 end

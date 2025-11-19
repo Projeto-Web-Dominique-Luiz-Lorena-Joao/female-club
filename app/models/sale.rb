@@ -6,9 +6,13 @@ class Sale < ApplicationRecord
   has_many :sale_products, dependent: :destroy
   has_many :products, through: :sale_products
   has_many :stock_movements, dependent: :destroy
+  has_many :services, through: :sale_services
+
+  accepts_nested_attributes_for :sale_products, allow_destroy: true, reject_if: :reject_product
+  accepts_nested_attributes_for :sale_services, allow_destroy: true, reject_if: :reject_service
 
   validates :sale_date, presence: true
-  validates :total_amount, presence: true, numericality: { greater_than_or_equal_to: 0 }
+  validates :total_amount, numericality: { greater_than_or_equal_to: 0 }, presence: true
   validates :discount_percentage,
             numericality: {
               greater_than_or_equal_to: 0,
@@ -85,5 +89,15 @@ class Sale < ApplicationRecord
   def calculate_total_amount
     # Implementar lógica se necessário, baseado em sale_items
     # self.total_amount = sale_items.sum(&:subtotal)
+  end
+
+  def reject_product(attributes)
+    # Reject if product_id is blank (unless it's marked for destruction)
+    attributes['product_id'].blank? && attributes['_destroy'] != 'true'
+  end
+
+  def reject_service(attributes)
+    # Reject if service_id is blank (unless it's marked for destruction)
+    attributes['service_id'].blank? && attributes['_destroy'] != 'true'
   end
 end
