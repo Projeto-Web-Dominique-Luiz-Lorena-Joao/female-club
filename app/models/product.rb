@@ -5,6 +5,9 @@ class Product < ApplicationRecord
 
   has_many_attached :gallery_images
 
+  has_many :sale_products, dependent: :destroy
+  has_many :sales, through: :sale_products
+
   validate :gallery_images_limit
   validates :name, presence: true
   validates :code, uniqueness: true, allow_nil: true

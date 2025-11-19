@@ -3,7 +3,8 @@ class Sale < ApplicationRecord
   belongs_to :customer, optional: true
   belongs_to :employee
   has_many :sale_services, dependent: :destroy
-  # has_many :sale_items, dependent: :destroy
+  has_many :sale_products, dependent: :destroy
+  has_many :products, through: :sale_products
 
   validates :sale_date, presence: true
   validates :total_amount, presence: true, numericality: { greater_than_or_equal_to: 0 }

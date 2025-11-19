@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_11_19_034452) do
+ActiveRecord::Schema[8.0].define(version: 2025_11_19_050437) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -115,6 +115,18 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_19_034452) do
     t.index ["supplier_id"], name: "index_products_on_supplier_id"
   end
 
+  create_table "sale_products", force: :cascade do |t|
+    t.bigint "sale_id", null: false
+    t.bigint "product_id", null: false
+    t.integer "quantity", default: 1, null: false
+    t.decimal "unit_price", precision: 10, scale: 2, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["product_id"], name: "index_sale_products_on_product_id"
+    t.index ["sale_id", "product_id"], name: "index_sale_products_on_sale_id_and_product_id", unique: true
+    t.index ["sale_id"], name: "index_sale_products_on_sale_id"
+  end
+
   create_table "sale_services", force: :cascade do |t|
     t.bigint "sale_id", null: false
     t.bigint "service_id", null: false
@@ -212,6 +224,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_19_034452) do
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "customers", "guarantors"
   add_foreign_key "products", "suppliers"
+  add_foreign_key "sale_products", "products"
+  add_foreign_key "sale_products", "sales"
   add_foreign_key "sale_services", "sales"
   add_foreign_key "sale_services", "services"
   add_foreign_key "sales", "customers"
