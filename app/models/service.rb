@@ -18,7 +18,7 @@ class Service < ApplicationRecord
   # scope :archived, -> { where(status: 'arquivado') }
 
   scope :ordered_by_name, -> { order(:name) }
-  scope :available, -> { where(active: ['ativo']) }
+  scope :available, -> { where(active: 'ativo') }
 
   before_validation :set_default_status, on: :create
 

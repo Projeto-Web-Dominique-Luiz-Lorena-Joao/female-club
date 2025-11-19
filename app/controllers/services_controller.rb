@@ -16,7 +16,7 @@ class ServicesController < ApplicationController
   # GET /services/:id
   def show
     @sale_services = @service.sale_services.includes(:sale)
-    #@service_appointments = @service.service_appointments.includes(:employee, :customer)
+    @service_appointments = @service.service_appointments.includes(:employee, :customer)
   end
 
   # GET /services/new

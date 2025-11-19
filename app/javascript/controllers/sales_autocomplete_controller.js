@@ -10,11 +10,14 @@ export default class extends Controller {
   connect() {
     console.log("Autocomplete controller conectado para:", this.element.id)
     this.searchTimeout = null
+    this.selectedIndex = -1
     document.addEventListener("click", this.handleGlobalClick.bind(this))
+    this.searchInputTarget.addEventListener("keydown", this.handleKeydown.bind(this))
   }
 
   disconnect() {
     document.removeEventListener("click", this.handleGlobalClick.bind(this))
+    this.searchInputTarget.removeEventListener("keydown", this.handleKeydown.bind(this))
   }
 
   handleGlobalClick(event) {
@@ -27,6 +30,7 @@ export default class extends Controller {
     const query = this.searchInputTarget.value.trim()
 
     clearTimeout(this.searchTimeout)
+    this.selectedIndex = -1
 
     if (query.length < 2) {
       this.resultsTarget.classList.add("hidden")
@@ -64,8 +68,9 @@ export default class extends Controller {
     if (items.length === 0) {
       if (this.allowCreateValue) {
         const createDiv = document.createElement("div")
-        createDiv.className = "px-3 py-2 cursor-pointer bg-blue-50 hover:bg-blue-100 text-blue-700 font-medium"
+        createDiv.className = "px-3 py-2 cursor-pointer bg-blue-50 hover:bg-blue-100 text-blue-700 font-medium transition-colors"
         createDiv.textContent = `✓ Criar novo cliente: "${query}"`
+        createDiv.dataset.resultItem = "create"
         createDiv.addEventListener("click", () => this.selectNewCustomer(query))
         this.resultsTarget.appendChild(createDiv)
       } else {
@@ -77,22 +82,86 @@ export default class extends Controller {
     } else {
       items.forEach(item => {
         const div = document.createElement("div")
-        div.className = "px-3 py-2 cursor-pointer hover:bg-gray-100 border-b border-gray-100 last:border-b-0"
+        div.className = "px-3 py-2 cursor-pointer hover:bg-gray-100 border-b border-gray-100 last:border-b-0 transition-colors"
         div.textContent = item.name
+        div.dataset.resultItem = "true"
+        div.dataset.id = item.id
+        div.dataset.name = item.name
         div.addEventListener("click", () => this.selectItem(item.id, item.name))
         this.resultsTarget.appendChild(div)
       })
 
       if (this.allowCreateValue) {
         const createDiv = document.createElement("div")
-        createDiv.className = "px-3 py-2 cursor-pointer bg-blue-50 hover:bg-blue-100 text-blue-700 font-medium"
+        createDiv.className = "px-3 py-2 cursor-pointer bg-blue-50 hover:bg-blue-100 text-blue-700 font-medium transition-colors"
         createDiv.textContent = `✓ Criar novo cliente: "${query}"`
+        createDiv.dataset.resultItem = "create"
         createDiv.addEventListener("click", () => this.selectNewCustomer(query))
         this.resultsTarget.appendChild(createDiv)
       }
     }
 
     this.resultsTarget.classList.remove("hidden")
+  }
+
+  handleKeydown(event) {
+    // If results are hidden, only Escape does nothing (menu not visible)
+    if (this.resultsTarget.classList.contains("hidden")) {
+      return
+    }
+
+    const items = this.resultsTarget.querySelectorAll("[data-result-item]")
+
+    if (items.length === 0) {
+      return
+    }
+
+    switch(event.key) {
+      case "ArrowDown":
+        event.preventDefault()
+        this.selectedIndex = Math.min(this.selectedIndex + 1, items.length - 1)
+        this.highlightItem(items)
+        break
+
+      case "ArrowUp":
+        event.preventDefault()
+        this.selectedIndex = Math.max(this.selectedIndex - 1, -1)
+        this.highlightItem(items)
+        break
+
+      case "Enter":
+        event.preventDefault()
+        if (this.selectedIndex >= 0 && items[this.selectedIndex]) {
+          const item = items[this.selectedIndex]
+          if (item.dataset.resultItem === "create") {
+            this.selectNewCustomer(this.searchInputTarget.value.trim())
+          } else {
+            this.selectItem(item.dataset.id, item.dataset.name)
+          }
+        }
+        break
+
+      case "Escape":
+        event.preventDefault()
+        this.resultsTarget.classList.add("hidden")
+        this.selectedIndex = -1
+        break
+    }
+  }
+
+  highlightItem(items) {
+    items.forEach((item, index) => {
+      if (index === this.selectedIndex) {
+        item.classList.add("bg-blue-100", "font-medium")
+      } else {
+        item.classList.remove("bg-blue-100", "font-medium")
+      }
+    })
+
+    // Scroll the selected item into view
+    if (this.selectedIndex >= 0 && items[this.selectedIndex]) {
+      items[this.selectedIndex].scrollIntoView({ block: "nearest" })
+    }
   }
 
   selectItem(id, name) {

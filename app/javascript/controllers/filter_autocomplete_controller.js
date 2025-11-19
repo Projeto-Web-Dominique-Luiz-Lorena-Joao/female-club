@@ -11,10 +11,14 @@ export default class extends Controller {
 
     // Índice do item selecionado com seta do teclado
     this.selectedIndex = -1
+
+    // Adicionar listener para navegação com teclado
+    this.searchInputTarget.addEventListener("keydown", this.handleKeydown.bind(this))
   }
 
   disconnect() {
     document.removeEventListener("click", this.handleClickOutside)
+    this.searchInputTarget.removeEventListener("keydown", this.handleKeydown.bind(this))
   }
 
   handleClickOutside(event) {

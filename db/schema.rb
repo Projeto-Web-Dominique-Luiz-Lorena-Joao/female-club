@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_11_18_163459) do
+ActiveRecord::Schema[8.0].define(version: 2025_11_19_034452) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -152,6 +152,20 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_18_163459) do
     t.index ["status"], name: "index_sales_on_status"
   end
 
+  create_table "service_appointments", force: :cascade do |t|
+    t.bigint "service_id", null: false
+    t.bigint "employee_id", null: false
+    t.bigint "customer_id", null: false
+    t.datetime "appointment_date", null: false
+    t.string "status", default: "agendado", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["customer_id"], name: "index_service_appointments_on_customer_id"
+    t.index ["employee_id"], name: "index_service_appointments_on_employee_id"
+    t.index ["service_id", "employee_id", "customer_id", "appointment_date"], name: "idx_service_appointments_lookup"
+    t.index ["service_id"], name: "index_service_appointments_on_service_id"
+  end
+
   create_table "services", force: :cascade do |t|
     t.string "name", null: false
     t.text "description"
@@ -202,4 +216,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_18_163459) do
   add_foreign_key "sale_services", "services"
   add_foreign_key "sales", "customers"
   add_foreign_key "sales", "employees"
+  add_foreign_key "service_appointments", "customers"
+  add_foreign_key "service_appointments", "employees"
+  add_foreign_key "service_appointments", "services"
 end

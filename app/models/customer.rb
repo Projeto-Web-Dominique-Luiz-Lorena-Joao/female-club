@@ -2,8 +2,8 @@ class Customer < ApplicationRecord
 
   # has_many :sales, foreign_key: :custumer_id, dependent: :destroy
   belongs_to :guarantor, optional: true
+  has_many :service_appointments, dependent: :destroy
   # has_many :receivables, dependent: :destroy
-  # has_many :service_appointments, dependent: :destroy
   # has_many :incomes, dependent: :nullify
 
 

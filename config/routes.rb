@@ -1,5 +1,11 @@
 Rails.application.routes.draw do
-
+  resources :service_appointments do
+    collection do
+      get :search_services
+      get :search_employees
+      get :search_customers
+    end
+  end
   resources :suppliers
   resources :employees
   resources :guarantors do
