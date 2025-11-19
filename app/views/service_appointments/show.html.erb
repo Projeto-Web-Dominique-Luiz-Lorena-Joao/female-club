@@ -60,7 +60,7 @@
         <p class="text-sm font-medium text-gray-500">Data e Hora</p>
         <% if @service_appointment.appointment_date %>
           <p class="text-lg text-gray-900 mt-1">
-            <%= l(@service_appointment.appointment_date, format: :short) %> às <%= @service_appointment.appointment_date.strftime('%H:%M') %>
+            <%= l(@service_appointment.appointment_date, format: :long) %>
           </p>
         <% else %>
           <p class="text-gray-400 mt-1">-</p>

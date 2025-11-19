@@ -13,7 +13,7 @@ class ServiceAppointment < ApplicationRecord
   validates :service_id, presence: true
   validates :employee_id, presence: true
   validates :customer_id, presence: true
-  validates :appointment_date, presence: true
+  validates :appointment_date, presence: true, comparison: { greater_than: :now, message: "não pode ser no passado" }
   validates :status, presence: true, inclusion: { in: %w[agendado concluido cancelado nao_compareceu] }
 
   scope :upcoming, -> { where('appointment_date > ?', Time.current).order(:appointment_date) }
