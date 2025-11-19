@@ -18,7 +18,6 @@
   <% end %>
 
   <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-    <!-- Razão Social -->
     <div class="md:col-span-2">
       <%= form.label :legal_name, "Razão Social *", class: "block text-sm font-medium text-gray-700 mb-2" %>
       <%= form.text_field :legal_name,
@@ -27,7 +26,6 @@
           required: true %>
     </div>
 
-    <!-- Nome Fantasia -->
     <div class="md:col-span-2">
       <%= form.label :trade_name, "Nome Fantasia", class: "block text-sm font-medium text-gray-700 mb-2" %>
       <%= form.text_field :trade_name,
@@ -36,7 +34,7 @@
       <p class="text-xs text-gray-500 mt-1">Se não informado, será usado a Razão Social</p>
     </div>
 
-    <!-- Categoria -->
+
     <div>
       <%= form.label :product_category, "Categoria de Produtos", class: "block text-sm font-medium text-gray-700 mb-2" %>
       <%= form.select :product_category,
@@ -77,7 +75,7 @@
           placeholder: "(00) 0000-0000" %>
     </div>
 
-    <!-- Email -->
+
     <div class="md:col-span-2">
       <%= form.label :email, "E-mail", class: "block text-sm font-medium text-gray-700 mb-2" %>
       <%= form.email_field :email,
@@ -85,7 +83,7 @@
           placeholder: "contato@fornecedor.com.br" %>
     </div>
 
-    <!-- Endereço Completo -->
+
     <div class="md:col-span-2">
       <%= form.label :full_address, "Endereço Completo", class: "block text-sm font-medium text-gray-700 mb-2" %>
       <%= form.text_area :full_address,
@@ -94,7 +92,7 @@
           placeholder: "Rua, número, complemento, bairro, cidade - CEP" %>
     </div>
 
-    <!-- Observações -->
+
     <div class="md:col-span-2">
       <%= form.label :notes, "Observações", class: "block text-sm font-medium text-gray-700 mb-2" %>
       <%= form.text_area :notes,
@@ -104,11 +102,11 @@
     </div>
   </div>
 
-  <div class="flex justify-end space-x-4 pt-6">
+  <div class="flex justify-end space-x-2 pt-6">
     <%= link_to "Cancelar", suppliers_path,
-        class: "px-6 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 font-medium transition" %>
+        class: "px-6 py-3 rounded-lg bg-gray-300 hover:bg-gray-200 text-gray-700 font-medium transition" %>
     <%= form.submit "Salvar Fornecedor",
-        class: "px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium shadow-lg transition" %>
+        class: "px-6 py-3 bg-green-600 hover:bg-green-500 text-white rounded-lg font-medium shadow-lg transition" %>
   </div>
 <% end %>
 

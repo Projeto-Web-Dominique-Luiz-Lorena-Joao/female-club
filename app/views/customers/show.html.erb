@@ -5,10 +5,16 @@
       </span>
     </div>
     <div class="flex space-x-3">
-      <%= link_to edit_customer_path(@customer), class: "bg-orange-200 hover:bg-orange-100 text-orange-700 px-8 py-2 rounded-lg font-medium" do %>
+      <%= link_to edit_customer_path(@customer), class: "bg-orange-400 hover:bg-orange-300 text-white px-8 py-2 rounded-lg font-medium" do %>
         Editar
       <% end %>
-      <%= link_to customers_path,
+      <%= button_to "Deletar Cliente",
+                    customer_path(@customer),
+                    method: :delete,
+                    data: { confirm: "Tem certeza que deseja excluir este cliente?" },
+                    class: "bg-red-500 hover:bg-red-400 text-white px-4 py-2 rounded-lg font-medium" %>
+
+        <%= link_to customers_path,
           class: "bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-lg font-medium flex items-center gap-2" do %>
 
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
