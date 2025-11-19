@@ -13,7 +13,7 @@
   <!-- Filtros -->
   <div class="bg-white rounded-lg shadow p-4">
     <%= form_with url: service_appointments_path, method: :get, local: true, class: "space-y-4" do |f| %>
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
         <!-- Filtro Serviço com Autocomplete -->
         <div data-controller="filter-autocomplete"
              data-filter-autocomplete-search-url-value="/service_appointments/search_services"
@@ -72,6 +72,21 @@
         <div>
           <%= f.label :date, "Data", class: "block text-sm font-medium text-gray-700" %>
           <%= f.date_field :date, value: params[:date], class: "w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" %>
+        </div>
+
+        <!-- Filtro Status -->
+        <div>
+          <%= f.label :status, "Status", class: "block text-sm font-medium text-gray-700" %>
+          <%= f.select :status,
+              [
+                ["Todos", ""],
+                ["📅 Agendado", "agendado"],
+                ["✓ Concluído", "concluido"],
+                ["✕ Cancelado", "cancelado"],
+                ["⚠ Não Compareceu", "nao_compareceu"]
+              ],
+              { selected: params[:status] },
+              class: "w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" %>
         </div>
       </div>
 

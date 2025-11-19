@@ -37,6 +37,7 @@ class ServiceAppointmentsController < ApplicationController
     @service_appointments = @service_appointments.by_customer(params[:customer_id]) if params[:customer_id].present?
     @service_appointments = @service_appointments.by_employee(params[:employee_id]) if params[:employee_id].present?
     @service_appointments = @service_appointments.by_date(params[:date]) if params[:date].present?
+    @service_appointments = @service_appointments.by_status(params[:status]) if params[:status].present?
 
     @service_appointments = @service_appointments.page(params[:page]).per(15)
   end
