@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  resources :expenses
   resources :service_appointments do
     collection do
       get :search_services
@@ -47,6 +48,7 @@ Rails.application.routes.draw do
   get 'sales', to: 'home#sales'
   get 'products', to: 'home#products'
   get 'services', to: 'home#services'
+  get 'expenses', to: 'home#expenses'
 
   # get "up" => "rails/health#show", as: :rails_health_check
 end

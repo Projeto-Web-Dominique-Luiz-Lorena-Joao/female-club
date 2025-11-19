@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_11_19_051808) do
+ActiveRecord::Schema[8.0].define(version: 2025_11_19_060225) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -78,6 +78,25 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_19_051808) do
     t.index ["full_name"], name: "index_employees_on_full_name"
     t.index ["position"], name: "index_employees_on_position"
     t.index ["status"], name: "index_employees_on_status"
+  end
+
+  create_table "expenses", force: :cascade do |t|
+    t.bigint "employee_id", null: false
+    t.bigint "supplier_id", null: false
+    t.date "expense_date", null: false
+    t.string "expense_type", null: false
+    t.decimal "amount", precision: 10, scale: 2, null: false
+    t.string "payment_method", null: false
+    t.text "notes"
+    t.string "category", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["category"], name: "index_expenses_on_category"
+    t.index ["employee_id", "created_at"], name: "index_expenses_on_employee_id_and_created_at"
+    t.index ["employee_id"], name: "index_expenses_on_employee_id"
+    t.index ["expense_date"], name: "index_expenses_on_expense_date"
+    t.index ["expense_type"], name: "index_expenses_on_expense_type"
+    t.index ["supplier_id"], name: "index_expenses_on_supplier_id"
   end
 
   create_table "guarantors", force: :cascade do |t|
@@ -241,6 +260,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_19_051808) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "customers", "guarantors"
+  add_foreign_key "expenses", "employees"
+  add_foreign_key "expenses", "suppliers"
   add_foreign_key "products", "suppliers"
   add_foreign_key "sale_products", "products"
   add_foreign_key "sale_products", "sales"

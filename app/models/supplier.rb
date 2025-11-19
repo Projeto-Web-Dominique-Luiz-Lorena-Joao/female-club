@@ -3,7 +3,7 @@ class Supplier < ApplicationRecord
   # has_many :stock_items, dependent: :nullify
   # has_many :stock_movements, dependent: :nullify
   # has_many :monthly_expenses, dependent: :nullify
-  # has_many :expenses, dependent: :nullify
+  has_many :expenses, dependent: :destroy
 
   enum :status, {
     ativo: 'ativo',

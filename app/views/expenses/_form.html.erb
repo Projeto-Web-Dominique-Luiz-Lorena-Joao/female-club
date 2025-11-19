@@ -1,0 +1,108 @@
+<%= form_with model: @expense, local: true, class: "space-y-6" do |f| %>
+  <% if @expense.errors.any? %>
+    <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+      <h2 class="text-red-800 font-semibold mb-2">
+        <%= pluralize(@expense.errors.count, "erro") %> encontrado:
+      </h2>
+      <ul class="list-disc list-inside text-red-700">
+        <% @expense.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div>
+      <%= f.label :employee_id, "Funcionário", class: "block text-sm font-medium text-gray-700 mb-2" %>
+      <%= f.collection_select :employee_id,
+          Employee.all,
+          :id,
+          :full_name,
+          { prompt: "Selecione um funcionário" },
+          class: "w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" %>
+    </div>
+
+    <div>
+      <%= f.label :supplier_id, "Fornecedor", class: "block text-sm font-medium text-gray-700 mb-2" %>
+      <%= f.collection_select :supplier_id,
+          Supplier.all,
+          :id,
+          :display_name,
+          { prompt: "Selecione um fornecedor" },
+          class: "w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" %>
+    </div>
+
+    <div>
+      <%= f.label :expense_date, "Data da Despesa", class: "block text-sm font-medium text-gray-700 mb-2" %>
+      <%= f.date_field :expense_date,
+          class: "w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" %>
+    </div>
+
+    <div>
+      <%= f.label :amount, "Valor (R$)", class: "block text-sm font-medium text-gray-700 mb-2" %>
+      <%= f.number_field :amount,
+          step: 0.01,
+          class: "w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" %>
+    </div>
+
+    <div>
+      <%= f.label :expense_type, "Tipo de Despesa", class: "block text-sm font-medium text-gray-700 mb-2" %>
+      <%= f.select :expense_type,
+          [
+            ["Aluguel", "aluguel"],
+            ["Utilidades", "utilities"],
+            ["Salários", "salaries"],
+            ["Suprimentos", "supplies"],
+            ["Manutenção", "maintenance"],
+            ["Marketing", "marketing"],
+            ["Seguro", "insurance"],
+            ["Impostos", "taxes"],
+            ["Outro", "other"]
+          ],
+          { prompt: "Selecione um tipo" },
+          class: "w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" %>
+    </div>
+
+    <div>
+      <%= f.label :category, "Categoria", class: "block text-sm font-medium text-gray-700 mb-2" %>
+      <%= f.select :category,
+          [
+            ["Fixa Mensal", "fixa_mensal"],
+            ["Fixa Anual", "fixa_anual"],
+            ["Esporádica", "esporadica"],
+            ["Rara", "rara"]
+          ],
+          { prompt: "Selecione uma categoria" },
+          class: "w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" %>
+    </div>
+
+    <div>
+      <%= f.label :payment_method, "Forma de Pagamento", class: "block text-sm font-medium text-gray-700 mb-2" %>
+      <%= f.select :payment_method,
+          [
+            ["Dinheiro", "dinheiro"],
+            ["Cartão de Crédito", "cartao_credito"],
+            ["Cartão de Débito", "cartao_debito"],
+            ["PIX", "pix"],
+            ["Transferência", "transferencia"],
+            ["Boleto", "boleto"]
+          ],
+          { prompt: "Selecione uma forma de pagamento" },
+          class: "w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" %>
+    </div>
+  </div>
+
+  <div>
+    <%= f.label :notes, "Anotações (opcional)", class: "block text-sm font-medium text-gray-700 mb-2" %>
+    <%= f.text_area :notes,
+        rows: 4,
+        placeholder: "Adicione qualquer anotação relevante sobre esta despesa",
+        class: "w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" %>
+  </div>
+
+  <div class="flex gap-4 pt-6 border-t border-gray-200">
+    <%= f.submit class: "flex-1 bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 font-medium" %>
+    <%= link_to "Cancelar", expenses_path, class: "flex-1 text-center bg-gray-200 text-gray-800 px-6 py-2 rounded-lg hover:bg-gray-300 font-medium" %>
+  </div>
+<% end %>

@@ -1,0 +1,21 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  employee: one
+  supplier: one
+  expense_date: 2025-11-19
+  expense_type: aluguel
+  amount: 1500.00
+  payment_method: transferencia
+  category: fixa_mensal
+  notes: Aluguel mensal do estabelecimento
+
+two:
+  employee: two
+  supplier: two
+  expense_date: 2025-11-15
+  expense_type: supplies
+  amount: 250.50
+  payment_method: pix
+  category: esporadica
+  notes: Suprimentos de limpeza
