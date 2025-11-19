@@ -3,7 +3,7 @@ pt-BR:
     formats:
       default: "%d de %B de %Y às %H:%M"
       short: "%d de %b de %Y"
-      long: "%A, %d de %B de %Y %H:%M"
+      long: "%A, %d de %B de %Y às %H:%M"
     am_pm:
       am: "AM"
       pm: "PM"
