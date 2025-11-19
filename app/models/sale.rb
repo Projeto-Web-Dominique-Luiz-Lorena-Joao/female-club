@@ -5,6 +5,7 @@ class Sale < ApplicationRecord
   has_many :sale_services, dependent: :destroy
   has_many :sale_products, dependent: :destroy
   has_many :products, through: :sale_products
+  has_many :stock_movements, dependent: :destroy
 
   validates :sale_date, presence: true
   validates :total_amount, presence: true, numericality: { greater_than_or_equal_to: 0 }

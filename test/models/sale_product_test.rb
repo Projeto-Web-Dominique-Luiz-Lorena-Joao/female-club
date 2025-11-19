@@ -34,7 +34,7 @@ class SaleProductTest < ActiveSupport::TestCase
       unit_price: 50.00
     )
     assert_not sale_product.save
-    assert_includes sale_product.errors[:quantity], "can't be blank"
+    assert_includes sale_product.errors[:quantity], "não pode ficar em branco"
   end
 
   test "should validate quantity is integer" do
@@ -65,7 +65,7 @@ class SaleProductTest < ActiveSupport::TestCase
       unit_price: nil
     )
     assert_not sale_product.save
-    assert_includes sale_product.errors[:unit_price], "can't be blank"
+    assert_includes sale_product.errors[:unit_price], "não pode ficar em branco"
   end
 
   test "should calculate total price correctly" do

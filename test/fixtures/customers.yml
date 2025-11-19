@@ -1,19 +1,19 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  full_name: MyString
-  cpf: MyString
+  full_name: Customer One
+  cpf: "11111111111"
   birth_date: 2025-11-14
-  phone_number: MyString
-  email: MyString
+  phone_number: "11999999999"
+  email: customer1@example.com
   full_address: MyText
   notes: MyText
 
 two:
-  full_name: MyString
-  cpf: MyString
+  full_name: Customer Two
+  cpf: "22222222222"
   birth_date: 2025-11-14
-  phone_number: MyString
-  email: MyString
+  phone_number: "21999999999"
+  email: customer2@example.com
   full_address: MyText
   notes: MyText

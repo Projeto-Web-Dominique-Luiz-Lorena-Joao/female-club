@@ -7,6 +7,7 @@ class Product < ApplicationRecord
 
   has_many :sale_products, dependent: :destroy
   has_many :sales, through: :sale_products
+  has_many :stock_movements, dependent: :destroy
 
   validate :gallery_images_limit
   validates :name, presence: true

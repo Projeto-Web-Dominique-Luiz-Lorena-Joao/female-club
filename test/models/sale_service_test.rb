@@ -5,7 +5,7 @@ class SaleServiceTest < ActiveSupport::TestCase
 
   def setup
     # Disable fixture loading for this test
-    @employee = Employee.find_or_create_by!(name: 'Test Employee', cpf: '12345678901', position: 'Gerente', salary: 2000)
+    @employee = Employee.find_or_create_by!(full_name: 'Test Employee', cpf: '55555555555', position: 'gerente', salary: 2000, phone: '11999999999')
     @sale = Sale.create!(sale_date: Date.today, total_amount: 100, payment_method: 'pix', status: 'pago', employee: @employee)
     @service = Service.create!(name: 'Corte de Cabelo', price: 50, active: 'ativo')
   end

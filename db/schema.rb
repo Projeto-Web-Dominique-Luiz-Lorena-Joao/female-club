@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_11_19_050437) do
+ActiveRecord::Schema[8.0].define(version: 2025_11_19_051808) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -189,6 +189,24 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_19_050437) do
     t.index ["name"], name: "index_services_on_name"
   end
 
+  create_table "stock_movements", force: :cascade do |t|
+    t.bigint "product_id", null: false
+    t.bigint "employee_id", null: false
+    t.bigint "sale_id"
+    t.bigint "sale_product_id"
+    t.string "movement_type", null: false
+    t.integer "quantity", default: 0, null: false
+    t.text "description"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["employee_id"], name: "index_stock_movements_on_employee_id"
+    t.index ["movement_type"], name: "index_stock_movements_on_movement_type"
+    t.index ["product_id", "created_at"], name: "index_stock_movements_on_product_id_and_created_at"
+    t.index ["product_id"], name: "index_stock_movements_on_product_id"
+    t.index ["sale_id"], name: "index_stock_movements_on_sale_id"
+    t.index ["sale_product_id"], name: "index_stock_movements_on_sale_product_id"
+  end
+
   create_table "suppliers", force: :cascade do |t|
     t.string "legal_name", null: false
     t.string "trade_name"
@@ -233,4 +251,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_19_050437) do
   add_foreign_key "service_appointments", "customers"
   add_foreign_key "service_appointments", "employees"
   add_foreign_key "service_appointments", "services"
+  add_foreign_key "stock_movements", "employees"
+  add_foreign_key "stock_movements", "products"
+  add_foreign_key "stock_movements", "sale_products"
+  add_foreign_key "stock_movements", "sales"
 end

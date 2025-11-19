@@ -14,12 +14,12 @@ class ServiceAppointmentTest < ActiveSupport::TestCase
       service: @service,
       employee: @employee,
       customer: @customer,
-      appointment_date: 2.days.from_now,
-      status: 'agendado'
+      appointment_date: 2.days.from_now.change(hour: 10, minute: 0),
+      status: "agendado"
     )
 
     assert appointment.persisted?
-    assert_equal 'agendado', appointment.status
+    assert_equal "agendado", appointment.status
     assert_equal @service.id, appointment.service_id
     assert_equal @employee.id, appointment.employee_id
     assert_equal @customer.id, appointment.customer_id
@@ -31,7 +31,7 @@ class ServiceAppointmentTest < ActiveSupport::TestCase
       employee: @employee,
       customer: @customer,
       appointment_date: nil,
-      status: 'agendado'
+      status: "agendado"
     )
 
     assert_not appointment.valid?
@@ -43,7 +43,7 @@ class ServiceAppointmentTest < ActiveSupport::TestCase
       service: @service,
       employee: @employee,
       customer: @customer,
-      appointment_date: 2.days.from_now,
+      appointment_date: 2.days.from_now.change(hour: 10, minute: 0),
       status: nil
     )
 

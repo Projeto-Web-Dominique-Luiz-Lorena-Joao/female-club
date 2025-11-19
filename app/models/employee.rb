@@ -1,7 +1,7 @@
 class Employee < ApplicationRecord
   has_many :sales, dependent: :nullify
   has_many :service_appointments, dependent: :nullify
-  # has_many :stock_movements, dependent: :nullify
+  has_many :stock_movements, dependent: :nullify
   # has_many :expenses, dependent: :nullify
   # has_many :incomes, dependent: :nullify
 
