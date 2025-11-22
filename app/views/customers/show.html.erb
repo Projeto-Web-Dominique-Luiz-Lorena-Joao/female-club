@@ -5,17 +5,12 @@
       </span>
     </div>
     <div class="flex space-x-3">
-      <%= link_to edit_customer_path(@customer), class: "bg-orange-400 hover:bg-orange-300 text-white px-8 py-2 rounded-lg font-medium" do %>
+      <%= link_to edit_customer_path(@customer), class: "bg-black hover:bg-gray-700 text-white px-8 py-2 rounded-lg font-medium" do %>
         Editar
       <% end %>
-      <%= button_to "Deletar Cliente",
-                    customer_path(@customer),
-                    method: :delete,
-                    data: { confirm: "Tem certeza que deseja excluir este cliente?" },
-                    class: "bg-red-500 hover:bg-red-400 text-white px-4 py-2 rounded-lg font-medium" %>
 
         <%= link_to customers_path,
-          class: "bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-lg font-medium flex items-center gap-2" do %>
+          class: "bg-gray-300 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg font-medium flex items-center gap-2" do %>
 
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
             stroke="currentColor" stroke-width="2" fill="none"
@@ -50,7 +45,7 @@
   </div>
 
   <div class="bg-white rounded-lg shadow-lg overflow-hidden">
-    <div class="px-6 py-4 bg-gray-900">
+    <div class="px-6 py-4 bg-black">
       <h2 class="text-xl font-bold text-white">Informações Pessoais</h2>
     </div>
     <div class="p-6 grid grid-cols-2 gap-6">
@@ -96,7 +91,7 @@
           <div class="flex items-center justify-between">
             <p class="text-sm font-medium text-gray-500 mb-2">Fiador</p>
             <%= link_to guarantor_path(@customer.guarantor),
-                        class: "inline-flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-lg transition shadow" do %>
+                        class: "inline-flex items-center px-4 py-2 bg-blue-200 text-blue-700 text-sm font-medium rounded-lg transition shadow" do %>
               <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
               </svg>
@@ -120,8 +115,16 @@
   </div>
   
   <div class="bg-white rounded-lg shadow-lg overflow-hidden">
-    <div class="px-6 py-4 bg-gray-900">
+    <div class="px-6 py-4 bg-black">
       <h2 class="text-xl font-bold text-white">Histórico de Compras</h2>
     </div>
     <div class="p-6">
+</div>
+
+<div>
+      <%= button_to "Deletar Cliente",
+                    customer_path(@customer),
+                    method: :delete,
+                    data: { confirm: "Tem certeza que deseja excluir este cliente?" },
+                    class: "bg-red-200 hover:bg-red-100 text-red-700 px-4 py-2 rounded-lg font-medium" %>
 </div>

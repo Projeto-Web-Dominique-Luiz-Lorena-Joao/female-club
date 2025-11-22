@@ -6,7 +6,7 @@
       <p class="mt-2 text-gray-600">Gerenciar base de clientes</p>
     </div>
     <%= link_to new_customer_path,
-      class: "bg-green-600 hover:bg-green-500 text-white px-6 py-3 rounded-lg font-medium shadow-lg transition inline-flex items-center" do %>
+      class: "bg-black hover:bg-gray-700 text-white px-6 py-3 rounded-lg font-medium shadow-lg transition duration-200 inline-flex items-center" do %>
       Novo Cliente
     <% end %>
   </div>
@@ -37,10 +37,10 @@
 
         <div class="flex justify-end space-x-2 items-center">
           <%= submit_tag "Buscar",
-              class: "bg-blue-700 hover:bg-blue-500 text-white px-6 py-2 rounded-lg font-medium transition" %>
+              class: "bg-black hover:bg-gray-700 text-white px-6 py-2 rounded-lg font-medium transition duration-200" %>
 
           <%= link_to "Limpar", customers_path,
-              class: "bg-gray-300 hover:bg-gray-200 text-gray-700 px-6 py-2 rounded-lg font-medium transition" %>
+              class: "bg-gray-300 hover:bg-gray-200 text-gray-700 px-6 py-2 rounded-lg font-medium transition duration-200" %>
         </div>
 
       </div>
@@ -50,7 +50,7 @@
   <div class="bg-white rounded-lg shadow overflow-hidden">
     <% if @customers.any? %>
       <table class="min-w-full divide-y divide-gray-200">
-        <thead class="bg-gray-900">
+        <thead class="bg-black">
           <tr>
             <th class="px-6 py-3 text-center text-xs font-medium text-white uppercase">Cliente</th>
             <th class="px-6 py-3 text-center text-xs font-medium text-white uppercase">CPF</th>
@@ -86,20 +86,11 @@
                 -
               </td>
 
-              <td class="px-6 py-4 text-right w-32">
-                <div class="flex flex-col items-end space-y-2 w-full">
+              <td class="px-6 py-4 text-center space-x-2">
+                <div class="flex flex-col items-center space-y-2 w-full">
 
                   <%= link_to "Visualizar", customer_path(customer),
-                      class: "bg-blue-200 text-blue-700 px-3 py-1 rounded-lg hover:bg-blue-100 w-full text-center text-sm font-medium" %>
-
-                  <%= link_to "Editar", edit_customer_path(customer),
-                      class: "bg-orange-200 text-orange-700 px-3 py-1 rounded-lg hover:bg-orange-100 w-full text-center text-sm font-medium" %>
-
-                  <button
-                    onclick="openDeleteModal('/customers', <%= customer.id %>, '<%= j customer.full_name %>', 'cliente')"
-                    class="bg-red-200 text-red-700 px-3 py-1 rounded-lg hover:bg-red-100 w-full text-center text-sm font-medium">
-                    Deletar
-                  </button>
+                      class: "bg-blue-200 text-blue-700 px-5 py-2 rounded-lg hover:bg-blue-100 text-center text-sm font-medium" %>
 
                 </div>
               </td>
@@ -115,7 +106,7 @@
       <div class="text-center py-12">
         <p class="mt-4 text-xl text-gray-600">Nenhum cliente cadastrado</p>
         <%= link_to "Cadastrar primeiro cliente", new_customer_path,
-            class: "mt-4 inline-block bg-green-600 hover:bg-green-500 text-white px-6 py-3 rounded-lg font-medium" %>
+            class: "mt-4 inline-block bg-black hover:bg-gray-700 text-white px-6 py-3 rounded-lg font-medium transition duration-200" %>
       </div>
 
     <% end %>

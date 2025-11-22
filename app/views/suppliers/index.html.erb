@@ -5,7 +5,7 @@
       <h1 class="text-3xl font-bold text-gray-900">Fornecedores</h1>
       <p class="mt-2 text-gray-600">Gerenciar fornecedores e parceiros</p>
     </div>
-    <%= link_to new_supplier_path, class: "bg-green-600 hover:bg-green-500 text-white px-6 py-3 rounded-lg font-medium shadow-lg transition inline-flex items-center" do %>
+    <%= link_to new_supplier_path, class: "bg-black hover:bg-gray-700 text-white px-6 py-3 rounded-lg font-medium shadow-lg transition duration-200 inline-flex items-center" do %>
       Novo Fornecedor
     <% end %>
   </div>
@@ -69,8 +69,8 @@
       </div>
 
       <div class="flex space-x-2">
-        <%= submit_tag "Buscar", class: "bg-blue-700 hover:bg-blue-500 text-white px-6 py-2 rounded-lg font-medium transition" %>
-        <%= link_to "Limpar", suppliers_path, class: "bg-gray-300 hover:bg-gray-200 text-gray-700 px-6 py-2 rounded-lg font-medium transition" %>
+        <%= submit_tag "Buscar", class: "bg-black hover:bg-gray-700 text-white px-6 py-2 rounded-lg font-medium transition duration-200" %>
+        <%= link_to "Limpar", suppliers_path, class: "bg-gray-300 hover:bg-gray-200 text-gray-700 px-6 py-2 rounded-lg font-medium transition duration-200" %>
       </div>
     <% end %>
   </div>
@@ -79,14 +79,13 @@
   <div class="bg-white rounded-lg shadow overflow-hidden">
     <% if @suppliers.any? %>
       <table class="min-w-full divide-y divide-gray-200">
-        <thead class="bg-gray-900">
+        <thead class="bg-black">
           <tr>
             <th class="px-6 py-3 text-center text-xs font-medium text-white uppercase">Fornecedor</th>
             <th class="px-6 py-3 text-center text-xs font-medium text-white uppercase">Categoria</th>
             <th class="px-6 py-3 text-center text-xs font-medium text-white uppercase">Status</th>
             <th class="px-6 py-3 text-center text-xs font-medium text-white uppercase">Contato</th>
             <th class="px-6 py-3 text-center text-xs font-medium text-white uppercase">Itens</th>
-            <th class="px-6 py-3 text-center text-xs font-medium text-white uppercase">Valor Estoque</th>
             <th class="px-6 py-3 text-center text-xs font-medium text-white uppercase">Ações</th>
           </tr>
         </thead>
@@ -121,19 +120,9 @@
                 <p class="text-xs text-gray-500"><%# supplier.items_in_stock %> em estoque</p>
               </td>
 
-              <td class="px-6 py-4 text-sm font-medium text-green-600 text-center">
-                R$ <%# number_with_delimiter(supplier.total_stock_value.to_f.round(2), delimiter: '.', separator: ',') %>
-              </td>
-
-              <td class="px-6 py-4 text-right space-x-2">
-                <div class="flex flex-col items-end space-y-2 w-full">
-                <%= link_to "Visualizar", supplier_path(supplier), class: "bg-blue-200 text-blue-700 px-3 py-1 rounded-lg hover:bg-blue-100 w-full text-center text-sm font-medium" %>
-                <%= link_to "Editar", edit_supplier_path(supplier), class: "bg-orange-200 text-orange-700 px-3 py-1 rounded-lg hover:bg-orange-100 w-full text-center text-sm font-medium" %>
-                <%= button_to "Deletar", supplier_path(supplier),
-                    method: :delete,
-                    data: { confirm: "Tem certeza? Isso afetará os itens de estoque vinculados." },
-                    form: { class: "w-full" },
-                    class: "bg-red-200 text-red-700 px-3 py-1 rounded-lg hover:bg-red-100 w-full text-center text-sm font-medium" %>
+              <td class="px-6 py-4 text-center space-x-2">
+                <div class="flex flex-col items-center space-y-2 w-full">
+                <%= link_to "Visualizar", supplier_path(supplier), class: "bg-blue-200 text-blue-700 px-5 py-2 rounded-lg hover:bg-blue-100 text-center text-sm font-medium" %>
                 </div>
               </td>
 
@@ -145,7 +134,7 @@
       <div class="text-center py-12">
         <p class="mt-4 text-xl text-gray-600">Nenhum fornecedor cadastrado</p>
         <%= link_to "Cadastrar primeiro fornecedor", new_supplier_path,
-            class: "mt-4 inline-block bg-green-600 hover:bg-green-500 text-white px-6 py-3 rounded-lg font-medium" %>
+            class: "mt-4 inline-block bg-black hover:bg-gray-700 text-white px-6 py-3 rounded-lg font-medium transition duration-200" %>
       </div>
     <% end %>
   </div>
