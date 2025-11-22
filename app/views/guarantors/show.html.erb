@@ -63,6 +63,21 @@
         <p class="mt-1 text-lg text-gray-900"><%= @guarantor.relationship&.titleize || '-' %></p>
       </div>
 
+      <div>
+        <p class="text-sm font-medium text-gray-500">Status</p>
+        <div class="mt-1">
+          <% if @guarantor.ativo? %>
+            <span class="px-3 py-1 text-sm font-medium rounded-full bg-green-100 text-green-800">
+              Ativo
+            </span>
+          <% elsif @guarantor.inativo? %>
+            <span class="px-3 py-1 text-sm font-medium rounded-full bg-red-100 text-red-800">
+              Inativo
+            </span>
+          <% end %>
+        </div>
+      </div>
+
       <% if @guarantor.address.present? %>
         <div class="col-span-2">
           <p class="text-sm font-medium text-gray-500">Endereço</p>

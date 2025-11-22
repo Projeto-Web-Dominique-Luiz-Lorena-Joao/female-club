@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_11_18_031710) do
+ActiveRecord::Schema[8.0].define(version: 2025_11_22_191730) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -80,6 +80,25 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_18_031710) do
     t.index ["status"], name: "index_employees_on_status"
   end
 
+  create_table "expenses", force: :cascade do |t|
+    t.bigint "employee_id", null: false
+    t.bigint "supplier_id", null: false
+    t.date "expense_date", null: false
+    t.string "expense_type", null: false
+    t.decimal "amount", precision: 10, scale: 2, null: false
+    t.string "payment_method", null: false
+    t.text "notes"
+    t.string "category", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["category"], name: "index_expenses_on_category"
+    t.index ["employee_id", "created_at"], name: "index_expenses_on_employee_id_and_created_at"
+    t.index ["employee_id"], name: "index_expenses_on_employee_id"
+    t.index ["expense_date"], name: "index_expenses_on_expense_date"
+    t.index ["expense_type"], name: "index_expenses_on_expense_type"
+    t.index ["supplier_id"], name: "index_expenses_on_supplier_id"
+  end
+
   create_table "guarantors", force: :cascade do |t|
     t.string "full_name", null: false
     t.string "cpf"
@@ -88,9 +107,57 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_18_031710) do
     t.string "relationship"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "status", default: "ativo", null: false
     t.index ["cpf"], name: "index_guarantors_on_cpf"
     t.index ["phone"], name: "index_guarantors_on_phone"
     t.index ["relationship"], name: "index_guarantors_on_relationship"
+    t.index ["status"], name: "index_guarantors_on_status"
+  end
+
+  create_table "products", force: :cascade do |t|
+    t.bigint "supplier_id"
+    t.string "name", null: false
+    t.text "description"
+    t.decimal "price", precision: 10, scale: 2
+    t.boolean "active", default: true
+    t.string "brand"
+    t.string "color"
+    t.float "quantity"
+    t.decimal "purchase_price", precision: 10, scale: 2
+    t.decimal "sale_price", precision: 10, scale: 2
+    t.string "category"
+    t.integer "min_stock"
+    t.text "location"
+    t.text "notes"
+    t.string "unit"
+    t.string "code"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["supplier_id"], name: "index_products_on_supplier_id"
+  end
+
+  create_table "sale_products", force: :cascade do |t|
+    t.bigint "sale_id", null: false
+    t.bigint "product_id", null: false
+    t.integer "quantity", default: 1, null: false
+    t.decimal "unit_price", precision: 10, scale: 2, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["product_id"], name: "index_sale_products_on_product_id"
+    t.index ["sale_id", "product_id"], name: "index_sale_products_on_sale_id_and_product_id", unique: true
+    t.index ["sale_id"], name: "index_sale_products_on_sale_id"
+  end
+
+  create_table "sale_services", force: :cascade do |t|
+    t.bigint "sale_id", null: false
+    t.bigint "service_id", null: false
+    t.integer "quantity", default: 1, null: false
+    t.decimal "unit_price", precision: 10, scale: 2, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["sale_id", "service_id"], name: "index_sale_services_on_sale_id_and_service_id", unique: true
+    t.index ["sale_id"], name: "index_sale_services_on_sale_id"
+    t.index ["service_id"], name: "index_sale_services_on_service_id"
   end
 
   create_table "sales", force: :cascade do |t|
@@ -116,6 +183,49 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_18_031710) do
     t.index ["sale_date"], name: "index_sales_on_sale_date"
     t.index ["status", "due_date"], name: "index_sales_on_status_and_due_date"
     t.index ["status"], name: "index_sales_on_status"
+  end
+
+  create_table "service_appointments", force: :cascade do |t|
+    t.bigint "service_id", null: false
+    t.bigint "employee_id", null: false
+    t.bigint "customer_id", null: false
+    t.datetime "appointment_date", null: false
+    t.string "status", default: "agendado", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["customer_id"], name: "index_service_appointments_on_customer_id"
+    t.index ["employee_id"], name: "index_service_appointments_on_employee_id"
+    t.index ["service_id", "employee_id", "customer_id", "appointment_date"], name: "idx_service_appointments_lookup"
+    t.index ["service_id"], name: "index_service_appointments_on_service_id"
+  end
+
+  create_table "services", force: :cascade do |t|
+    t.string "name", null: false
+    t.text "description"
+    t.decimal "price", precision: 10, scale: 2, null: false
+    t.string "active", default: "active", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["active"], name: "index_services_on_active"
+    t.index ["name"], name: "index_services_on_name"
+  end
+
+  create_table "stock_movements", force: :cascade do |t|
+    t.bigint "product_id", null: false
+    t.bigint "employee_id", null: false
+    t.bigint "sale_id"
+    t.bigint "sale_product_id"
+    t.string "movement_type", null: false
+    t.integer "quantity", default: 0, null: false
+    t.text "description"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["employee_id"], name: "index_stock_movements_on_employee_id"
+    t.index ["movement_type"], name: "index_stock_movements_on_movement_type"
+    t.index ["product_id", "created_at"], name: "index_stock_movements_on_product_id_and_created_at"
+    t.index ["product_id"], name: "index_stock_movements_on_product_id"
+    t.index ["sale_id"], name: "index_stock_movements_on_sale_id"
+    t.index ["sale_product_id"], name: "index_stock_movements_on_sale_product_id"
   end
 
   create_table "suppliers", force: :cascade do |t|
@@ -152,6 +262,20 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_18_031710) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "customers", "guarantors"
+  add_foreign_key "expenses", "employees"
+  add_foreign_key "expenses", "suppliers"
+  add_foreign_key "products", "suppliers"
+  add_foreign_key "sale_products", "products"
+  add_foreign_key "sale_products", "sales"
+  add_foreign_key "sale_services", "sales"
+  add_foreign_key "sale_services", "services"
   add_foreign_key "sales", "customers"
   add_foreign_key "sales", "employees"
+  add_foreign_key "service_appointments", "customers"
+  add_foreign_key "service_appointments", "employees"
+  add_foreign_key "service_appointments", "services"
+  add_foreign_key "stock_movements", "employees"
+  add_foreign_key "stock_movements", "products"
+  add_foreign_key "stock_movements", "sale_products"
+  add_foreign_key "stock_movements", "sales"
 end
