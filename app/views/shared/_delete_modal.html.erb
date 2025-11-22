@@ -26,11 +26,11 @@
         Cancelar
       </button>
 
-      <form id="deleteForm" method="post" class="inline">
+      <form id="deleteForm" method="post" class="inline" data-turbo="false">
         <input type="hidden" name="_method" value="delete">
         <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
 
-        <button class="px-5 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 transition">
+        <button type="submit" class="px-5 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 transition">
           Excluir
         </button>
       </form>
@@ -48,6 +48,7 @@
     document.getElementById("deleteType").innerText = label;
 
     form.action = `${basePath}/${id}`;
+    form.dataset.redirectUrl = basePath;
 
     modal.classList.remove("hidden");
   }

@@ -156,6 +156,64 @@
     </div>
   </div>
 
+  <!-- Produtos -->
+  <% if @sale.sale_products.any? %>
+    <div class="bg-white rounded-lg shadow-md p-6 mt-6">
+      <h2 class="text-xl font-semibold mb-4">Produtos</h2>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead class="bg-blue-100 border-b border-blue-300">
+            <tr>
+              <th class="text-left px-3 py-2">Produto</th>
+              <th class="text-center px-3 py-2 w-24">Qtd</th>
+              <th class="text-right px-3 py-2 w-32">Preço Unit.</th>
+              <th class="text-right px-3 py-2 w-32">Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @sale.sale_products.each do |sale_product| %>
+              <tr class="border-b hover:bg-gray-50">
+                <td class="px-3 py-2"><%= sale_product.product.name %></td>
+                <td class="text-center px-3 py-2"><%= sale_product.quantity %></td>
+                <td class="text-right px-3 py-2">R$ <%= number_with_precision(sale_product.unit_price, precision: 2, delimiter: ',', separator: '.') %></td>
+                <td class="text-right px-3 py-2 font-semibold">R$ <%= number_with_precision(sale_product.total_price, precision: 2, delimiter: ',', separator: '.') %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  <% end %>
+
+  <!-- Serviços -->
+  <% if @sale.sale_services.any? %>
+    <div class="bg-white rounded-lg shadow-md p-6 mt-6">
+      <h2 class="text-xl font-semibold mb-4">Serviços</h2>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead class="bg-green-100 border-b border-green-300">
+            <tr>
+              <th class="text-left px-3 py-2">Serviço</th>
+              <th class="text-center px-3 py-2 w-24">Qtd</th>
+              <th class="text-right px-3 py-2 w-32">Preço Unit.</th>
+              <th class="text-right px-3 py-2 w-32">Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @sale.sale_services.each do |sale_service| %>
+              <tr class="border-b hover:bg-gray-50">
+                <td class="px-3 py-2"><%= sale_service.service.name %></td>
+                <td class="text-center px-3 py-2"><%= sale_service.quantity %></td>
+                <td class="text-right px-3 py-2">R$ <%= number_with_precision(sale_service.unit_price, precision: 2, delimiter: ',', separator: '.') %></td>
+                <td class="text-right px-3 py-2 font-semibold">R$ <%= number_with_precision(sale_service.total_price, precision: 2, delimiter: ',', separator: '.') %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  <% end %>
+
   <!-- Observações -->
   <% if @sale.notes.present? %>
     <div class="bg-white rounded-lg shadow-md p-6 mt-6">

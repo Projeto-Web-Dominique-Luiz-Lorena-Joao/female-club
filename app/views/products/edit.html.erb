@@ -1,0 +1,16 @@
+<div class="space-y-6">
+
+  <div class="flex items-center space-x-2">
+    <%= link_to "← Voltar", products_path, class: "text-blue-600 hover:text-blue-800" %>
+  </div>
+
+  <div>
+    <h1 class="text-3xl font-bold text-gray-900">Editar Produto</h1>
+    <p class="mt-2 text-gray-600">Atualize as informações do produto: <strong><%= @product.name %></strong></p>
+  </div>
+
+  <div class="bg-white rounded-lg shadow p-6">
+    <%= render "form", product: @product %>
+  </div>
+
+</div>

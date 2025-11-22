@@ -1,0 +1,120 @@
+<div class="max-w-4xl mx-auto space-y-6">
+  <!-- Header com Nome e Botões de Ação -->
+  <div class="flex justify-between items-start">
+    <div>
+      <h1 class="text-3xl font-bold text-gray-900">Detalhes do Agendamento</h1>
+    </div>
+    <div class="flex space-x-3">
+      <%= link_to "Editar", edit_service_appointment_path(@service_appointment), class: "bg-orange-200 hover:bg-orange-100 text-orange-700 px-8 py-2 rounded-lg font-medium" %>
+      <%= link_to "← Voltar", service_appointments_path, class: "bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-lg font-medium" %>
+    </div>
+  </div>
+
+  <!-- Cards de Informações -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <!-- Serviço -->
+    <div class="bg-white rounded-lg shadow p-6">
+      <p class="text-gray-500 text-sm font-medium">Serviço</p>
+      <% if @service_appointment.service %>
+        <p class="text-2xl font-bold text-blue-600 mt-2">
+          <%= link_to @service_appointment.service.name, service_path(@service_appointment.service), class: "hover:underline" %>
+        </p>
+      <% else %>
+        <p class="text-gray-400 mt-2">-</p>
+      <% end %>
+    </div>
+
+    <!-- Status -->
+    <div class="bg-white rounded-lg shadow p-6">
+      <p class="text-gray-500 text-sm font-medium">Status</p>
+      <div class="mt-2">
+        <% case @service_appointment.status %>
+        <% when 'agendado' %>
+          <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+            Agendado
+          </span>
+        <% when 'concluido' %>
+          <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+            Concluído
+          </span>
+        <% when 'cancelado' %>
+          <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800">
+            Cancelado
+          </span>
+        <% when 'nao_compareceu' %>
+          <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800">
+            Não Compareceu
+          </span>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+    <div class="px-6 py-4 bg-gray-900">
+      <h2 class="text-xl font-bold text-white">Informações do Agendamento</h2>
+    </div>
+    <div class="p-6 space-y-4">
+
+      <div class="pb-4">
+        <p class="text-sm font-medium text-gray-500">Data e Hora</p>
+        <% if @service_appointment.appointment_date %>
+          <p class="text-lg text-gray-900 mt-1">
+            <%= l(@service_appointment.appointment_date, format: :long) %>
+          </p>
+        <% else %>
+          <p class="text-gray-400 mt-1">-</p>
+        <% end %>
+      </div>
+
+      <!-- Cliente -->
+      <div class="pb-4">
+        <p class="text-sm font-medium text-gray-500">Cliente</p>
+        <% if @service_appointment.customer %>
+          <p class="text-lg text-gray-900 mt-1">
+            <%= link_to @service_appointment.customer.full_name, customer_path(@service_appointment.customer), class: "text-blue-600 hover:text-blue-800" %>
+          </p>
+        <% else %>
+          <p class="text-gray-400 mt-1">-</p>
+        <% end %>
+      </div>
+
+      <!-- Funcionário -->
+      <div class="pb-4">
+        <p class="text-sm font-medium text-gray-500">Funcionário</p>
+        <% if @service_appointment.employee %>
+          <p class="text-lg text-gray-900 mt-1">
+            <%= link_to @service_appointment.employee.full_name, employee_path(@service_appointment.employee), class: "text-blue-600 hover:text-blue-800" %>
+          </p>
+        <% else %>
+          <p class="text-gray-400 mt-1">-</p>
+        <% end %>
+      </div>
+
+      <!-- Preço do Serviço -->
+      <div>
+        <p class="text-sm font-medium text-gray-500">Preço do Serviço</p>
+        <% if @service_appointment.service %>
+          <p class="text-lg text-green-600 font-bold mt-1">
+            <%= @service_appointment.service.formatted_price %>
+          </p>
+        <% else %>
+          <p class="text-gray-400 mt-1">-</p>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <!-- Data de Criação/Atualização -->
+  <div class="bg-gray-50 rounded-lg p-4 text-sm text-gray-600">
+    <p>Criado em: <%= l(@service_appointment.created_at, format: :short) %></p>
+    <p>Última atualização: <%= l(@service_appointment.updated_at, format: :short) %></p>
+  </div>
+
+  <!-- Botão de Deletar -->
+  <div class="flex justify-end">
+    <button onclick="openDeleteModal('/service_appointments', <%= @service_appointment.id %>, '<%= @service_appointment.service&.name %>', 'agendamento')" class="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-lg font-medium">
+      Deletar Agendamento
+    </button>
+  </div>
+</div>

@@ -160,6 +160,52 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_22_191730) do
     t.index ["service_id"], name: "index_sale_services_on_service_id"
   end
 
+  create_table "products", force: :cascade do |t|
+    t.bigint "supplier_id"
+    t.string "name", null: false
+    t.text "description"
+    t.decimal "price", precision: 10, scale: 2
+    t.boolean "active", default: true
+    t.string "brand"
+    t.string "color"
+    t.float "quantity"
+    t.decimal "purchase_price", precision: 10, scale: 2
+    t.decimal "sale_price", precision: 10, scale: 2
+    t.string "category"
+    t.integer "min_stock"
+    t.text "location"
+    t.text "notes"
+    t.string "unit"
+    t.string "code"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["supplier_id"], name: "index_products_on_supplier_id"
+  end
+
+  create_table "sale_products", force: :cascade do |t|
+    t.bigint "sale_id", null: false
+    t.bigint "product_id", null: false
+    t.integer "quantity", default: 1, null: false
+    t.decimal "unit_price", precision: 10, scale: 2, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["product_id"], name: "index_sale_products_on_product_id"
+    t.index ["sale_id", "product_id"], name: "index_sale_products_on_sale_id_and_product_id", unique: true
+    t.index ["sale_id"], name: "index_sale_products_on_sale_id"
+  end
+
+  create_table "sale_services", force: :cascade do |t|
+    t.bigint "sale_id", null: false
+    t.bigint "service_id", null: false
+    t.integer "quantity", default: 1, null: false
+    t.decimal "unit_price", precision: 10, scale: 2, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["sale_id", "service_id"], name: "index_sale_services_on_sale_id_and_service_id", unique: true
+    t.index ["sale_id"], name: "index_sale_services_on_sale_id"
+    t.index ["service_id"], name: "index_sale_services_on_service_id"
+  end
+
   create_table "sales", force: :cascade do |t|
     t.bigint "customer_id"
     t.bigint "employee_id", null: false

@@ -2,10 +2,17 @@ class Sale < ApplicationRecord
 
   belongs_to :customer, optional: true
   belongs_to :employee
-  # has_many :sale_items, dependent: :destroy
+  has_many :sale_services, dependent: :destroy
+  has_many :sale_products, dependent: :destroy
+  has_many :products, through: :sale_products
+  has_many :stock_movements, dependent: :destroy
+  has_many :services, through: :sale_services
+
+  accepts_nested_attributes_for :sale_products, allow_destroy: true, reject_if: :reject_product
+  accepts_nested_attributes_for :sale_services, allow_destroy: true, reject_if: :reject_service
 
   validates :sale_date, presence: true
-  validates :total_amount, presence: true, numericality: { greater_than_or_equal_to: 0 }
+  validates :total_amount, numericality: { greater_than_or_equal_to: 0 }, presence: true
   validates :discount_percentage,
             numericality: {
               greater_than_or_equal_to: 0,
@@ -82,5 +89,19 @@ class Sale < ApplicationRecord
   def calculate_total_amount
     # Implementar lógica se necessário, baseado em sale_items
     # self.total_amount = sale_items.sum(&:subtotal)
+  end
+
+  def reject_product(attributes)
+    # Reject if product_id is blank (unless it's marked for destruction)
+    should_reject = attributes['product_id'].blank? && attributes['_destroy'].to_s != '1'
+    Rails.logger.info "REJECT PRODUCT: product_id=#{attributes['product_id']&.inspect}, _destroy=#{attributes['_destroy']&.inspect}, should_reject=#{should_reject}"
+    should_reject
+  end
+
+  def reject_service(attributes)
+    # Reject if service_id is blank (unless it's marked for destruction)
+    should_reject = attributes['service_id'].blank? && attributes['_destroy'].to_s != '1'
+    Rails.logger.info "REJECT SERVICE: service_id=#{attributes['service_id']&.inspect}, _destroy=#{attributes['_destroy']&.inspect}, should_reject=#{should_reject}"
+    should_reject
   end
 end

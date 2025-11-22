@@ -1,0 +1,15 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  service: one
+  employee: one
+  customer: one
+  appointment_date: 2025-11-20 10:00:00
+  status: agendado
+
+two:
+  service: two
+  employee: two
+  customer: two
+  appointment_date: 2025-11-21 14:00:00
+  status: concluido

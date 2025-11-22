@@ -1,5 +1,5 @@
 <%# app/views/sales/_form.html.erb %>
-<%= form_with(model: sale, local: true, id: "sale_form") do |form| %>
+<%= form_with(model: sale, id: "sale_form", local: true, method: sale.new_record? ? :post : :patch) do |form| %>
   <% if sale.errors.any? %>
     <div class="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded mb-4">
       <h4 class="font-bold"><%= pluralize(sale.errors.count, "erro") %> impediram que esta venda fosse salva:</h4>
@@ -101,6 +101,162 @@
     </div>
   </div>
 
+  <!-- Seção de Produtos -->
+  <div class="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200"
+       data-controller="sale-items"
+       data-sale-items-item-type-value="product"
+       data-sale-items-search-url-value="/sales/search_products">
+    <h3 class="text-lg font-semibold text-gray-800 mb-4">Produtos</h3>
+
+    <!-- Lista de produtos adicionados -->
+    <div id="products_list" class="mb-4">
+      <!-- Products are rendered in the table below -->
+    </div>
+
+    <!-- Campo para adicionar novo produto -->
+    <div class="flex gap-2 mb-4">
+      <div class="flex-1 relative">
+        <input type="text"
+               id="product_search"
+               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+               placeholder="Digite o nome ou código do produto..."
+               autocomplete="off"
+               data-sale-items-target="searchInput"
+               data-action="input->sale-items#search focus->sale-items#focus">
+        <div class="hidden absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto"
+             data-sale-items-target="results"></div>
+      </div>
+      <button type="button"
+              class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              data-action="click->sale-items#addItem"
+              id="add_product_btn"
+              onclick="console.log('[TEST] Add product button clicked'); console.log('this:', this); console.log('event:', event);">
+        + Produto
+      </button>
+    </div>
+
+    <!-- Tabela com produtos adicionados -->
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead class="bg-blue-100 border-b border-blue-300">
+          <tr>
+            <th class="text-left px-3 py-2">Produto</th>
+            <th class="text-center px-3 py-2 w-24">Qtd</th>
+            <th class="text-right px-3 py-2 w-32">Preço Unit.</th>
+            <th class="text-right px-3 py-2 w-32">Total</th>
+            <th class="text-center px-3 py-2 w-16"></th>
+          </tr>
+        </thead>
+        <tbody id="products_table_body">
+          <% sale.sale_products.each_with_index do |sale_product, index| %>
+            <tr id="product_row_<%= index %>" class="border-b hover:bg-gray-50">
+              <td class="px-3 py-2"><%= sale_product.product.name %></td>
+              <td class="text-center px-3 py-2">
+                <%= form.fields_for :sale_products_attributes, sale_product, index: index do |f| %>
+                  <%= f.hidden_field :id %>
+                  <%= f.hidden_field :product_id %>
+                  <%= f.hidden_field :unit_price, data: { unit_price: sale_product.unit_price } %>
+                  <%= f.hidden_field :_destroy, value: 0, class: "destroy_checkbox" %>
+                  <%= f.number_field :quantity, min: 1, value: sale_product.quantity, class: "w-16 text-center px-2 py-1 border border-gray-300 rounded quantity-input", data: { unit_price: sale_product.unit_price } %>
+                <% end %>
+              </td>
+              <td class="text-right px-3 py-2" data-unit-price="<%= sale_product.unit_price %>">R$ <%= number_with_precision(sale_product.unit_price, precision: 2, delimiter: ',', separator: '.') %></td>
+              <td class="text-right px-3 py-2 font-semibold">R$ <span class="product_total_<%= index %>"><%= number_with_precision(sale_product.total_price, precision: 2, delimiter: ',', separator: '.') %></span></td>
+              <td class="text-center px-3 py-2">
+                <button type="button"
+                        class="text-red-600 hover:text-red-800"
+                        onclick="removeProductRow(this)">
+                  ✕
+                </button>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+      <% if sale.sale_products.empty? %>
+        <p class="text-gray-500 text-center py-4 italic">Nenhum produto adicionado</p>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Seção de Serviços -->
+  <div class="mt-6 p-4 bg-green-50 rounded-lg border border-green-200"
+       data-controller="sale-items"
+       data-sale-items-item-type-value="service"
+       data-sale-items-search-url-value="/sales/search_services">
+    <h3 class="text-lg font-semibold text-gray-800 mb-4">Serviços</h3>
+
+    <!-- Lista de serviços adicionados -->
+    <div id="services_list" class="mb-4">
+      <!-- Services are rendered in the table below -->
+    </div>
+
+    <!-- Campo para adicionar novo serviço -->
+    <div class="flex gap-2 mb-4">
+      <div class="flex-1 relative">
+        <input type="text"
+               id="service_search"
+               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+               placeholder="Digite o nome do serviço..."
+               autocomplete="off"
+               data-sale-items-target="searchInput"
+               data-action="input->sale-items#search focus->sale-items#focus">
+        <div class="hidden absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto"
+             data-sale-items-target="results"></div>
+      </div>
+      <button type="button"
+              class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500"
+              data-action="click->sale-items#addItem"
+              id="add_service_btn"
+              onclick="console.log('[TEST] Add service button clicked'); console.log('this:', this); console.log('event:', event);">
+        + Serviço
+      </button>
+    </div>
+
+    <!-- Tabela com serviços adicionados -->
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead class="bg-green-100 border-b border-green-300">
+          <tr>
+            <th class="text-left px-3 py-2">Serviço</th>
+            <th class="text-center px-3 py-2 w-24">Qtd</th>
+            <th class="text-right px-3 py-2 w-32">Preço Unit.</th>
+            <th class="text-right px-3 py-2 w-32">Total</th>
+            <th class="text-center px-3 py-2 w-16"></th>
+          </tr>
+        </thead>
+        <tbody id="services_table_body">
+          <% sale.sale_services.each_with_index do |sale_service, index| %>
+            <tr id="service_row_<%= index %>" class="border-b hover:bg-gray-50">
+              <td class="px-3 py-2"><%= sale_service.service.name %></td>
+              <td class="text-center px-3 py-2">
+                <%= form.fields_for :sale_services_attributes, sale_service, index: index do |f| %>
+                  <%= f.hidden_field :id %>
+                  <%= f.hidden_field :service_id %>
+                  <%= f.hidden_field :unit_price, data: { unit_price: sale_service.unit_price } %>
+                  <%= f.hidden_field :_destroy, value: 0, class: "destroy_checkbox" %>
+                  <%= f.number_field :quantity, min: 1, value: sale_service.quantity, class: "w-16 text-center px-2 py-1 border border-gray-300 rounded quantity-input", data: { unit_price: sale_service.unit_price } %>
+                <% end %>
+              </td>
+              <td class="text-right px-3 py-2" data-unit-price="<%= sale_service.unit_price %>">R$ <%= number_with_precision(sale_service.unit_price, precision: 2, delimiter: ',', separator: '.') %></td>
+              <td class="text-right px-3 py-2 font-semibold">R$ <span class="service_total_<%= index %>"><%= number_with_precision(sale_service.total_price, precision: 2, delimiter: ',', separator: '.') %></span></td>
+              <td class="text-center px-3 py-2">
+                <button type="button"
+                        class="text-red-600 hover:text-red-800"
+                        onclick="removeServiceRow(this)">
+                  ✕
+                </button>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+      <% if sale.sale_services.empty? %>
+        <p class="text-gray-500 text-center py-4 italic">Nenhum serviço adicionado</p>
+      <% end %>
+    </div>
+  </div>
+
   <div class="mt-4">
     <%= form.label :notes, "Observações", class: "block text-sm font-medium text-gray-700 mb-1" %>
     <%= form.text_area :notes, rows: 3, class: "w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" %>
@@ -111,6 +267,124 @@
     <%= link_to "Cancelar", sales_path, class: "px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400" %>
   </div>
 <% end %>
+
+<script>
+// Test to check if Stimulus is loading controllers
+(function() {
+  console.log('[TEST] Checking for Stimulus controllers...')
+  setTimeout(() => {
+    const productController = document.querySelector('[data-controller="sale-items"][data-sale-items-item-type-value="product"]')
+    const serviceController = document.querySelector('[data-controller="sale-items"][data-sale-items-item-type-value="service"]')
+
+    console.log('[TEST] Product controller element found:', !!productController)
+    console.log('[TEST] Service controller element found:', !!serviceController)
+
+    if (productController) {
+      const hasStimulus = productController.hasAttribute('data-controller')
+      console.log('[TEST] Product element has data-controller:', hasStimulus)
+      console.log('[TEST] Product element classes:', productController.className)
+    }
+  }, 500)
+})()
+
+// Interceptar o submit do formulário de venda
+(function() {
+  let formReady = false
+  let isSubmitting = false
+
+  function setupFormListener() {
+    const saleForm = document.querySelector('#sale_form')
+    if (!saleForm) return
+
+    // Don't attach listener multiple times
+    if (saleForm.dataset.listenerAttached) {
+      console.log('[SALES FORM] Listener already attached, skipping')
+      return
+    }
+
+    saleForm.dataset.listenerAttached = 'true'
+    formReady = true
+    console.log('[SALES FORM] Listener attached successfully')
+
+    saleForm.addEventListener('submit', handleFormSubmit, true)
+
+    function handleFormSubmit(event) {
+      console.log('[SALES FORM] Submit intercepted', event)
+
+      // Prevent double submission
+      if (isSubmitting) {
+        console.log('[SALES FORM] ⚠️ Already submitting, preventing double submission')
+        event.preventDefault()
+        event.stopPropagation()
+        return
+      }
+
+      event.preventDefault()
+      event.stopPropagation()
+
+      console.log('[SALES FORM] ✓ Submit prevented, proceeding with validation')
+
+      // Disable submit button to prevent double clicks
+      const submitButton = document.querySelector('input[type="submit"]')
+      if (submitButton) {
+        submitButton.disabled = true
+        submitButton.value = 'Salvando...'
+      }
+
+      const totalAmountInput = document.querySelector('input[name="sale[total_amount]"]')
+
+      // Se não há total_amount preenchido, verifica se há produtos ou serviços
+      if (!totalAmountInput || !totalAmountInput.value || parseFloat(totalAmountInput.value) === 0) {
+        const hasProducts = document.querySelectorAll('#products_table_body tr:not([style*="display: none"])').length > 0
+        const hasServices = document.querySelectorAll('#services_table_body tr:not([style*="display: none"])').length > 0
+
+        if (!hasProducts && !hasServices) {
+          alert('Por favor, adicione pelo menos um produto/serviço ou preencha o valor total manualmente')
+          return
+        }
+      }
+
+      // Garante que o total_amount tenha um valor
+      if (!totalAmountInput.value || totalAmountInput.value === '') {
+        totalAmountInput.value = '0.00'
+      }
+
+      console.log('[SALES FORM] Validation passed, sending PATCH request')
+      isSubmitting = true
+      submitFormViaPatch(saleForm)
+    }
+  }
+
+  function submitFormViaPatch(form) {
+    // The form now has the correct method set by Rails (POST for create, PATCH for update)
+    // We just need to validate and submit it normally
+
+    console.log('[SALES FORM] Form method:', form.method)
+    console.log('[SALES FORM] Form action:', form.action)
+    console.log('[SALES FORM] Submitting form normally, Rails will handle CSRF token')
+
+    // Re-enable the submit button before submitting
+    const submitButton = document.querySelector('input[type="submit"]')
+    if (submitButton) {
+      submitButton.disabled = false
+      submitButton.value = 'Salvar Venda'
+    }
+
+    // Submit the form - Rails form_with helper handles everything including CSRF
+    form.submit()
+  }
+
+  // Try to setup on DOMContentLoaded
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setupFormListener)
+  } else {
+    setupFormListener()
+  }
+
+  // Also try again after a short delay in case DOM is still loading
+  setTimeout(setupFormListener, 100)
+})()
+</script>
 
 <script>
 (function() {
@@ -212,4 +486,168 @@
 
   document.addEventListener('turbo:load', applyDiscountMask);
 })();
+</script>
+
+<script>
+// Funções para gerenciar linhas existentes (ao editar venda)
+function removeProductRow(button) {
+  const row = button.closest('tr');
+  if (!row) return;
+
+  // Find the destroy checkbox in this row
+  const destroyCheckbox = row.querySelector('.destroy_checkbox');
+  if (destroyCheckbox) {
+    destroyCheckbox.value = '1';  // Use '1' as Rails expects
+  }
+
+  // Hide the row
+  row.style.display = 'none';
+
+  // Update totals
+  updateProductsTotal();
+}
+
+function removeServiceRow(button) {
+  const row = button.closest('tr');
+  if (!row) return;
+
+  // Find the destroy checkbox in this row
+  const destroyCheckbox = row.querySelector('.destroy_checkbox');
+  if (destroyCheckbox) {
+    destroyCheckbox.value = '1';  // Use '1' as Rails expects
+  }
+
+  // Hide the row
+  row.style.display = 'none';
+
+  // Update totals
+  updateServicesTotal();
+}
+
+function updateProductsTotal() {
+  let productsTotal = 0;
+  const productRows = document.querySelectorAll('#products_table_body tr');
+  productRows.forEach(row => {
+    if (row.style.display !== 'none') {
+      const destroyCheckbox = row.querySelector('.destroy_checkbox');
+      if (destroyCheckbox && destroyCheckbox.value === '1') {
+        return;
+      }
+
+      const quantityInput = row.querySelector('input[name*="[quantity]"]');
+      const unitPriceInput = row.querySelector('input[name*="[unit_price]"]');
+      if (quantityInput && unitPriceInput) {
+        const quantity = parseInt(quantityInput.value) || 0;
+        const unitPrice = parseFloat(unitPriceInput.value) || 0;
+        const rowTotal = quantity * unitPrice;
+        productsTotal += rowTotal;
+
+        // Update the row total display
+        const totalSpan = row.querySelector('td:nth-child(4) span');
+        if (totalSpan) {
+          totalSpan.textContent = (rowTotal).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+      }
+    }
+  });
+
+  updateGrandTotal();
+}
+
+function updateServicesTotal() {
+  let servicesTotal = 0;
+  const serviceRows = document.querySelectorAll('#services_table_body tr');
+  serviceRows.forEach(row => {
+    if (row.style.display !== 'none') {
+      const destroyCheckbox = row.querySelector('.destroy_checkbox');
+      if (destroyCheckbox && destroyCheckbox.value === '1') {
+        return;
+      }
+
+      const quantityInput = row.querySelector('input[name*="[quantity]"]');
+      const unitPriceInput = row.querySelector('input[name*="[unit_price]"]');
+      if (quantityInput && unitPriceInput) {
+        const quantity = parseInt(quantityInput.value) || 0;
+        const unitPrice = parseFloat(unitPriceInput.value) || 0;
+        const rowTotal = quantity * unitPrice;
+        servicesTotal += rowTotal;
+
+        // Update the row total display
+        const totalSpan = row.querySelector('td:nth-child(4) span');
+        if (totalSpan) {
+          totalSpan.textContent = (rowTotal).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+      }
+    }
+  });
+
+  updateGrandTotal();
+}
+
+function updateGrandTotal() {
+  let productsTotal = 0;
+  const productRows = document.querySelectorAll('#products_table_body tr');
+  productRows.forEach(row => {
+    if (row.style.display !== 'none') {
+      const destroyCheckbox = row.querySelector('.destroy_checkbox');
+      if (destroyCheckbox && destroyCheckbox.value === '1') {
+        return;
+      }
+
+      const quantityInput = row.querySelector('input[name*="[quantity]"]');
+      const unitPriceInput = row.querySelector('input[name*="[unit_price]"]');
+      if (quantityInput && unitPriceInput) {
+        const quantity = parseInt(quantityInput.value) || 0;
+        const unitPrice = parseFloat(unitPriceInput.value) || 0;
+        productsTotal += quantity * unitPrice;
+      }
+    }
+  });
+
+  let servicesTotal = 0;
+  const serviceRows = document.querySelectorAll('#services_table_body tr');
+  serviceRows.forEach(row => {
+    if (row.style.display !== 'none') {
+      const destroyCheckbox = row.querySelector('.destroy_checkbox');
+      if (destroyCheckbox && destroyCheckbox.value === '1') {
+        return;
+      }
+
+      const quantityInput = row.querySelector('input[name*="[quantity]"]');
+      const unitPriceInput = row.querySelector('input[name*="[unit_price]"]');
+      if (quantityInput && unitPriceInput) {
+        const quantity = parseInt(quantityInput.value) || 0;
+        const unitPrice = parseFloat(unitPriceInput.value) || 0;
+        servicesTotal += quantity * unitPrice;
+      }
+    }
+  });
+
+  // Update the sale total_amount field
+  const totalAmountInput = document.querySelector('input[name="sale[total_amount]"]');
+  if (totalAmountInput) {
+    const grandTotal = productsTotal + servicesTotal;
+    totalAmountInput.value = grandTotal.toFixed(2);
+  }
+}
+
+// Attach quantity change listeners on page load for existing items
+document.addEventListener('DOMContentLoaded', function() {
+  // Add listeners for product quantity inputs
+  const productQuantityInputs = document.querySelectorAll('#products_table_body input[name*="[quantity]"]');
+  productQuantityInputs.forEach(input => {
+    input.addEventListener('change', updateProductsTotal);
+    input.addEventListener('input', updateProductsTotal);
+  });
+
+  // Add listeners for service quantity inputs
+  const serviceQuantityInputs = document.querySelectorAll('#services_table_body input[name*="[quantity]"]');
+  serviceQuantityInputs.forEach(input => {
+    input.addEventListener('change', updateServicesTotal);
+    input.addEventListener('input', updateServicesTotal);
+  });
+
+  // Initialize grand total
+  updateGrandTotal();
+});
 </script>

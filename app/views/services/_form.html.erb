@@ -1,0 +1,160 @@
+<%= form_with(model: service, class: "space-y-6") do |form| %>
+  <% if service.errors.any? %>
+    <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded-md">
+      <div class="flex">
+        <span class="text-red-500 text-xl">⚠️</span>
+        <div class="ml-3">
+          <h3 class="text-sm font-medium text-red-800">
+            <%= pluralize(service.errors.count, "erro") %>:
+          </h3>
+          <ul class="mt-2 text-sm text-red-700 list-disc list-inside">
+            <% service.errors.full_messages.each do |message| %>
+              <li><%= message %></li>
+            <% end %>
+          </ul>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <!-- Secao: Informacoes Basicas -->
+  <div class="pt-6">
+    <h3 class="text-lg font-semibold text-gray-900 mb-4">Informacoes Basicas</h3>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+      <div class="md:col-span-2">
+        <%= form.label :name, "Nome do Servico *", class: "block text-sm font-medium text-gray-700 mb-2" %>
+        <%= form.text_field :name,
+            id: "service_name",
+            class: "w-full px-4 py-2 border border-gray-300 rounded-lg",
+            placeholder: "Ex: Limpeza Profunda, Corte de Cabelo",
+            required: true %>
+      </div>
+
+      <div class="md:col-span-2">
+        <%= form.label :description, "Descricao", class: "block text-sm font-medium text-gray-700 mb-2" %>
+        <%= form.text_area :description,
+            rows: 4,
+            class: "w-full px-4 py-2 border border-gray-300 rounded-lg",
+            placeholder: "Descricao detalhada do servico..." %>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Secao: Preco -->
+  <div class="pt-6">
+    <h3 class="text-lg font-semibold text-gray-900 mb-4">Preço</h3>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+      <div>
+        <%= form.label :price, "Preço do Servico *", class: "block text-sm font-medium text-gray-700 mb-2" %>
+        <div class="relative">
+          <span class="absolute left-3 top-2 text-gray-500">R$</span>
+          <%= form.number_field :price,
+              step: "0.01",
+              class: "w-full px-4 py-2 pl-8 border border-gray-300 rounded-lg",
+              placeholder: "0,00",
+              required: true %>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Secao: Status -->
+  <div class="pt-6">
+    <h3 class="text-lg font-semibold text-gray-900 mb-4">Status</h3>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+      <div>
+        <%= form.label :active, "Status do Servico *", class: "block text-sm font-medium text-gray-700 mb-2" %>
+        <select name="service[active]" class="w-full px-4 py-2 border border-gray-300 rounded-lg" required>
+          <option value="ativo" <%= "selected" if (service.active || "ativo") == "ativo" %>>Ativo</option>
+          <option value="inativo" <%= "selected" if service.active == "inativo" %>>Inativo</option>
+          <option value="arquivado" <%= "selected" if service.active == "arquivado" %>>Arquivado</option>
+        </select>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Botoes de Acao -->
+  <div class="flex justify-end space-x-2 pt-6">
+    <%= link_to "Cancelar", services_path,
+        class: "px-6 py-3 rounded-lg bg-gray-300 hover:bg-gray-200 text-gray-700 font-medium transition" %>
+    <%= form.submit service.new_record? ? "Criar Servico" : "Atualizar Servico",
+        class: "px-6 py-3 bg-green-600 hover:bg-green-500 text-white rounded-lg font-medium shadow-lg transition" %>
+  </div>
+
+<% end %>
+
+<script>
+  function toUpperCaseText(text) {
+    return text ? text.toUpperCase() : text;
+  }
+
+  function initializePriceMasks() {
+    const priceFields = document.querySelectorAll('input[type="number"][step="0.01"]');
+
+    priceFields.forEach(field => {
+      field.addEventListener('input', function() {
+        if (this.value) {
+          let value = this.value.replace(/[^\d]/g, '');
+
+          if (!value) {
+            this.value = '';
+            return;
+          }
+
+          if (value.length === 1) {
+            value = '00' + value;
+          } else if (value.length === 2) {
+            value = '0' + value;
+          }
+
+          let integerPart = value.slice(0, -2);
+          const decimalPart = value.slice(-2);
+
+          integerPart = integerPart.replace(/^0+/, '') || '0';
+
+          this.value = integerPart + '.' + decimalPart;
+        }
+      });
+    });
+  }
+
+  function initializeUpperCaseFields() {
+    const fieldIds = ['service_name'];
+
+    fieldIds.forEach(id => {
+      const field = document.getElementById(id);
+
+      if (field) {
+        field.addEventListener('input', function() {
+          this.value = toUpperCaseText(this.value);
+        });
+      }
+    });
+  }
+
+  function initializeAllMasks() {
+    initializePriceMasks();
+    initializeUpperCaseFields();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function() {
+      initializeAllMasks();
+    });
+  } else {
+    initializeAllMasks();
+  }
+
+  document.addEventListener('turbo:load', function() {
+    initializeAllMasks();
+  });
+</script>
