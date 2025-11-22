@@ -1,233 +1,161 @@
-<div data-controller="guarantor-modal">
-<%= form_with(model: customer, class: "space-y-6") do |form| %>
-  <% if customer.errors.any? %>
-    <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded-md">
-      <div class="flex">
-        <span class="text-red-500 text-xl">⚠️</span>
-        <div class="ml-3">
-          <h3 class="text-sm font-medium text-red-800">
-            <%= pluralize(customer.errors.count, "erro") %>:
-          </h3>
-          <ul class="mt-2 text-sm text-red-700 list-disc list-inside">
-            <% customer.errors.full_messages.each do |message| %>
-              <li><%= message %></li>
-            <% end %>
-          </ul>
+<div data-controller="guarantor-form" class="space-y-6">
+  <%= form_with(model: customer, class: "space-y-8") do |form| %>
+    
+    <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+      <div class="px-6 py-4 bg-gray-900 border-b border-gray-200">
+        <h2 class="text-xl font-bold text-white">Informações do Cliente</h2>
+      </div>
+
+      <div class="p-6">
+        <% if customer.errors.any? %>
+          <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded-md mb-6">
+            <div class="flex">
+              <span class="text-red-500 text-xl">⚠️</span>
+              <div class="ml-3">
+                <h3 class="text-sm font-medium text-red-800">
+                  <%= pluralize(customer.errors.count, "erro") %>:
+                </h3>
+                <ul class="mt-2 text-sm text-red-700 list-disc list-inside">
+                  <% customer.errors.full_messages.each do |message| %>
+                    <li><%= message %></li>
+                  <% end %>
+                </ul>
+              </div>
+            </div>
+          </div>
+        <% end %>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="md:col-span-2">
+            <%= form.label :full_name, "Nome Completo *", class: "block text-sm font-medium text-gray-700 mb-2" %>
+            <%= form.text_field :full_name, class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent", required: true %>
+          </div>
+
+          <div>
+            <%= form.label :cpf, "CPF *", class: "block text-sm font-medium text-gray-700 mb-2" %>
+            <%= form.text_field :cpf, class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent", placeholder: "000.000.000-00", maxlength: 14, required: true %>
+          </div>
+
+          <div>
+            <%= form.label :birth_date, "Data de Nascimento", class: "block text-sm font-medium text-gray-700 mb-2" %>
+            <%= form.date_field :birth_date, class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent" %>
+          </div>
+
+          <div>
+            <%= form.label :phone_number, "Telefone *", class: "block text-sm font-medium text-gray-700 mb-2" %>
+            <%= form.text_field :phone_number, class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent", placeholder: "(00) 00000-0000", required: true %>
+          </div>
+
+          <div>
+            <%= form.label :email, "E-mail", class: "block text-sm font-medium text-gray-700 mb-2" %>
+            <%= form.email_field :email, class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent", placeholder: "email@exemplo.com" %>
+          </div>
+
+          <div class="md:col-span-2">
+            <%= form.label :full_address, "Endereço Completo", class: "block text-sm font-medium text-gray-700 mb-2" %>
+            <%= form.text_area :full_address, rows: 2, class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent", placeholder: "Rua, número, complemento, bairro, cidade - CEP" %>
+          </div>
+
+          <div class="md:col-span-2">
+            <%= form.label :notes, "Observações", class: "block text-sm font-medium text-gray-700 mb-2" %>
+            <%= form.text_area :notes, rows: 3, class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent" %>
+          </div>
+          
+          <div class="md:col-span-2 flex justify-end">
+            <div class="flex items-center gap-3">
+              <label class="text-md font-medium text-gray-900 text-right cursor-pointer select-none"
+                    onclick="this.closest('.flex').querySelector('input[type=checkbox]').click()">
+                Deseja cadastrar um fiador?
+              </label>
+              <label class="relative inline-flex items-center cursor-pointer shrink-0">
+                <input type="checkbox"
+                      class="sr-only peer"
+                      data-guarantor-form-target="toggle"
+                      data-action="change->guarantor-form#toggleSection"
+                      <%= 'checked' if customer.guarantor.present? %>>
+                <div class="relative w-14 h-7 bg-gray-200 rounded-full
+                            peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300
+                            after:content-[''] after:absolute after:top-0.5 after:left-[4px]
+                            after:bg-white after:border-gray-300 after:border after:rounded-full
+                            after:h-6 after:w-6 after:transition-all
+                            peer-checked:after:translate-x-full peer-checked:bg-green-600">
+                </div>
+              </label>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-  <% end %>
 
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-    <div class="md:col-span-2">
-      <%= form.label :full_name, "Nome Completo *", class: "block text-sm font-medium text-gray-700 mb-2" %>
-      <%= form.text_field :full_name,
-          class: "w-full px-4 py-2 border border-gray-300 rounded-lg",
-          required: true %>
-    </div>
-
-    <div>
-      <%= form.label :cpf, "CPF *", class: "block text-sm font-medium text-gray-700 mb-2" %>
-      <%= form.text_field :cpf,
-          class: "w-full px-4 py-2 border border-gray-300 rounded-lg",
-          placeholder: "000.000.000-00",
-          maxlength: 14,
-          required: true %>
-    </div>
-
-    <div>
-      <%= form.label :birth_date, "Data de Nascimento", class: "block text-sm font-medium text-gray-700 mb-2" %>
-      <%= form.date_field :birth_date,
-          class: "w-full px-4 py-2 border border-gray-300 rounded-lg" %>
-    </div>
-
-    <div>
-      <%= form.label :phone_number, "Telefone *", class: "block text-sm font-medium text-gray-700 mb-2" %>
-      <%= form.text_field :phone_number,
-          class: "w-full px-4 py-2 border border-gray-300 rounded-lg",
-          placeholder: "(00) 00000-0000",
-          required: true %>
-    </div>
-
-    <div>
-      <%= form.label :email, "E-mail", class: "block text-sm font-medium text-gray-700 mb-2" %>
-      <%= form.email_field :email,
-          class: "w-full px-4 py-2 border border-gray-300 rounded-lg",
-          placeholder: "email@exemplo.com" %>
-    </div>
-
-    <div class="md:col-span-2">
-      <%= form.label :full_address, "Endereço Completo", class: "block text-sm font-medium text-gray-700 mb-2" %>
-      <%= form.text_area :full_address,
-          rows: 2,
-          class: "w-full px-4 py-2 border border-gray-300 rounded-lg",
-          placeholder: "Rua, número, complemento, bairro, cidade - CEP" %>
-    </div>
-
-    <div class="md:col-span-2">
-      <%= form.label :notes, "Observações", class: "block text-sm font-medium text-gray-700 mb-2" %>
-      <%= form.text_area :notes,
-          rows: 3,
-          class: "w-full px-4 py-2 border border-gray-300 rounded-lg",
-          placeholder: "Preferências, alergias, observações importantes..." %>
-    </div>
-
-    <!-- Toggle para Fiador -->
-    <div class="md:col-span-2 border-t pt-6">
-      <div class="flex items-center justify-between">
-        <label class="text-sm font-medium text-gray-700">Deseja cadastrar fiador?</label>
-        <label class="relative inline-flex items-center cursor-pointer">
-          <input type="checkbox"
-                 class="sr-only peer"
-                 data-guarantor-modal-target="toggleSwitch"
-                 data-action="change->guarantor-modal#toggleGuarantor"
-                 <%= 'checked' if customer.guarantor.present? %>>
-          <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
-          <span class="ml-3 text-sm font-medium text-gray-900">
-            <span class="peer-checked:hidden">Não</span>
-            <span class="hidden peer-checked:inline">Sim</span>
-          </span>
-        </label>
+    <% guarantor = customer.guarantor || Guarantor.new %>
+      <div data-guarantor-form-target="section" class="bg-white rounded-lg shadow-lg overflow-hidden transition-all duration-300 <%= 'hidden' unless customer.guarantor.present? %>">
+      <div class="px-6 py-4 bg-gray-900 border-b flex justify-between items-center">
+        <h2 class="text-xl font-bold text-white">Informações do Fiador</h2>
       </div>
 
-      <!-- Seção de informações do fiador (aparece quando cadastrado) -->
-      <div data-guarantor-modal-target="guarantorSection" class="mt-4 <%= 'hidden' unless customer.guarantor.present? %>">
-        <% if customer.guarantor.present? %>
-          <% guarantor = customer.guarantor %>
-          <div class="bg-green-50 border border-green-200 rounded-lg p-4">
-            <h4 class="font-semibold text-green-800 mb-2">Fiador Cadastrado:</h4>
-            <p class="text-sm text-gray-700"><strong>Nome:</strong> <%= guarantor.full_name %></p>
-            <p class="text-sm text-gray-700"><strong>Parentesco:</strong> <%= guarantor.relationship %></p>
-            <% if guarantor.cpf.present? %>
-              <p class="text-sm text-gray-700"><strong>CPF:</strong> <%= guarantor.formatted_cpf %></p>
-            <% end %>
-            <% if guarantor.phone.present? %>
-              <p class="text-sm text-gray-700"><strong>Telefone:</strong> <%= guarantor.formatted_phone %></p>
-            <% end %>
-            <input type="hidden" name="guarantor[id]" value="<%= guarantor.id %>" data-guarantor-modal-target="guarantorId">
-            <input type="hidden" name="guarantor[full_name]" value="<%= guarantor.full_name %>">
-            <input type="hidden" name="guarantor[cpf]" value="<%= guarantor.cpf %>">
-            <input type="hidden" name="guarantor[phone]" value="<%= guarantor.phone %>">
-            <input type="hidden" name="guarantor[relationship]" value="<%= guarantor.relationship %>">
-            <input type="hidden" name="guarantor[address]" value="<%= guarantor.address %>">
-            <button type="button"
-                    class="mt-3 text-sm text-blue-600 hover:text-blue-800 underline"
-                    data-action="click->guarantor-modal#editGuarantor">
-              Editar Fiador
-            </button>
-          </div>
+      <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+        <% if guarantor.try(:id) %>
+          <input type="hidden" name="guarantor[id]" value="<%= guarantor.id %>">
         <% end %>
-      </div>
-    </div>
-  </div>
 
-  <div class="flex justify-end space-x-2 pt-6 ">
-    <%= link_to "Cancelar", customers_path,
-        class: "px-6 py-3 rounded-lg bg-gray-300 hover:bg-gray-200 text-gray-700 font-medium transition" %>
-    <%= form.submit "Salvar Cliente",
-        class: "px-6 py-3 bg-green-600 hover:bg-green-500 text-white rounded-lg font-medium shadow-lg transition" %>
-  </div>
+        <div class="md:col-span-1">
+          <label class="block text-sm font-medium text-gray-700 mb-2">Nome do Fiador *</label>
+          <input type="text" 
+                 name="guarantor[full_name]" 
+                 value="<%= guarantor.full_name %>"
+                 data-guarantor-form-target="input"
+                 class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent"
+                 placeholder="Nome completo">
+        </div>
 
-<% end %>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Parentesco *</label>
+          <select name="guarantor[relationship]" 
+                  data-guarantor-form-target="input"
+                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+            <option value="">Selecione...</option>
+            <%= options_for_select(['Pai', 'Mãe', 'Irmão(a)', 'Esposo(a)', 'Avô(a)', 'Tio(a)', 'Primo(a)', 'Amigo(a)', 'Outro'], guarantor.relationship) %>
+          </select>
+        </div>
 
-<!-- Modal Fiador -->
-<div data-guarantor-modal-target="modal"
-     class="hidden fixed inset-0 bg-black/20 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">CPF do Fiador</label>
+          <input type="text" 
+                 name="guarantor[cpf]" 
+                 value="<%= guarantor.cpf %>"
+                 data-guarantor-form-target="input"
+                 class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                 placeholder="000.000.000-00"
+                 maxlength="14">
+        </div>
 
-  <div class="relative w-full max-w-3xl bg-white rounded-2xl shadow-2xl p-8">
-    
-    <!-- Cabeçalho -->
-    <div class="flex justify-between items-center">
-      <div>
-        <h2 class="text-2xl font-semibold text-gray-900">Cadastrar Fiador</h2>
-        <p class="text-gray-500 text-sm">Adicione um novo fiador ao sistema</p>
-      </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Telefone do Fiador</label>
+          <input type="text" 
+                 name="guarantor[phone]" 
+                 value="<%= guarantor.phone %>"
+                 data-guarantor-form-target="input"
+                 class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                 placeholder="(00) 00000-0000">
+        </div>
 
-      <button type="button"
-              class="text-gray-400 hover:text-gray-600 text-3xl leading-none"
-              data-action="click->guarantor-modal#closeModal">
-        &times;
-      </button>
-    </div>
-
-    <!-- Formulário -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-
-      <!-- Nome -->
-      <div class="col-span-1">
-        <label class="block text-sm font-medium mb-1">Nome Completo *</label>
-        <input type="text"
-               data-guarantor-modal-target="guarantorName"
-               class="w-full h-12 px-4 bg-gray-100 border border-gray-200 rounded-xl"
-               placeholder="Nome completo do fiador"
-               required>
-      </div>
-
-      <!-- CPF -->
-      <div class="col-span-1">
-        <label class="block text-sm font-medium mb-1">CPF</label>
-        <input type="text"
-               data-guarantor-modal-target="guarantorCpf"
-               maxlength="14"
-               class="w-full h-12 px-4 bg-gray-100 border border-gray-200 rounded-xl"
-               placeholder="000.000.000-00">
-      </div>
-
-      <!-- Telefone -->
-      <div class="col-span-1">
-        <label class="block text-sm font-medium mb-1">Telefone</label>
-        <input type="text"
-               data-guarantor-modal-target="guarantorPhone"
-               class="w-full h-12 px-4 bg-gray-100 border border-gray-200 rounded-xl"
-               placeholder="(00) 00000-0000">
-      </div>
-
-      <!-- Parentesco -->
-      <div class="col-span-1">
-        <label class="block text-sm font-medium mb-1">Parentesco *</label>
-        <select data-guarantor-modal-target="guarantorRelationship"
-                class="w-full h-12 px-4 bg-gray-100 border border-gray-200 rounded-xl"
-                required>
-          <option value="">Selecione o parentesco</option>
-          <option value="pai">Pai</option>
-          <option value="mãe">Mãe</option>
-          <option value="irmão(a)">Irmão(a)</option>
-          <option value="esposo(a)">Esposo(a)</option>
-          <option value="avô(a)">Avô(a)</option>
-          <option value="tio(a)">Tio(a)</option>
-          <option value="primo(a)">Primo(a)</option>
-          <option value="amigo(a)">Amigo(a)</option>
-          <option value="outro">Outro</option>
-        </select>
-      </div>
-
-      <!-- Endereço -->
-      <div class="col-span-1 md:col-span-2">
-        <label class="block text-sm font-medium mb-1">Endereço</label>
-        <textarea rows="2"
-                  data-guarantor-modal-target="guarantorAddress"
-                  class="w-full px-4 py-3 bg-gray-100 border border-gray-200 rounded-xl"
-                  placeholder="Endereço completo do fiador"></textarea>
+        <div class="md:col-span-2">
+          <label class="block text-sm font-medium text-gray-700 mb-2">Endereço do Fiador</label>
+          <textarea name="guarantor[address]" 
+                    rows="2"
+                    data-guarantor-form-target="input"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    placeholder="Endereço completo"><%= guarantor.address %></textarea>
+        </div>
       </div>
     </div>
 
-    <!-- Botões -->
-    <div class="flex justify-end gap-3 mt-8 pt-6">
-      <button type="button"
-              class="px-6 py-2 rounded-xl border border-gray-300 text-gray-600 hover:bg-gray-100 transition"
-              data-action="click->guarantor-modal#closeModal">
-        Cancelar
-      </button>
-
-      <button type="button"
-              class="px-8 py-2 bg-green-600 text-white rounded-xl hover:bg-green-500 transition"
-              data-action="click->guarantor-modal#saveGuarantor">
-        Salvar Fiador
-      </button>
+    <div class="flex justify-end space-x-3 pt-6 border-t border-gray-200">
+      <%= link_to "Cancelar", customers_path, class: "px-6 py-3 rounded-lg bg-gray-200 hover:bg-gray-300 text-gray-700 font-medium transition" %>
+      <%= form.submit "Salvar Cliente", class: "px-6 py-3 bg-green-600 hover:bg-green-500 text-white rounded-lg font-medium shadow-lg transition cursor-pointer" %>
     </div>
-
-  </div>
+  <% end %>
 </div>
 
 
