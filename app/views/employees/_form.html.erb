@@ -170,15 +170,13 @@
     console.log('Máscaras ativadas!');
 
     function aplicar() {
-      // --- MÁSCARA DE CPF (Corrigida) ---
       const cpf = document.querySelector('input[name="employee[cpf]"]');
       if (cpf && !cpf.dataset.m) {
         cpf.dataset.m = '1';
         cpf.addEventListener('input', function(e) {
-          let v = e.target.value.replace(/\D/g, ''); // Remove tudo que não é dígito
-          if (v.length > 11) v = v.slice(0, 11);     // Limita a 11 dígitos
+          let v = e.target.value.replace(/\D/g, ''); 
+          if (v.length > 11) v = v.slice(0, 11);     
 
-          // Aplica a máscara progressivamente
           if (v.length > 9) {
             // 10 ou 11 dígitos
             v = v.replace(/(\d{3})(\d{3})(\d{3})(\d{1,2})/, '$1.$2.$3-$4');
@@ -194,17 +192,12 @@
         console.log('CPF ok');
       }
 
-      // --- MÁSCARA DE TELEFONE (Corrigida) ---
       const tel = document.querySelector('input[name="employee[phone]"]');
       if (tel && !tel.dataset.m) {
         tel.dataset.m = '1';
         tel.addEventListener('input', function(e) {
-          let v = e.target.value.replace(/\D/g, ''); // Remove tudo que não é dígito
-          if (v.length > 11) v = v.slice(0, 11);     // Limita a 11 dígitos
-
-          // Esta lógica causa o "pulo" do 10º para o 11º dígito,
-          // mas é a única forma de suportar 10 e 11 dígitos com este método.
-          // O mais importante é que agora o "apagar" funciona.
+          let v = e.target.value.replace(/\D/g, ''); 
+          if (v.length > 11) v = v.slice(0, 11);     
 
           if (v.length > 10) {
             // 11 dígitos: (XX) XXXXX-XXXX
@@ -226,7 +219,6 @@
       }
     }
 
-    // --- Carregamento do script ---
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', aplicar);
     } else {

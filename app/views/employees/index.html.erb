@@ -4,7 +4,7 @@
       <h1 class="text-3xl font-bold text-gray-900">Funcionários</h1>
       <p class="mt-2 text-gray-600">Gerenciar equipe</p>
     </div>
-    <%= link_to new_employee_path, class: "bg-green-600 hover:bg-green-500 text-white px-6 py-3 rounded-lg font-medium shadow-lg transition inline-flex items-center" do %>
+    <%= link_to new_employee_path, class: "bg-black hover:bg-gray-700 text-white px-6 py-3 rounded-lg font-medium shadow-lg transition duration-200 inline-flex items-center" do %>
       Novo Funcionário
     <% end %>
   </div>
@@ -26,96 +26,77 @@
     </div>
   </div>
 
-  <div class="bg-white rounded-lg shadow p-6">
-    <%= form_with url: employees_path, method: :get, class: "space-y-4" do %>
-      <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
-        <div class="md:col-span-6">
-          <%= text_field_tag :search, params[:search],
-              placeholder: "Buscar por nome, CPF, telefone ou e-mail ...",
-              class: "w-full px-4 py-2 border border-gray-300 rounded-lg" %>
-        </div>
+<div class="bg-white rounded-lg shadow p-6">
+  <%= form_with url: employees_path, method: :get, class: "space-y-4" do %>
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
 
-        <div class="md:col-span-3">
-          <%= select_tag :status,
-              options_for_select([
-                ['Todos os Status', ''],
-                ['Ativos', 'ativo'],
-                ['Inativos', 'inativo'],
-                ['Férias', 'ferias'],
-                ['Afastados', 'afastado']
-              ], params[:status]),
-              class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-black-900" %>
-        </div>
-
-        <div class="md:col-span-3">
-          <%= select_tag :position,
-              options_for_select([
-                ['Todos os Cargos', ''],
-                ['Gerente', 'gerente'],
-                ['Vendedor', 'vendedor'],
-                ['Caixa', 'caixa'],
-                ['Estoquista', 'estoquista'],
-                ['Manicure', 'manicure'],
-                ['Cabeleireira', 'cabeleireira'],
-                ['Esteticista', 'esteticista'],
-                ['Maquiador', 'maquiador'],
-                ['Atendente', 'atendente'],
-                ['Auxiliar', 'auxiliar']
-              ], params[:position]),
-              class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-black-900" %>
-        </div>
-
-        <div class="flex space-x-2">
-          <%= submit_tag "Buscar", class: "flex-1 bg-blue-700 hover:bg-blue-500 text-white px-6 py-2 rounded-lg font-medium transition" %>
-          <%= link_to "Limpar", employees_path, class: "bg-gray-300 hover:bg-gray-200 text-gray-700 px-6 py-2 rounded-lg font-medium transition" %>
-        </div>
+      <div class="md:col-span-6">
+        <%= text_field_tag :search, params[:search],
+            placeholder: "Buscar por nome, CPF, telefone ou e-mail ...",
+            class: "w-full px-4 py-2 border border-gray-300 rounded-lg" %>
       </div>
-    <% end %>
-  </div>
 
-  <div class="bg-white rounded-lg shadow p-6">
-    <%= form_with url: employees_path, method: :get, class: "space-y-4" do %>
-      <!-- Preservar filtros anteriores -->
-      <% if params[:search].present? %>
-        <%= hidden_field_tag :search, params[:search] %>
-      <% end %>
-      <% if params[:status].present? %>
-        <%= hidden_field_tag :status, params[:status] %>
-      <% end %>
-      <% if params[:position].present? %>
-        <%= hidden_field_tag :position, params[:position] %>
-      <% end %>
-
-      <p class="text-sm font-medium text-gray-700 mb-3">Ordenar por Tempo de Admissão</p>
-      <div class="space-y-2">
-        <div class="flex items-center">
-          <%= radio_button_tag :sort_admission, 'desc', params[:sort_admission] == 'desc' %>
-          <%= label_tag :sort_admission_desc, "(A → a) - Maior p/ Menor (Mais Antigos)", for: "sort_admission_desc", class: "ml-2" %>
-        </div>
-        <div class="flex items-center">
-          <%= radio_button_tag :sort_admission, 'asc', params[:sort_admission] == 'asc' %>
-          <%= label_tag :sort_admission_asc, "(a → A) - Menor p/ Maior (Mais Novos)", for: "sort_admission_asc", class: "ml-2" %>
-        </div>
-        <div class="mt-4">
-          <%= submit_tag "Aplicar Filtro", class: "bg-pink-600 hover:bg-pink-500 text-white px-6 py-2 rounded-lg font-medium transition focus:ring-2 focus:ring-pink-500" %>
-        </div>
+      <div class="md:col-span-2">
+        <%= select_tag :status,
+            options_for_select([
+              ['Todos os Status', ''],
+              ['Ativos', 'ativo'],
+              ['Inativos', 'inativo'],
+              ['Férias', 'ferias'],
+              ['Afastados', 'afastado']
+            ], params[:status]),
+            class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-black-900" %>
       </div>
-    <% end %>
-  </div>
+
+      <div class="md:col-span-2">
+        <%= select_tag :position,
+            options_for_select([
+              ['Todos os Cargos', ''],
+              ['Gerente', 'gerente'],
+              ['Vendedor', 'vendedor'],
+              ['Caixa', 'caixa'],
+              ['Estoquista', 'estoquista'],
+              ['Manicure', 'manicure'],
+              ['Cabeleireira', 'cabeleireira'],
+              ['Esteticista', 'esteticista'],
+              ['Maquiador', 'maquiador'],
+              ['Atendente', 'atendente'],
+              ['Auxiliar', 'auxiliar']
+            ], params[:position]),
+            class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-black-900" %>
+      </div>
+
+      <div class="md:col-span-2">
+        <%= select_tag :sort_admission,
+            options_for_select([
+              ['Ordenar por', ''],
+              ['Mais Antigos', 'desc'],
+              ['Mais Novos', 'asc']
+            ], params[:sort_admission]),
+            class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-black-900" %>
+      </div>
+
+      <div class="flex space-x-2"> 
+        <%= submit_tag "Buscar", class: "flex-1 bg-black hover:bg-gray-700 text-white px-6 py-2 rounded-lg font-medium transition duration-200" %>
+        <%= link_to "Limpar", employees_path, class: "bg-gray-300 hover:bg-gray-200 text-gray-700 px-6 py-2 rounded-lg font-medium transition duration-200" %> 
+      </div>
+
+    </div>
+  <% end %>
+</div>
+
 
   <div class="bg-white rounded-lg shadow overflow-hidden">
     <% if @employees.any? %>
       <table class="min-w-full divide-y divide-gray-200">
-        <thead class="bg-gray-50">
+        <thead class="bg-black">
           <tr>
-            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Funcionário</th>
-            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">CPF</th>
-            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Cargo</th>
-            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Contato</th>
-            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Salário</th>
-            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Tempo de Admissão</th>
-            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Status</th>
-            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Ações</th>
+            <th class="px-6 py-3 text-center text-xs font-medium text-white uppercase">Funcionário</th>
+            <th class="px-6 py-3 text-center text-xs font-medium text-white uppercase">CPF</th>
+            <th class="px-6 py-3 text-center text-xs font-medium text-white uppercase">Cargo</th>
+            <th class="px-6 py-3 text-center text-xs font-medium text-white uppercase">Contato</th>
+            <th class="px-6 py-3 text-center text-xs font-medium text-white uppercase">Status</th>
+            <th class="px-6 py-3 text-center text-xs font-medium text-white uppercase">Ações</th>
           </tr>
         </thead>
 
@@ -142,35 +123,16 @@
                 <p class="text-xs text-center text-gray-500"><%= employee.email || '-' %></p>
               </td>
 
-              <td class="px-6 py-4 text-sm text-center font-medium text-gray-900">
-                <%= employee.formatted_salary %>
-              </td>
-
-              <td class="px-6 py-4 text-sm text-center text-gray-900">
-                <span class="px-3 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-800">
-                  <%= employee.formatted_admission_time %>
-                </span>
-              </td>
-
               <td class="px-6 py-4 text-center">
                 <span class="px-3 py-1 text-xs font-medium rounded-full <%= employee.status_color %>">
                   <%= employee.status&.titleize %>
                 </span>
               </td>
 
-              <td class="px-6 py-4 text-right space-x-2">
-                <div class="flex flex-col items-end space-y-2 w-full">
+              <td class="px-6 py-4 text-center space-x-2">
+                <div class="flex flex-col items-center space-y-2 w-full">
                   <%= link_to "Visualizar", employee_path(employee),
-                      class: "bg-blue-200 text-blue-700 px-3 py-1 rounded-lg hover:bg-blue-100 w-full text-center text-sm font-medium" %>
-
-                  <%= link_to "Editar", edit_employee_path(employee),
-                      class: "bg-orange-200 text-orange-700 px-3 py-1 rounded-lg hover:bg-orange-100 w-full text-center text-sm font-medium" %>
-
-                  <button
-                    onclick="openDeleteModal('/employees', <%= employee.id %>, '<%= j employee.full_name %>', 'funcionário')"
-                    class="bg-red-200 text-red-700 px-3 py-1 rounded-lg hover:bg-red-100 w-full text-center text-sm font-medium">
-                    Deletar
-                  </button>
+                      class: "bg-blue-200 text-blue-700 px-5 py-2 rounded-lg hover:bg-blue-100 text-center text-sm font-medium" %>
                 </div>
               </td>
             </tr>
@@ -181,7 +143,7 @@
       <div class="text-center py-12">
         <p class="mt-4 text-xl text-gray-600">Nenhum funcionário cadastrado</p>
         <%= link_to "Cadastrar primeiro funcionário", new_employee_path,
-            class: "mt-4 inline-block bg-green-600 hover:bg-green-500 text-white px-6 py-3 rounded-lg font-medium" %>
+            class: "mt-4 inline-block bg-black hover:bg-gray-800 text-white px-6 py-3 rounded-lg font-medium transition duration-200" %>
       </div>
     <% end %>
   </div>

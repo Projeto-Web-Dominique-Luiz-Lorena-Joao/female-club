@@ -34,7 +34,6 @@
   </head>
 
   <body class="bg-gray-50 h-screen overflow-hidden">
-    <!-- Container de Notificações Centralizado -->
     <div class="fixed top-8 left-1/2 transform -translate-x-1/2 z-50 flex flex-col items-center space-y-4 pointer-events-none">
       <% if notice.present? %>
         <div data-controller="flash"
@@ -71,9 +70,9 @@
       <% end %>
     </div>
 
-    <div class="flex h-screen bg-gray-50">
+    <div class="flex h-screen bg-gray-50" data-controller="sidebar">
       <%= render 'shared/menu' %>
-      <main class="flex-1 relative p-8 overflow-y-auto">
+      <main class="flex-1 relative p-8 overflow-y-auto transition-all duration-300 ml-72" data-sidebar-target="content">
         <%= yield %>
         <%= render "shared/delete_modal" %>
       </main>

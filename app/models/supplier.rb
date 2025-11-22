@@ -61,11 +61,11 @@ class Supplier < ApplicationRecord
     when 'cosmeticos' then 'bg-pink-100 text-pink-800'
     when 'maquiagem' then 'bg-purple-100 text-purple-800'
     when 'perfumaria' then 'bg-blue-100 text-blue-800'
-    when 'cabelo' then 'bg-green-100 text-green-800'
+    when 'cabelo' then 'bg-orange-100 text-orange-800'
     when 'unhas' then 'bg-red-100 text-red-800'
     when 'pele' then 'bg-yellow-100 text-yellow-800'
     when 'acessorios' then 'bg-indigo-100 text-indigo-800'
-    when 'equipamentos' then 'bg-gray-100 text-gray-800'
+    when 'equipamentos' then 'bg-gray-200 text-gray-800'
     else 'bg-gray-100 text-gray-800'
     end
   end

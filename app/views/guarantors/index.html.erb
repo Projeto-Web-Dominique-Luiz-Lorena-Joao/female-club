@@ -6,24 +6,46 @@
       <p class="mt-2 text-gray-600">Gerenciar todos os fiadores cadastrados no sistema</p>
     </div>
     <div class="flex gap-3">
-      <%= link_to new_guarantor_path, class: "bg-green-600 hover:bg-green-500 text-white px-6 py-3 rounded-lg font-medium shadow-lg transition inline-flex items-center" do %>
+      <%= link_to new_guarantor_path, class: "bg-black hover:bg-gray-700 text-white px-6 py-3 rounded-lg font-medium shadow-lg transition duration-200 inline-flex items-center" do %>
         Novo Fiador
       <% end %>
     </div>
+  </div>
+
+  <div class="bg-white rounded-lg shadow p-6">
+    <%= form_with url: guarantors_path, method: :get, class: "space-y-4", local: true do %>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+        <div class="md:col-span-2">
+          <%= text_field_tag :search, params[:search],
+            placeholder: "Buscar por nome, CPF, telefone ou cliente",
+            class: "w-full px-4 py-2 border border-gray-300 rounded-lg" %>
+        </div>
+
+        <div class="flex justify-end space-x-2 items-center">
+          <%= submit_tag "Buscar",
+              class: "bg-black hover:bg-gray-700 text-white px-6 py-2 rounded-lg font-medium transition duration-200" %>
+
+          <%= link_to "Limpar", guarantors_path,
+              class: "bg-gray-300 hover:bg-gray-200 text-gray-700 px-6 py-2 rounded-lg font-medium transition duration-200" %>
+        </div>
+
+      </div>
+    <% end %>
   </div>
 
   <!-- Lista -->
   <div class="bg-white rounded-lg shadow overflow-hidden">
     <% if @guarantors.any? %>
       <table class="min-w-full divide-y divide-gray-200">
-        <thead class="bg-gray-50">
+        <thead class="bg-black">
           <tr>
-            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Nome</th>
-            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Cliente</th>
-            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">CPF</th>
-            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Telefone</th>
-            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Parentesco</th>
-            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase w-32">Ações</th>
+            <th class="px-6 py-3 text-center text-xs font-medium text-white uppercase">Nome</th>
+            <th class="px-6 py-3 text-center text-xs font-medium text-white uppercase">Cliente</th>
+            <th class="px-6 py-3 text-center text-xs font-medium text-white uppercase">CPF</th>
+            <th class="px-6 py-3 text-center text-xs font-medium text-white uppercase">Telefone</th>
+            <th class="px-6 py-3 text-center text-xs font-medium text-white uppercase">Parentesco</th>
+            <th class="px-6 py-3 text-center text-xs font-medium text-white uppercase w-32">Ações</th>
           </tr>
         </thead>
         <tbody class="bg-white divide-y divide-gray-200">
@@ -54,15 +76,9 @@
                   <span class="text-gray-400">-</span>
                 <% end %>
               </td>
-              <td class="px-6 py-4 text-right w-32">
+              <td class="px-6 py-4 text-center space-x-2">
                 <div class="flex flex-col items-end space-y-2 w-full">
-                  <%= link_to "Visualizar", guarantor_path(guarantor), class: "bg-blue-200 text-blue-700 px-3 py-1 rounded-lg hover:bg-blue-100 w-full text-center text-sm font-medium" %>
-                  <%= link_to "Editar", edit_guarantor_path(guarantor), class: "bg-orange-200 text-orange-700 px-3 py-1 rounded-lg hover:bg-orange-100 w-full text-center text-sm font-medium" %>
-                  <%= button_to "Deletar", guarantor_path(guarantor),
-                      method: :delete,
-                      data: { confirm: "Tem certeza que deseja excluir este fiador?" },
-                      form: { class: "w-full" },
-                      class: "bg-red-200 text-red-700 px-3 py-1 rounded-lg hover:bg-red-100 w-full text-center text-sm font-medium" %>
+                  <%= link_to "Visualizar", guarantor_path(guarantor), class: "bg-blue-200 text-blue-700 px-5 py-2 rounded-lg hover:bg-blue-100 text-center text-sm font-medium" %>
                 </div>
               </td>
             </tr>
@@ -71,13 +87,9 @@
       </table>
     <% else %>
       <div class="text-center py-12">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-gray-300 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-        </svg>
         <p class="mt-4 text-xl text-gray-600">Nenhum fiador cadastrado</p>
-        <p class="text-gray-500 mb-6">Ainda não há fiadores cadastrados no sistema.</p>
         <%= link_to "Cadastrar primeiro fiador", new_guarantor_path,
-            class: "mt-4 inline-block bg-green-600 hover:bg-green-500 text-white px-6 py-3 rounded-lg font-medium" %>
+            class: "mt-4 inline-block bg-black hover:bg-gray-800 text-white px-6 py-3 rounded-lg font-medium transition duration-200" %>
       </div>
     <% end %>
   </div>
