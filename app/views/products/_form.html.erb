@@ -204,9 +204,13 @@
       <div>
         <%= form.label :cover_image, "Imagem de Capa", class: "block text-sm font-medium text-gray-700 mb-2" %>
         <div class="flex items-center space-x-4">
-          <% if product.cover_image.attached? %>
+          <% if product.cover_image.attached? && product.persisted? %>
             <div class="relative">
-              <%= image_tag product.cover_image.variant(resize_to_limit: [150, 150], strip: false), class: "h-24 w-24 rounded object-cover" %>
+              <% begin %>
+                <%= image_tag product.cover_image.variant(resize_to_limit: [150, 150], strip: false), class: "h-24 w-24 rounded object-cover" %>
+              <% rescue ArgumentError %>
+                <%= image_tag product.cover_image, class: "h-24 w-24 rounded object-cover" %>
+              <% end %>
               <button type="button"
                       onclick="document.getElementById('remove-cover-image').checked = true; this.textContent='Será removida'; this.classList.add('opacity-50', 'cursor-not-allowed');"
                       class="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1 hover:bg-red-600">
