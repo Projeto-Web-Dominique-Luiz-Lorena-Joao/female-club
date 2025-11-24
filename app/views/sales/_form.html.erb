@@ -1,272 +1,301 @@
-<%# app/views/sales/_form.html.erb %>
-<%= form_with(model: sale, id: "sale_form", local: true, method: sale.new_record? ? :post : :patch) do |form| %>
-  <% if sale.errors.any? %>
-    <div class="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded mb-4">
-      <h4 class="font-bold"><%= pluralize(sale.errors.count, "erro") %> impediram que esta venda fosse salva:</h4>
-      <ul class="list-disc list-inside mt-2">
-        <% sale.errors.full_messages.each do |message| %>
-          <li><%= message %></li>
+<div class="space-y-6">
+  <%= form_with(model: sale, id: "sale_form", local: true, method: sale.new_record? ? :post : :patch, class: "space-y-8 max-w-4xl mx-auto") do |form| %>
+
+    <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+
+      <div class="px-6 py-4 bg-black border-b border-gray-200">
+        <h2 class="text-xl font-bold text-white">Dados da Venda</h2>
+      </div>
+
+      <div class="p-6">
+
+        <% if sale.errors.any? %>
+          <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded-md mb-6">
+            <div class="flex">
+              <span class="text-red-500 text-xl">⚠️</span>
+              <div class="ml-3">
+                <h3 class="text-sm font-medium text-red-800">
+                  <%= pluralize(sale.errors.count, "erro") %> impediram que esta venda fosse salva:
+                </h3>
+                <ul class="mt-2 text-sm text-red-700 list-disc list-inside">
+                  <% sale.errors.full_messages.each do |message| %>
+                    <li><%= message %></li>
+                  <% end %>
+                </ul>
+              </div>
+            </div>
+          </div>
         <% end %>
-      </ul>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+          <div data-controller="sales-autocomplete"
+               data-sales-autocomplete-search-url-value="/sales/search_employees"
+               data-sales-autocomplete-allow-create-value="false"
+               id="employee_autocomplete">
+            <%= form.label :employee_id, "Funcionário *", class: "block text-sm font-medium text-gray-700 mb-2" %>
+            <div class="relative">
+              <%= form.hidden_field :employee_id, id: "sale_employee_id", data: { "sales-autocomplete-target": "hiddenInput" } %>
+              <input type="text"
+                     id="employee_search"
+                     class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 
+                            focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent"
+                     placeholder="Digite o nome do funcionário..."
+                     autocomplete="off"
+                     value="<%= sale.employee&.full_name %>"
+                     data-sales-autocomplete-target="searchInput"
+                     data-action="input->sales-autocomplete#search focus->sales-autocomplete#focus click->sales-autocomplete#focus"
+                     required>
+              <div id="employee_results"
+                   class="hidden absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto"
+                   data-sales-autocomplete-target="results"></div>
+            </div>
+            <small class="text-gray-500 text-xs mt-1 block">
+              Selecionado: <span id="selected_employee" class="font-medium" data-sales-autocomplete-target="selectedDisplay"><%= sale.employee&.full_name || 'Nenhum' %></span>
+            </small>
+          </div>
+
+          <div data-controller="sales-autocomplete"
+               data-sales-autocomplete-search-url-value="/sales/search_customers"
+               data-sales-autocomplete-allow-create-value="true"
+               id="customer_autocomplete">
+            <%= form.label :customer_id, "Cliente", class: "block text-sm font-medium text-gray-700 mb-2" %>
+            <div class="relative">
+              <%= form.hidden_field :customer_id, id: "sale_customer_id", data: { "sales-autocomplete-target": "hiddenInput" } %>
+              <input type="text"
+                     id="customer_search"
+                     name="customer_search"
+                     class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 
+                            focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent"
+                     placeholder="Digite o nome do cliente ou deixe em branco..."
+                     autocomplete="off"
+                     value="<%= sale.customer&.full_name %>"
+                     data-sales-autocomplete-target="searchInput"
+                     data-action="input->sales-autocomplete#search focus->sales-autocomplete#focus click->sales-autocomplete#focus">
+              <div id="customer_results"
+                   class="hidden absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto"
+                   data-sales-autocomplete-target="results"></div>
+            </div>
+            <small class="text-gray-500 text-xs mt-1 block">
+              Selecionado: <span id="selected_customer" class="font-medium" data-sales-autocomplete-target="selectedDisplay"><%= sale.customer&.full_name || 'Cliente Avulso' %></span>
+            </small>
+          </div>
+
+          <div>
+            <%= form.label :sale_date, "Data da Venda *", class: "block text-sm font-medium text-gray-700 mb-2" %>
+            <%= form.date_field :sale_date, 
+                class: "w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 
+                        focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent", 
+                required: true %>
+          </div>
+
+          <div>
+            <%= form.label :due_date, "Data de Vencimento", class: "block text-sm font-medium text-gray-700 mb-2" %>
+            <%= form.date_field :due_date, 
+                class: "w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 
+                        focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent" %>
+          </div>
+
+          <div>
+            <%= form.label :payment_method, "Forma de Pagamento *", class: "block text-sm font-medium text-gray-700 mb-2" %>
+            <%= form.select :payment_method, @payment_methods, { prompt: "Selecione uma opção" }, 
+                class: "w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 
+                        focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent", 
+                required: true %>
+          </div>
+
+          <div>
+            <%= form.label :status, "Status *", class: "block text-sm font-medium text-gray-700 mb-2" %>
+            <%= form.select :status, @statuses, { prompt: "Selecione uma opção" }, 
+                class: "w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 
+                        focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent", 
+                required: true %>
+          </div>
+
+          <div>
+            <%= form.label :discount_percentage, "Desconto (%)", class: "block text-sm font-medium text-gray-700 mb-2" %>
+            <%= form.text_field :discount_percentage,
+                id: "discount_percentage",
+                class: "w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 
+                        focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent",
+                placeholder: "0",
+                data: { "discount-mask": true } %>
+          </div>
+
+          <div>
+            <%= form.label :total_amount, "Valor Total *", class: "block text-sm font-medium text-gray-700 mb-2" %>
+            <%= form.number_field :total_amount, 
+                class: "w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 
+                        focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent", 
+                step: "0.01", min: "0", required: true %>
+          </div>
+
+          <div class="md:col-span-2 mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200"
+               data-controller="sale-items"
+               data-sale-items-item-type-value="product"
+               data-sale-items-search-url-value="/sales/search_products">
+            <h3 class="text-lg font-semibold text-gray-800 mb-4">Produtos</h3>
+
+            <div id="products_list" class="mb-4"></div>
+
+            <div class="flex gap-2 mb-4">
+              <div class="flex-1 relative">
+                <input type="text"
+                       id="product_search"
+                       class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white 
+                              focus:outline-none focus:ring-2 focus:ring-blue-500"
+                       placeholder="Digite o nome ou código do produto..."
+                       autocomplete="off"
+                       data-sale-items-target="searchInput"
+                       data-action="input->sale-items#search focus->sale-items#focus">
+                <div class="hidden absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto"
+                     data-sale-items-target="results"></div>
+              </div>
+              <button type="button"
+                      class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium"
+                      data-action="click->sale-items#addItem"
+                      id="add_product_btn">
+                + Produto
+              </button>
+            </div>
+
+            <div class="overflow-x-auto bg-white rounded-lg border border-gray-200">
+              <table class="w-full text-sm">
+                <thead class="bg-blue-100 border-b border-blue-200">
+                  <tr>
+                    <th class="text-left px-4 py-3 font-semibold text-gray-700">Produto</th>
+                    <th class="text-center px-4 py-3 w-24 font-semibold text-gray-700">Qtd</th>
+                    <th class="text-right px-4 py-3 w-32 font-semibold text-gray-700">Preço Unit.</th>
+                    <th class="text-right px-4 py-3 w-32 font-semibold text-gray-700">Total</th>
+                    <th class="text-center px-4 py-3 w-16"></th>
+                  </tr>
+                </thead>
+                <tbody id="products_table_body">
+                  <% sale.sale_products.each_with_index do |sale_product, index| %>
+                    <tr id="product_row_<%= index %>" class="border-b last:border-0 hover:bg-gray-50 transition">
+                      <td class="px-4 py-3"><%= sale_product.product.name %></td>
+                      <td class="text-center px-4 py-3">
+                        <%= form.fields_for :sale_products_attributes, sale_product, index: index do |f| %>
+                          <%= f.hidden_field :id %>
+                          <%= f.hidden_field :product_id %>
+                          <%= f.hidden_field :unit_price, data: { unit_price: sale_product.unit_price } %>
+                          <%= f.hidden_field :_destroy, value: 0, class: "destroy_checkbox" %>
+                          <%= f.number_field :quantity, min: 1, value: sale_product.quantity, 
+                              class: "w-16 text-center px-2 py-1 border border-gray-300 rounded bg-gray-50 quantity-input", 
+                              data: { unit_price: sale_product.unit_price } %>
+                        <% end %>
+                      </td>
+                      <td class="text-right px-4 py-3" data-unit-price="<%= sale_product.unit_price %>">R$ <%= number_with_precision(sale_product.unit_price, precision: 2, delimiter: ',', separator: '.') %></td>
+                      <td class="text-right px-4 py-3 font-semibold">R$ <span class="product_total_<%= index %>"><%= number_with_precision(sale_product.total_price, precision: 2, delimiter: ',', separator: '.') %></span></td>
+                      <td class="text-center px-4 py-3">
+                        <button type="button" class="text-red-600 hover:text-red-800 transition" onclick="removeProductRow(this)">✕</button>
+                      </td>
+                    </tr>
+                  <% end %>
+                </tbody>
+              </table>
+              <% if sale.sale_products.empty? %>
+                <p class="text-gray-500 text-center py-6 italic">Nenhum produto adicionado</p>
+              <% end %>
+            </div>
+          </div>
+
+          <div class="md:col-span-2 p-4 bg-green-50 rounded-lg border border-green-200"
+               data-controller="sale-items"
+               data-sale-items-item-type-value="service"
+               data-sale-items-search-url-value="/sales/search_services">
+            <h3 class="text-lg font-semibold text-gray-800 mb-4">Serviços</h3>
+
+            <div id="services_list" class="mb-4"></div>
+
+            <div class="flex gap-2 mb-4">
+              <div class="flex-1 relative">
+                <input type="text"
+                       id="service_search"
+                       class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white 
+                              focus:outline-none focus:ring-2 focus:ring-green-500"
+                       placeholder="Digite o nome do serviço..."
+                       autocomplete="off"
+                       data-sale-items-target="searchInput"
+                       data-action="input->sale-items#search focus->sale-items#focus">
+                <div class="hidden absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto"
+                     data-sale-items-target="results"></div>
+              </div>
+              <button type="button"
+                      class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 font-medium"
+                      data-action="click->sale-items#addItem"
+                      id="add_service_btn">
+                + Serviço
+              </button>
+            </div>
+
+            <div class="overflow-x-auto bg-white rounded-lg border border-gray-200">
+              <table class="w-full text-sm">
+                <thead class="bg-green-100 border-b border-green-200">
+                  <tr>
+                    <th class="text-left px-4 py-3 font-semibold text-gray-700">Serviço</th>
+                    <th class="text-center px-4 py-3 w-24 font-semibold text-gray-700">Qtd</th>
+                    <th class="text-right px-4 py-3 w-32 font-semibold text-gray-700">Preço Unit.</th>
+                    <th class="text-right px-4 py-3 w-32 font-semibold text-gray-700">Total</th>
+                    <th class="text-center px-4 py-3 w-16"></th>
+                  </tr>
+                </thead>
+                <tbody id="services_table_body">
+                  <% sale.sale_services.each_with_index do |sale_service, index| %>
+                    <tr id="service_row_<%= index %>" class="border-b last:border-0 hover:bg-gray-50 transition">
+                      <td class="px-4 py-3"><%= sale_service.service.name %></td>
+                      <td class="text-center px-4 py-3">
+                        <%= form.fields_for :sale_services_attributes, sale_service, index: index do |f| %>
+                          <%= f.hidden_field :id %>
+                          <%= f.hidden_field :service_id %>
+                          <%= f.hidden_field :unit_price, data: { unit_price: sale_service.unit_price } %>
+                          <%= f.hidden_field :_destroy, value: 0, class: "destroy_checkbox" %>
+                          <%= f.number_field :quantity, min: 1, value: sale_service.quantity, 
+                              class: "w-16 text-center px-2 py-1 border border-gray-300 rounded bg-gray-50 quantity-input", 
+                              data: { unit_price: sale_service.unit_price } %>
+                        <% end %>
+                      </td>
+                      <td class="text-right px-4 py-3" data-unit-price="<%= sale_service.unit_price %>">R$ <%= number_with_precision(sale_service.unit_price, precision: 2, delimiter: ',', separator: '.') %></td>
+                      <td class="text-right px-4 py-3 font-semibold">R$ <span class="service_total_<%= index %>"><%= number_with_precision(sale_service.total_price, precision: 2, delimiter: ',', separator: '.') %></span></td>
+                      <td class="text-center px-4 py-3">
+                        <button type="button" class="text-red-600 hover:text-red-800 transition" onclick="removeServiceRow(this)">✕</button>
+                      </td>
+                    </tr>
+                  <% end %>
+                </tbody>
+              </table>
+              <% if sale.sale_services.empty? %>
+                <p class="text-gray-500 text-center py-6 italic">Nenhum serviço adicionado</p>
+              <% end %>
+            </div>
+          </div>
+
+          <div class="md:col-span-2">
+            <%= form.label :notes, "Observações", class: "block text-sm font-medium text-gray-700 mb-2" %>
+            <%= form.text_area :notes, rows: 3, 
+                class: "w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 
+                        focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent" %>
+          </div>
+
+          <div class="flex justify-between items-center pt-2 md:col-span-2">
+            <div class="text-xs text-gray-500">* campos obrigatórios</div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="flex justify-end space-x-3 pt-6 border-t border-gray-200">
+      <%= link_to "Cancelar", sales_path,
+          class: "px-6 py-3 rounded-lg bg-gray-200 border border-gray-300 hover:bg-white 
+                  text-gray-700 font-medium transition" %>
+
+      <%= form.submit "Salvar Venda",
+          class: "px-6 py-3 bg-green-600 hover:bg-green-500 text-white rounded-lg 
+                  font-medium shadow-lg transition cursor-pointer" %>
     </div>
   <% end %>
-
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-    <!-- Campo de Funcionário com Autocomplete -->
-    <div data-controller="sales-autocomplete"
-         data-sales-autocomplete-search-url-value="/sales/search_employees"
-         data-sales-autocomplete-allow-create-value="false"
-         id="employee_autocomplete">
-      <%= form.label :employee_id, "Funcionário *", class: "block text-sm font-medium text-gray-700 mb-1" %>
-      <div class="relative">
-        <%= form.hidden_field :employee_id, id: "sale_employee_id", data: { "sales-autocomplete-target": "hiddenInput" } %>
-        <input type="text"
-               id="employee_search"
-               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-               placeholder="Digite o nome do funcionário..."
-               autocomplete="off"
-               value="<%= sale.employee&.full_name %>"
-               data-sales-autocomplete-target="searchInput"
-               data-action="input->sales-autocomplete#search focus->sales-autocomplete#focus click->sales-autocomplete#focus"
-               required>
-        <div id="employee_results"
-             class="hidden absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto"
-             data-sales-autocomplete-target="results"></div>
-      </div>
-      <small class="text-gray-500 text-xs">Selecionado: <span id="selected_employee" class="font-medium" data-sales-autocomplete-target="selectedDisplay"><%= sale.employee&.full_name || 'Nenhum' %></span></small>
-    </div>
-
-    <!-- Campo de Cliente com Autocomplete -->
-    <div data-controller="sales-autocomplete"
-         data-sales-autocomplete-search-url-value="/sales/search_customers"
-         data-sales-autocomplete-allow-create-value="true"
-         id="customer_autocomplete">
-      <%= form.label :customer_id, "Cliente", class: "block text-sm font-medium text-gray-700 mb-1" %>
-      <div class="relative">
-        <%= form.hidden_field :customer_id, id: "sale_customer_id", data: { "sales-autocomplete-target": "hiddenInput" } %>
-        <input type="text"
-               id="customer_search"
-               name="customer_search"
-               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-               placeholder="Digite o nome do cliente ou deixe em branco..."
-               autocomplete="off"
-               value="<%= sale.customer&.full_name %>"
-               data-sales-autocomplete-target="searchInput"
-               data-action="input->sales-autocomplete#search focus->sales-autocomplete#focus click->sales-autocomplete#focus">
-        <div id="customer_results"
-             class="hidden absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto"
-             data-sales-autocomplete-target="results"></div>
-      </div>
-      <small class="text-gray-500 text-xs">Selecionado: <span id="selected_customer" class="font-medium" data-sales-autocomplete-target="selectedDisplay"><%= sale.customer&.full_name || 'Cliente Avulso' %></span></small>
-    </div>
-  </div>
-
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-    <div>
-      <%= form.label :sale_date, "Data da Venda *", class: "block text-sm font-medium text-gray-700 mb-1" %>
-      <%= form.date_field :sale_date, class: "w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500", required: true %>
-    </div>
-
-    <div>
-      <%= form.label :due_date, "Data de Vencimento", class: "block text-sm font-medium text-gray-700 mb-1" %>
-      <%= form.date_field :due_date, class: "w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" %>
-    </div>
-  </div>
-
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-    <div>
-      <%= form.label :payment_method, "Forma de Pagamento *", class: "block text-sm font-medium text-gray-700 mb-1" %>
-      <%= form.select :payment_method, @payment_methods, { prompt: "Selecione uma opção" }, class: "w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500", required: true %>
-    </div>
-
-    <div>
-      <%= form.label :status, "Status *", class: "block text-sm font-medium text-gray-700 mb-1" %>
-      <%= form.select :status, @statuses, { prompt: "Selecione uma opção" }, class: "w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500", required: true %>
-    </div>
-  </div>
-
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-    <div>
-      <%= form.label :discount_percentage, "Desconto (%)", class: "block text-sm font-medium text-gray-700 mb-1" %>
-      <%= form.text_field :discount_percentage,
-          id: "discount_percentage",
-          class: "w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500",
-          placeholder: "0",
-          data: { "discount-mask": true } %>
-    </div>
-
-    <div>
-      <%= form.label :total_amount, "Valor Total *", class: "block text-sm font-medium text-gray-700 mb-1" %>
-      <%= form.number_field :total_amount, class: "w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500", step: "0.01", min: "0", required: true %>
-    </div>
-  </div>
-
-  <!-- Seção de Produtos -->
-  <div class="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200"
-       data-controller="sale-items"
-       data-sale-items-item-type-value="product"
-       data-sale-items-search-url-value="/sales/search_products">
-    <h3 class="text-lg font-semibold text-gray-800 mb-4">Produtos</h3>
-
-    <!-- Lista de produtos adicionados -->
-    <div id="products_list" class="mb-4">
-      <!-- Products are rendered in the table below -->
-    </div>
-
-    <!-- Campo para adicionar novo produto -->
-    <div class="flex gap-2 mb-4">
-      <div class="flex-1 relative">
-        <input type="text"
-               id="product_search"
-               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-               placeholder="Digite o nome ou código do produto..."
-               autocomplete="off"
-               data-sale-items-target="searchInput"
-               data-action="input->sale-items#search focus->sale-items#focus">
-        <div class="hidden absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto"
-             data-sale-items-target="results"></div>
-      </div>
-      <button type="button"
-              class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              data-action="click->sale-items#addItem"
-              id="add_product_btn"
-              onclick="console.log('[TEST] Add product button clicked'); console.log('this:', this); console.log('event:', event);">
-        + Produto
-      </button>
-    </div>
-
-    <!-- Tabela com produtos adicionados -->
-    <div class="overflow-x-auto">
-      <table class="w-full text-sm">
-        <thead class="bg-blue-100 border-b border-blue-300">
-          <tr>
-            <th class="text-left px-3 py-2">Produto</th>
-            <th class="text-center px-3 py-2 w-24">Qtd</th>
-            <th class="text-right px-3 py-2 w-32">Preço Unit.</th>
-            <th class="text-right px-3 py-2 w-32">Total</th>
-            <th class="text-center px-3 py-2 w-16"></th>
-          </tr>
-        </thead>
-        <tbody id="products_table_body">
-          <% sale.sale_products.each_with_index do |sale_product, index| %>
-            <tr id="product_row_<%= index %>" class="border-b hover:bg-gray-50">
-              <td class="px-3 py-2"><%= sale_product.product.name %></td>
-              <td class="text-center px-3 py-2">
-                <%= form.fields_for :sale_products_attributes, sale_product, index: index do |f| %>
-                  <%= f.hidden_field :id %>
-                  <%= f.hidden_field :product_id %>
-                  <%= f.hidden_field :unit_price, data: { unit_price: sale_product.unit_price } %>
-                  <%= f.hidden_field :_destroy, value: 0, class: "destroy_checkbox" %>
-                  <%= f.number_field :quantity, min: 1, value: sale_product.quantity, class: "w-16 text-center px-2 py-1 border border-gray-300 rounded quantity-input", data: { unit_price: sale_product.unit_price } %>
-                <% end %>
-              </td>
-              <td class="text-right px-3 py-2" data-unit-price="<%= sale_product.unit_price %>">R$ <%= number_with_precision(sale_product.unit_price, precision: 2, delimiter: ',', separator: '.') %></td>
-              <td class="text-right px-3 py-2 font-semibold">R$ <span class="product_total_<%= index %>"><%= number_with_precision(sale_product.total_price, precision: 2, delimiter: ',', separator: '.') %></span></td>
-              <td class="text-center px-3 py-2">
-                <button type="button"
-                        class="text-red-600 hover:text-red-800"
-                        onclick="removeProductRow(this)">
-                  ✕
-                </button>
-              </td>
-            </tr>
-          <% end %>
-        </tbody>
-      </table>
-      <% if sale.sale_products.empty? %>
-        <p class="text-gray-500 text-center py-4 italic">Nenhum produto adicionado</p>
-      <% end %>
-    </div>
-  </div>
-
-  <!-- Seção de Serviços -->
-  <div class="mt-6 p-4 bg-green-50 rounded-lg border border-green-200"
-       data-controller="sale-items"
-       data-sale-items-item-type-value="service"
-       data-sale-items-search-url-value="/sales/search_services">
-    <h3 class="text-lg font-semibold text-gray-800 mb-4">Serviços</h3>
-
-    <!-- Lista de serviços adicionados -->
-    <div id="services_list" class="mb-4">
-      <!-- Services are rendered in the table below -->
-    </div>
-
-    <!-- Campo para adicionar novo serviço -->
-    <div class="flex gap-2 mb-4">
-      <div class="flex-1 relative">
-        <input type="text"
-               id="service_search"
-               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-               placeholder="Digite o nome do serviço..."
-               autocomplete="off"
-               data-sale-items-target="searchInput"
-               data-action="input->sale-items#search focus->sale-items#focus">
-        <div class="hidden absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto"
-             data-sale-items-target="results"></div>
-      </div>
-      <button type="button"
-              class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500"
-              data-action="click->sale-items#addItem"
-              id="add_service_btn"
-              onclick="console.log('[TEST] Add service button clicked'); console.log('this:', this); console.log('event:', event);">
-        + Serviço
-      </button>
-    </div>
-
-    <!-- Tabela com serviços adicionados -->
-    <div class="overflow-x-auto">
-      <table class="w-full text-sm">
-        <thead class="bg-green-100 border-b border-green-300">
-          <tr>
-            <th class="text-left px-3 py-2">Serviço</th>
-            <th class="text-center px-3 py-2 w-24">Qtd</th>
-            <th class="text-right px-3 py-2 w-32">Preço Unit.</th>
-            <th class="text-right px-3 py-2 w-32">Total</th>
-            <th class="text-center px-3 py-2 w-16"></th>
-          </tr>
-        </thead>
-        <tbody id="services_table_body">
-          <% sale.sale_services.each_with_index do |sale_service, index| %>
-            <tr id="service_row_<%= index %>" class="border-b hover:bg-gray-50">
-              <td class="px-3 py-2"><%= sale_service.service.name %></td>
-              <td class="text-center px-3 py-2">
-                <%= form.fields_for :sale_services_attributes, sale_service, index: index do |f| %>
-                  <%= f.hidden_field :id %>
-                  <%= f.hidden_field :service_id %>
-                  <%= f.hidden_field :unit_price, data: { unit_price: sale_service.unit_price } %>
-                  <%= f.hidden_field :_destroy, value: 0, class: "destroy_checkbox" %>
-                  <%= f.number_field :quantity, min: 1, value: sale_service.quantity, class: "w-16 text-center px-2 py-1 border border-gray-300 rounded quantity-input", data: { unit_price: sale_service.unit_price } %>
-                <% end %>
-              </td>
-              <td class="text-right px-3 py-2" data-unit-price="<%= sale_service.unit_price %>">R$ <%= number_with_precision(sale_service.unit_price, precision: 2, delimiter: ',', separator: '.') %></td>
-              <td class="text-right px-3 py-2 font-semibold">R$ <span class="service_total_<%= index %>"><%= number_with_precision(sale_service.total_price, precision: 2, delimiter: ',', separator: '.') %></span></td>
-              <td class="text-center px-3 py-2">
-                <button type="button"
-                        class="text-red-600 hover:text-red-800"
-                        onclick="removeServiceRow(this)">
-                  ✕
-                </button>
-              </td>
-            </tr>
-          <% end %>
-        </tbody>
-      </table>
-      <% if sale.sale_services.empty? %>
-        <p class="text-gray-500 text-center py-4 italic">Nenhum serviço adicionado</p>
-      <% end %>
-    </div>
-  </div>
-
-  <div class="mt-4">
-    <%= form.label :notes, "Observações", class: "block text-sm font-medium text-gray-700 mb-1" %>
-    <%= form.text_area :notes, rows: 3, class: "w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" %>
-  </div>
-
-  <div class="flex gap-3 mt-6">
-    <%= form.submit "Salvar Venda", class: "px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500" %>
-    <%= link_to "Cancelar", sales_path, class: "px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400" %>
-  </div>
-<% end %>
+</div>
 
 <script>
 // Test to check if Stimulus is loading controllers
