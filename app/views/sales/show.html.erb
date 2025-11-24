@@ -1,230 +1,284 @@
-<div class="container mx-auto px-4 py-8">
+<div class="container mx-auto px-4 max-w-4xl">
+  <!-- Header com botões de ação -->
   <div class="flex justify-between items-center mb-6">
-    <h1 class="text-3xl font-bold text-gray-800">Venda #<%= @sale.id %></h1>
+    <%= link_to sales_path, class: "flex items-center gap-2 text-gray-600 hover:text-gray-800" do %>
+      <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+      </svg>
+      Voltar
+    <% end %>
+
     <div class="flex gap-2">
-
-      <%= link_to "Editar", edit_sale_path(@sale), class: "bg-orange-400 hover:bg-orange-300 text-white px-8 py-2 rounded-lg font-medium" %>
-       
-      <%= button_to "Deletar Venda",
-                    sale_path(@sale),
-                    method: :delete,
-                    data: { confirm: "Tem certeza que deseja excluir esta venda?" },
-                    class: "bg-red-500 hover:bg-red-400 text-white px-4 py-2 rounded-lg font-medium" %>
-
-      <%= link_to sales_path,
-          class: "bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-lg font-medium flex items-center gap-2" do %>
-
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
-            stroke="currentColor" stroke-width="2" fill="none"
-            class="w-5 h-5">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7 7-7M3 12h18" />
-        </svg>
-
-        Voltar
-      <% end %>
-
       <% if @sale.pendente? %>
-        <%= button_to "Marcar como Paga", mark_as_paid_sale_path(@sale), method: :patch, class: "bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg" %>
+        <%= button_to "Marcar como paga", mark_as_paid_sale_path(@sale), method: :patch, class: "bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg font-medium flex items-center gap-2" %>
+      <% end %>
+      
+      <%= link_to edit_sale_path(@sale), class: "bg-orange-400 hover:bg-orange-500 text-white px-4 py-2 rounded-lg font-medium flex items-center gap-2" do %>
+        <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
+        </svg>
+        Editar
+      <% end %>
+      
+      <%= button_to sale_path(@sale), method: :delete, data: { confirm: "Tem certeza que deseja excluir esta venda?" }, class: "bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-medium flex items-center gap-2" do %>
+        <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+        </svg>
+        Deletar Venda
       <% end %>
     </div>
   </div>
 
-  <!-- Status -->
-  <div class="bg-white rounded-lg shadow-md p-6 mb-6">
-    <div class="flex items-center justify-between">
-      <div>
-        <h2 class="text-xl font-semibold mb-2">Status</h2>
-        <% if @sale.pago? %>
-          <span class="px-4 py-2 rounded-full bg-green-100 text-green-800 font-semibold">Pago</span>
-        <% elsif @sale.pendente? %>
-          <span class="px-4 py-2 rounded-full bg-yellow-100 text-yellow-800 font-semibold">Pendente</span>
-        <% elsif @sale.cancelado? %>
-          <span class="px-4 py-2 rounded-full bg-red-100 text-red-800 font-semibold">Cancelado</span>
-        <% else %>
-          <span class="px-4 py-2 rounded-full bg-gray-100 text-gray-800 font-semibold">Expirado</span>
-        <% end %>
-
-        <% if @sale.overdue? %>
-          <p class="text-red-600 mt-2">⚠️ Vencida há <%= @sale.days_overdue %> dias</p>
-        <% end %>
+  <!-- Card Principal -->
+  <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+    <!-- Header Preto -->
+    <div class="bg-black text-white px-6 py-6">
+      <div class="flex items-center gap-3 mb-2">
+        <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+        </svg>
+        <h1 class="text-2xl font-bold">EXTRATO DE VENDA</h1>
       </div>
-
-      <div class="text-right">
-        <p class="text-sm text-gray-500">Valor Total</p>
-        <% if @sale.discount_percentage.present? && @sale.discount_percentage > 0 %>
-          <p class="text-lg text-gray-600 line-through">R$ <%= number_to_currency(@sale.total_amount, unit: "", precision: 2, delimiter: ".", separator: ",") %></p>
-          <p class="text-3xl font-bold text-green-600 mt-1">R$ <%= number_to_currency(@sale.total_with_discount, unit: "", precision: 2, delimiter: ".", separator: ",") %></p>
-          <p class="text-sm text-green-600 mt-1">
-            -<%= @sale.discount_percentage %>% (R$ <%= number_to_currency(@sale.total_amount - @sale.total_with_discount, unit: "", precision: 2, delimiter: ".", separator: ",") %>)
-          </p>
-        <% else %>
-          <p class="text-3xl font-bold text-gray-900">R$ <%= number_to_currency(@sale.total_amount, unit: "", precision: 2, delimiter: ".", separator: ",") %></p>
-        <% end %>
-      </div>
-    </div>
-  </div>
-
-  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-    <!-- Cliente -->
-    <div class="bg-white rounded-lg shadow-md p-6">
-      <h2 class="text-xl font-semibold mb-4">Cliente</h2>
-      <div class="space-y-3">
-        <div>
-          <p class="text-sm text-gray-500">Nome</p>
-          <p class="text-lg font-medium"><%= @sale.customer_name %></p>
-        </div>
-        <% if @sale.customer.present? %>
-          <div>
-            <p class="text-sm text-gray-500">Telefone</p>
-            <p class="text-lg"><%= @sale.customer.formatted_phone %></p>
-          </div>
-          <div>
-            <p class="text-sm text-gray-500">Email</p>
-            <p class="text-lg"><%= @sale.customer.email %></p>
-          </div>
-          <%= link_to "Ver perfil", customer_path(@sale.customer), class: "text-pink-500 hover:text-pink-600" %>
-        <% end %>
-      </div>
+      <p class="text-sm text-gray-300">Venda #<%= @sale.id %></p>
     </div>
 
-    <!-- Funcionário -->
-    <div class="bg-white rounded-lg shadow-md p-6">
-      <h2 class="text-xl font-semibold mb-4">Funcionário</h2>
-      <div class="space-y-3">
+    <!-- Conteúdo -->
+    <div class="p-6">
+      <!-- Status e Informações Principais -->
+      <div class="grid grid-cols-2 gap-4 mb-6">
         <div>
-          <p class="text-sm text-gray-500">Nome</p>
-          <p class="text-lg font-medium"><%= @sale.employee_name %></p>
+          <p class="text-sm text-gray-500 mb-1">Status:</p>
+          <% if @sale.pago? %>
+            <span class="inline-block px-3 py-1 rounded-full bg-green-100 text-green-800 font-semibold text-sm">Pago</span>
+          <% elsif @sale.pendente? %>
+            <span class="inline-block px-3 py-1 rounded-full bg-yellow-400 text-gray-900 font-semibold text-sm">Pendente</span>
+          <% elsif @sale.cancelado? %>
+            <span class="inline-block px-3 py-1 rounded-full bg-red-100 text-red-800 font-semibold text-sm">Cancelado</span>
+          <% else %>
+            <span class="inline-block px-3 py-1 rounded-full bg-gray-100 text-gray-800 font-semibold text-sm">Expirado</span>
+          <% end %>
         </div>
-        <div>
-          <p class="text-sm text-gray-500">Telefone</p>
-          <p class="text-lg"><%= @sale.employee.phone %></p>
-        </div>
-        <div>
-          <p class="text-sm text-gray-500">Cargo</p>
-          <p class="text-lg"><%= @sale.employee.position.humanize %></p>
-        </div>
-        <%= link_to "Ver perfil", employee_path(@sale.employee), class: "text-pink-500 hover:text-pink-600" %>
-      </div>
-    </div>
 
-    <!-- Detalhes -->
-    <div class="bg-white rounded-lg shadow-md p-6">
-      <h2 class="text-xl font-semibold mb-4">Detalhes</h2>
-      <div class="space-y-3">
-        <div>
-          <p class="text-sm text-gray-500">Data da Venda</p>
-          <p class="text-lg font-medium"><%= @sale.sale_date.strftime("%d/%m/%Y") %></p>
+        <div class="text-right">
+          <p class="text-sm text-gray-500 mb-1">Data da Venda:</p>
+          <p class="font-semibold"><%= @sale.sale_date.strftime("%d/%m/%Y") %></p>
         </div>
+      </div>
+
+      <!-- Alerta de Vencimento -->
+      <% if @sale.overdue? %>
+        <div class="bg-red-50 border border-red-200 rounded-lg px-4 py-3 mb-6 flex items-center gap-2">
+          <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-red-500">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+          </svg>
+          <span class="text-red-700 font-medium">Vencida há <%= @sale.days_overdue %> dias</span>
+        </div>
+      <% end %>
+
+      <!-- Informações Adicionais -->
+      <div class="grid grid-cols-3 gap-4 mb-6 text-sm">
         <% if @sale.due_date.present? %>
           <div>
-            <p class="text-sm text-gray-500">Vencimento</p>
-            <p class="text-lg font-medium"><%= @sale.due_date.strftime("%d/%m/%Y") %></p>
+            <p class="text-gray-500 mb-1">Vencimento:</p>
+            <p class="font-semibold"><%= @sale.due_date.strftime("%d/%m/%Y") %></p>
           </div>
         <% end %>
+        
+        <div>
+          <p class="text-gray-500 mb-1">Forma de Pagamento:</p>
+          <p class="font-semibold"><%= @sale.payment_method.humanize.upcase %></p>
+        </div>
+
         <% if @sale.paid_date.present? %>
           <div>
-            <p class="text-sm text-gray-500">Data do Pagamento</p>
-            <p class="text-lg font-medium text-green-600"><%= @sale.paid_date.strftime("%d/%m/%Y") %></p>
+            <p class="text-gray-500 mb-1">Data do Pagamento:</p>
+            <p class="font-semibold text-green-600"><%= @sale.paid_date.strftime("%d/%m/%Y") %></p>
           </div>
         <% end %>
-        <div>
-          <p class="text-sm text-gray-500">Forma de Pagamento</p>
-          <p class="text-lg font-medium"><%= @sale.payment_method.humanize %></p>
+      </div>
+
+      <hr class="my-6 border-gray-200">
+
+      <!-- Resumo de Valores -->
+      <div class="mb-6">
+        <div class="flex items-center gap-2 mb-3">
+          <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-gray-700">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <h2 class="font-semibold text-gray-900">Resumo de Valores</h2>
+        </div>
+        
+        <div class="bg-gray-50 rounded-lg p-4 space-y-2">
+          <div class="flex justify-between">
+            <span class="text-gray-600">Subtotal:</span>
+            <span class="font-semibold">R$ <%= number_to_currency(@sale.total_amount, unit: "", precision: 2, delimiter: ".", separator: ",") %></span>
+          </div>
+          
+          <% if @sale.discount_percentage.present? && @sale.discount_percentage > 0 %>
+            <div class="flex justify-between text-red-600">
+              <span>Desconto (<%= @sale.discount_percentage %>%):</span>
+              <span class="font-semibold">- R$ <%= number_to_currency(@sale.total_amount - @sale.total_with_discount, unit: "", precision: 2, delimiter: ".", separator: ",") %></span>
+            </div>
+            <hr class="border-gray-300">
+            <div class="flex justify-between text-lg pt-1">
+              <span class="font-semibold">Total a Pagar:</span>
+              <span class="font-bold text-green-600">R$ <%= number_to_currency(@sale.total_with_discount, unit: "", precision: 2, delimiter: ".", separator: ",") %></span>
+            </div>
+          <% else %>
+            <hr class="border-gray-300">
+            <div class="flex justify-between text-lg pt-1">
+              <span class="font-semibold">Total a Pagar:</span>
+              <span class="font-bold text-green-600">R$ <%= number_to_currency(@sale.total_amount, unit: "", precision: 2, delimiter: ".", separator: ",") %></span>
+            </div>
+          <% end %>
         </div>
       </div>
-    </div>
 
-    <!-- Valores -->
-    <div class="bg-white rounded-lg shadow-md p-6">
-      <h2 class="text-xl font-semibold mb-4">Valores</h2>
-      <div class="space-y-3">
-        <div class="flex justify-between pb-3 border-b">
-          <span class="text-gray-600">Valor Total:</span>
-          <span class="text-xl font-semibold">R$ <%= number_to_currency(@sale.total_amount, unit: "", precision: 2, delimiter: ".", separator: ",") %></span>
+      <hr class="my-6 border-gray-200">
+
+      <!-- Cliente -->
+      <div class="mb-6">
+        <div class="flex items-center gap-2 mb-3">
+          <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-gray-700">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+          </svg>
+          <h2 class="font-semibold text-gray-900">Cliente</h2>
         </div>
-        <% if @sale.discount_percentage.present? && @sale.discount_percentage > 0 %>
-          <div class="flex justify-between pb-3 border-b">
-            <span class="text-gray-600">Desconto (<%= @sale.discount_percentage %>%):</span>
-            <span class="text-lg text-green-600">- R$ <%= number_to_currency(@sale.total_amount - @sale.total_with_discount, unit: "", precision: 2, delimiter: ".", separator: ",") %></span>
+        
+        <div class="bg-gray-50 rounded-lg p-4">
+          <p class="font-medium text-gray-900 mb-2">
+            <%= link_to @sale.customer_name, @sale.customer.present? ? customer_path(@sale.customer) : "#", class: "text-blue-600 hover:text-blue-800" %>
+          </p>
+          <% if @sale.customer.present? %>
+            <div class="text-sm text-gray-600 space-y-1">
+              <p><%= @sale.customer.formatted_phone %></p>
+              <p><%= @sale.customer.email %></p>
+            </div>
+          <% end %>
+        </div>
+      </div>
+
+      <hr class="my-6 border-gray-200">
+
+      <!-- Atendido por -->
+      <div class="mb-6">
+        <div class="flex items-center gap-2 mb-3">
+          <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-gray-700">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 14.15v4.25c0 1.094-.787 2.036-1.872 2.18-2.087.277-4.216.42-6.378.42s-4.291-.143-6.378-.42c-1.085-.144-1.872-1.086-1.872-2.18v-4.25m16.5 0a2.18 2.18 0 00.75-1.661V8.706c0-1.081-.768-2.015-1.837-2.175a48.114 48.114 0 00-3.413-.387m4.5 8.006c-.194.165-.42.295-.673.38A23.978 23.978 0 0112 15.75c-2.648 0-5.195-.429-7.577-1.22a2.016 2.016 0 01-.673-.38m0 0A2.18 2.18 0 013 12.489V8.706c0-1.081.768-2.015 1.837-2.175a48.111 48.111 0 013.413-.387m7.5 0V5.25A2.25 2.25 0 0013.5 3h-3a2.25 2.25 0 00-2.25 2.25v.894m7.5 0a48.667 48.667 0 00-7.5 0M12 12.75h.008v.008H12v-.008z" />
+          </svg>
+          <h2 class="font-semibold text-gray-900">Atendido por</h2>
+        </div>
+        
+        <div class="bg-gray-50 rounded-lg p-4">
+          <p class="font-medium text-gray-900 mb-2">
+            <%= link_to @sale.employee_name, employee_path(@sale.employee), class: "text-blue-600 hover:text-blue-800" %>
+          </p>
+          <div class="text-sm text-gray-600 space-y-1">
+            <p><%= @sale.employee.phone %></p>
+            <p class="text-gray-500"><%= @sale.employee.position.humanize %></p>
           </div>
-          <div class="flex justify-between pt-2">
-            <span class="text-lg font-semibold">Valor Final:</span>
-            <span class="text-2xl font-bold text-pink-600">R$ <%= number_to_currency(@sale.total_with_discount, unit: "", precision: 2, delimiter: ".", separator: ",") %></span>
+        </div>
+      </div>
+
+      <!-- Produtos -->
+      <% if @sale.sale_products.any? %>
+        <hr class="my-6 border-gray-200">
+        <div class="mb-6">
+          <div class="flex items-center gap-2 mb-3">
+            <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-gray-700">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
+            </svg>
+            <h2 class="font-semibold text-gray-900">Produtos</h2>
           </div>
-        <% end %>
+          
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+              <thead class="bg-blue-100 text-gray-700">
+                <tr>
+                  <th class="text-left px-3 py-2 font-semibold">Item</th>
+                  <th class="text-center px-3 py-2 font-semibold">Qtd</th>
+                  <th class="text-right px-3 py-2 font-semibold">Preço Unit.</th>
+                  <th class="text-right px-3 py-2 font-semibold">Total</th>
+                </tr>
+              </thead>
+              <tbody class="bg-white">
+                <% @sale.sale_products.each do |sale_product| %>
+                  <tr class="border-b border-gray-200">
+                    <td class="px-3 py-2"><%= sale_product.product.name %></td>
+                    <td class="text-center px-3 py-2"><%= sale_product.quantity %></td>
+                    <td class="text-right px-3 py-2">R$ <%= number_with_precision(sale_product.unit_price, precision: 2, delimiter: ',', separator: '.') %></td>
+                    <td class="text-right px-3 py-2 font-semibold">R$ <%= number_with_precision(sale_product.total_price, precision: 2, delimiter: ',', separator: '.') %></td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      <% end %>
+
+      <!-- Serviços -->
+      <% if @sale.sale_services.any? %>
+        <hr class="my-6 border-gray-200">
+        <div class="mb-6">
+          <div class="flex items-center gap-2 mb-3">
+            <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-gray-700">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M11.42 15.17L17.25 21A2.652 2.652 0 0021 17.25l-5.877-5.877M11.42 15.17l2.496-3.03c.317-.384.74-.626 1.208-.766M11.42 15.17l-4.655 5.653a2.548 2.548 0 11-3.586-3.586l6.837-5.63m5.108-.233c.55-.164 1.163-.188 1.743-.14a4.5 4.5 0 004.486-6.336l-3.276 3.277a3.004 3.004 0 01-2.25-2.25l3.276-3.276a4.5 4.5 0 00-6.336 4.486c.091 1.076-.071 2.264-.904 2.95l-.102.085m-1.745 1.437L5.909 7.5H4.5L2.25 3.75l1.5-1.5L7.5 4.5v1.409l4.26 4.26m-1.745 1.437l1.745-1.437m6.615 8.206L15.75 15.75M4.867 19.125h.008v.008h-.008v-.008z" />
+            </svg>
+            <h2 class="font-semibold text-gray-900">Serviços</h2>
+          </div>
+          
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+              <thead class="bg-green-100 text-gray-700">
+                <tr>
+                  <th class="text-left px-3 py-2 font-semibold">Serviço</th>
+                  <th class="text-center px-3 py-2 font-semibold">Qtd</th>
+                  <th class="text-right px-3 py-2 font-semibold">Preço Unit.</th>
+                  <th class="text-right px-3 py-2 font-semibold">Total</th>
+                </tr>
+              </thead>
+              <tbody class="bg-white">
+                <% @sale.sale_services.each do |sale_service| %>
+                  <tr class="border-b border-gray-200">
+                    <td class="px-3 py-2"><%= sale_service.service.name %></td>
+                    <td class="text-center px-3 py-2"><%= sale_service.quantity %></td>
+                    <td class="text-right px-3 py-2">R$ <%= number_with_precision(sale_service.unit_price, precision: 2, delimiter: ',', separator: '.') %></td>
+                    <td class="text-right px-3 py-2 font-semibold">R$ <%= number_with_precision(sale_service.total_price, precision: 2, delimiter: ',', separator: '.') %></td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      <% end %>
+
+      <!-- Observações -->
+      <% if @sale.notes.present? %>
+        <hr class="my-6 border-gray-200">
+        <div class="mb-4">
+          <div class="flex items-center gap-2 mb-3">
+            <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-gray-700">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m3.75 9v6m3-3H9m1.5-12H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+            </svg>
+            <h2 class="font-semibold text-gray-900">Observações</h2>
+          </div>
+          
+          <div class="bg-gray-50 rounded-lg p-4">
+            <p class="text-gray-700 text-sm whitespace-pre-wrap"><%= @sale.notes %></p>
+          </div>
+        </div>
+      <% end %>
+
+      <!-- Footer -->
+      <div class="text-center text-xs text-gray-400 mt-6 pt-4 border-t border-gray-200">
+        <p>Este é um extrato detalhado da venda realizada</p>
+        <p>Documento gerado em <%= Time.current.strftime("%d/%m/%Y às %H:%M") %></p>
       </div>
     </div>
   </div>
 
-  <!-- Produtos -->
-  <% if @sale.sale_products.any? %>
-    <div class="bg-white rounded-lg shadow-md p-6 mt-6">
-      <h2 class="text-xl font-semibold mb-4">Produtos</h2>
-      <div class="overflow-x-auto">
-        <table class="w-full text-sm">
-          <thead class="bg-blue-100 border-b border-blue-300">
-            <tr>
-              <th class="text-left px-3 py-2">Produto</th>
-              <th class="text-center px-3 py-2 w-24">Qtd</th>
-              <th class="text-right px-3 py-2 w-32">Preço Unit.</th>
-              <th class="text-right px-3 py-2 w-32">Total</th>
-            </tr>
-          </thead>
-          <tbody>
-            <% @sale.sale_products.each do |sale_product| %>
-              <tr class="border-b hover:bg-gray-50">
-                <td class="px-3 py-2"><%= sale_product.product.name %></td>
-                <td class="text-center px-3 py-2"><%= sale_product.quantity %></td>
-                <td class="text-right px-3 py-2">R$ <%= number_with_precision(sale_product.unit_price, precision: 2, delimiter: ',', separator: '.') %></td>
-                <td class="text-right px-3 py-2 font-semibold">R$ <%= number_with_precision(sale_product.total_price, precision: 2, delimiter: ',', separator: '.') %></td>
-              </tr>
-            <% end %>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  <% end %>
-
-  <!-- Serviços -->
-  <% if @sale.sale_services.any? %>
-    <div class="bg-white rounded-lg shadow-md p-6 mt-6">
-      <h2 class="text-xl font-semibold mb-4">Serviços</h2>
-      <div class="overflow-x-auto">
-        <table class="w-full text-sm">
-          <thead class="bg-green-100 border-b border-green-300">
-            <tr>
-              <th class="text-left px-3 py-2">Serviço</th>
-              <th class="text-center px-3 py-2 w-24">Qtd</th>
-              <th class="text-right px-3 py-2 w-32">Preço Unit.</th>
-              <th class="text-right px-3 py-2 w-32">Total</th>
-            </tr>
-          </thead>
-          <tbody>
-            <% @sale.sale_services.each do |sale_service| %>
-              <tr class="border-b hover:bg-gray-50">
-                <td class="px-3 py-2"><%= sale_service.service.name %></td>
-                <td class="text-center px-3 py-2"><%= sale_service.quantity %></td>
-                <td class="text-right px-3 py-2">R$ <%= number_with_precision(sale_service.unit_price, precision: 2, delimiter: ',', separator: '.') %></td>
-                <td class="text-right px-3 py-2 font-semibold">R$ <%= number_with_precision(sale_service.total_price, precision: 2, delimiter: ',', separator: '.') %></td>
-              </tr>
-            <% end %>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  <% end %>
-
-  <!-- Observações -->
-  <% if @sale.notes.present? %>
-    <div class="bg-white rounded-lg shadow-md p-6 mt-6">
-      <h2 class="text-xl font-semibold mb-4">Observações</h2>
-      <p class="text-gray-700 whitespace-pre-wrap"><%= @sale.notes %></p>
-    </div>
-  <% end %>
-
-
-  <!-- Ações -->
-  <div class="flex gap-4 mt-6">
-    <%= button_to "Excluir Venda", sale_path(@sale), method: :delete, class: "bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-lg", data: { confirm: "Tem certeza?" } %>
+  <!-- Botão Excluir no final -->
+  <div class="mt-6 text-center">
+    <%= button_to "Excluir Venda", sale_path(@sale), method: :delete, class: "bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-lg font-medium", data: { confirm: "Tem certeza que deseja excluir esta venda?" } %>
   </div>
 </div>
