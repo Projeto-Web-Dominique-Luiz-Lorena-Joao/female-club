@@ -14,7 +14,11 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :employees # ÚNICA DECLARAÇÃO DE EMPLOYEES
+    resources :employees do
+    member do
+      patch :reactivate
+    end
+  end
 
   resources :suppliers do
     member do
