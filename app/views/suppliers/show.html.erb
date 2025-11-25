@@ -11,7 +11,7 @@
     </div>
     <div class="flex space-x-3">
 
-      <%= link_to edit_supplier_path(@supplier), class: "bg-orange-400 hover:bg-orange-300 text-white px-8 py-2 rounded-lg font-medium" do %>
+      <%= link_to edit_supplier_path(@supplier), class: "bg-black hover:bg-gray-700 text-white px-8 py-2 rounded-lg font-medium" do %>
         Editar
       <% end %>
 
@@ -29,7 +29,7 @@
                       class: "bg-green-500 hover:bg-green-400 text-white px-4 py-2 rounded-lg font-medium" %>
       <% end %>
 
-      <%= link_to suppliers_path, class: "bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-lg font-medium flex items-center gap-2" do %>
+      <%= link_to suppliers_path, class: "bg-gray-300 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg font-medium flex items-center gap-2" do %>
 
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
             stroke="currentColor" stroke-width="2" fill="none"
@@ -44,37 +44,36 @@
 
   <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
     <!-- Card Total de Itens -->
-    <div class="bg-white rounded-lg shadow p-6">
+    <div class="bg-white rounded-lg border border-gray-200 p-4">
       <div class="flex items-start">
         <div class="flex-shrink-0 bg-blue-100 rounded-lg p-3">
-          <svg class="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+          <svg class="w-6 h-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" d="m21 7.5-9-5.25L3 7.5m18 0-9 5.25m9-5.25v9l-9 5.25M3 7.5l9 5.25M3 7.5v9l9 5.25m0-9v9" />
           </svg>
         </div>
-        <div class="ml-4 flex-1">
-          <p class="text-gray-500 text-sm font-medium">Total de Itens</p>
+        <div class="ml-3 flex-1">
+          <p class="text-xs text-gray-500 font-medium">Total de Itens</p>
           <% if @supplier.respond_to?(:total_items_supplied) && @supplier.respond_to?(:items_in_stock) %>
-            <p class="text-4xl font-bold text-blue-600 mt-2"><%= @supplier.total_items_supplied %></p>
+            <p class="text-2xl font-bold text-gray-900 mt-1"><%= @supplier.total_items_supplied %></p>
             <p class="text-sm text-gray-600 mt-1"><%= @supplier.items_in_stock %> em estoque</p>
           <% else %>
-            <p class="text-4xl font-bold text-blue-600 mt-2">--</p>
-            <p class="text-sm text-gray-600 mt-1">-- em estoque</p>
+            <p class="text-2xl font-bold text-blue-600 mt-1">--</p>
           <% end %>
         </div>
       </div>
     </div>
 
     <!-- Card Valor Total em Estoque -->
-    <div class="bg-white rounded-lg shadow p-6">
+    <div class="bg-white rounded-lg border border-gray-200 p-4">
       <div class="flex items-start">
         <div class="flex-shrink-0 bg-green-100 rounded-lg p-3">
-          <svg class="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0 1 15.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 0 1 3 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 0 0-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 0 1-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 0 0 3 15h-.75M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm3 0h.008v.008H18V10.5Zm-12 0h.008v.008H6V10.5Z" />
+          <svg class="w-6 h-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
           </svg>
         </div>
-        <div class="ml-4 flex-1">
-          <p class="text-gray-500 text-sm font-medium">Valor Total em Estoque</p>
-          <p class="text-3xl font-bold text-green-600 mt-2">
+        <div class="ml-3 flex-1">
+          <p class="text-xs text-gray-500 font-medium">Valor Total em Estoque</p>
+          <p class="text-2xl font-bold text-green-600 mt-1">
             <% if @supplier.respond_to?(:total_stock_value) %>
               R$ <%= number_with_delimiter(@supplier.total_stock_value.to_f.round(2), delimiter: '.', separator: ',') %>
             <% else %>
@@ -86,16 +85,16 @@
     </div>
 
     <!-- Card Último Fornecimento -->
-    <div class="bg-white rounded-lg shadow p-6">
+    <div class="bg-white rounded-lg border border-gray-200 p-4">
       <div class="flex items-start">
-        <div class="flex-shrink-0 bg-purple-100 rounded-lg p-3">
-          <svg class="h-6 w-6 text-purple-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+        <div class="flex-shrink-0 bg-gray-100 rounded-lg p-3">
+          <svg class="w-6 h-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5" />
           </svg>
         </div>
-        <div class="ml-4 flex-1">
-          <p class="text-gray-500 text-sm font-medium">Último Fornecimento</p>
-          <p class="text-2xl font-bold text-gray-900 mt-2">
+        <div class="ml-3 flex-1">
+          <p class="text-xs text-gray-500 font-medium">Último Fornecimento</p>
+          <p class="text-2xl font-bold text-gray-900 mt-1">
             <% if @supplier.respond_to?(:last_supply_date) && (date = @supplier.last_supply_date) %>
               <%= I18n.l(date, format: :short) rescue date.strftime('%d/%m/%Y') %>
             <% else %>

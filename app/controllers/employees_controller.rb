@@ -1,6 +1,6 @@
 class EmployeesController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_employee, only: [:show, :edit, :update, :destroy]
+  before_action :set_employee, only: [:show, :edit, :update, :destroy, :reactivate]
 
   def index
     @employees = Employee.all
@@ -38,14 +38,11 @@ class EmployeesController < ApplicationController
     if params[:sort_admission].present?
       case params[:sort_admission]
       when 'desc'
-        # Mais antigos primeiro (admission_date mais antiga = maior)
         @employees = @employees.order(admission_date: :asc, created_at: :desc)
       when 'asc'
-        # Mais novos primeiro (admission_date mais recente = menor)
         @employees = @employees.order(admission_date: :desc, created_at: :desc)
       end
     else
-      # Ordenação padrão
       @employees = @employees.order(created_at: :desc)
     end
 
@@ -55,8 +52,6 @@ class EmployeesController < ApplicationController
   end
 
   def show
-    # @recent_sales = @employee.sales.recent.limit(5)
-    # @recent_movements = @employee.stock_movements.recent.limit(5)
   end
 
   def new
@@ -85,8 +80,19 @@ class EmployeesController < ApplicationController
   end
 
   def destroy
-    @employee.destroy
-    redirect_to employees_path, notice: 'Funcionário excluído com sucesso!'
+    if @employee.update(status: :inativo)
+      redirect_to employees_path, notice: 'Funcionário inativado com sucesso!'
+    else
+      redirect_to employees_path, alert: 'Não foi possível inativar o funcionário.'
+    end
+  end
+
+  def reactivate
+    if @employee.update(status: :ativo)
+      redirect_to employee_path(@employee), notice: 'Funcionário reativado com sucesso!'
+    else
+      redirect_to employee_path(@employee), alert: 'Não foi possível reativar o funcionário.'
+    end
   end
 
   private

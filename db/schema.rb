@@ -239,7 +239,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_24_235117) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "status", default: "ativo"
-    t.boolean "active"
+    t.boolean "active", default: true, null: false
     t.index ["legal_name"], name: "index_suppliers_on_legal_name"
     t.index ["product_category"], name: "index_suppliers_on_product_category"
     t.index ["status"], name: "index_suppliers_on_status"

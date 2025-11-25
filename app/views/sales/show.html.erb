@@ -1,31 +1,30 @@
 <div class="container mx-auto px-4 max-w-4xl">
   <!-- Header com botões de ação -->
   <div class="flex justify-between items-center mb-6">
-    <%= link_to sales_path, class: "flex items-center gap-2 text-gray-600 hover:text-gray-800" do %>
-      <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
-      </svg>
-      Voltar
-    <% end %>
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900">EXTRATO DE VENDA</h1>
+      <p class="text-sm text-gray-500">Venda #<%= @sale.id %></p>
+    </div>
 
-    <div class="flex gap-2">
+    <div class="flex space-x-3">
       <% if @sale.pendente? %>
         <%= button_to "Marcar como paga", mark_as_paid_sale_path(@sale), method: :patch, class: "bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg font-medium flex items-center gap-2" %>
       <% end %>
       
-      <%= link_to edit_sale_path(@sale), class: "bg-orange-400 hover:bg-orange-500 text-white px-4 py-2 rounded-lg font-medium flex items-center gap-2" do %>
-        <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
-        </svg>
+      <%= link_to edit_sale_path(@sale), class: "bg-black hover:bg-gray-700 text-white px-8 py-2 rounded-lg font-medium" do %>
         Editar
       <% end %>
       
-      <%= button_to sale_path(@sale), method: :delete, data: { confirm: "Tem certeza que deseja excluir esta venda?" }, class: "bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-medium flex items-center gap-2" do %>
-        <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+      <%= link_to "javascript:history.back()",
+          class: "bg-gray-300 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg font-medium flex items-center gap-2" do %>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+            stroke="currentColor" stroke-width="2" fill="none"
+            class="w-5 h-5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7 7-7M3 12h18" />
         </svg>
-        Deletar Venda
+        Voltar
       <% end %>
+
     </div>
   </div>
 
@@ -37,9 +36,8 @@
         <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8">
           <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
         </svg>
-        <h1 class="text-2xl font-bold">EXTRATO DE VENDA</h1>
+        <h2 class="text-xl font-bold">Detalhes da Venda</h2>
       </div>
-      <p class="text-sm text-gray-300">Venda #<%= @sale.id %></p>
     </div>
 
     <!-- Conteúdo -->
@@ -164,8 +162,9 @@
       <div class="mb-6">
         <div class="flex items-center gap-2 mb-3">
           <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-gray-700">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 14.15v4.25c0 1.094-.787 2.036-1.872 2.18-2.087.277-4.216.42-6.378.42s-4.291-.143-6.378-.42c-1.085-.144-1.872-1.086-1.872-2.18v-4.25m16.5 0a2.18 2.18 0 00.75-1.661V8.706c0-1.081-.768-2.015-1.837-2.175a48.114 48.114 0 00-3.413-.387m4.5 8.006c-.194.165-.42.295-.673.38A23.978 23.978 0 0112 15.75c-2.648 0-5.195-.429-7.577-1.22a2.016 2.016 0 01-.673-.38m0 0A2.18 2.18 0 013 12.489V8.706c0-1.081.768-2.015 1.837-2.175a48.111 48.111 0 013.413-.387m7.5 0V5.25A2.25 2.25 0 0013.5 3h-3a2.25 2.25 0 00-2.25 2.25v.894m7.5 0a48.667 48.667 0 00-7.5 0M12 12.75h.008v.008H12v-.008z" />
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
           </svg>
+
           <h2 class="font-semibold text-gray-900">Atendido por</h2>
         </div>
         
@@ -268,17 +267,11 @@
           </div>
         </div>
       <% end %>
-
-      <!-- Footer -->
-      <div class="text-center text-xs text-gray-400 mt-6 pt-4 border-t border-gray-200">
-        <p>Este é um extrato detalhado da venda realizada</p>
-        <p>Documento gerado em <%= Time.current.strftime("%d/%m/%Y às %H:%M") %></p>
-      </div>
     </div>
   </div>
 
-  <!-- Botão Excluir no final -->
+  <!-- Botão de Cancelar Venda -->
   <div class="mt-6 text-center">
-    <%= button_to "Excluir Venda", sale_path(@sale), method: :delete, class: "bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-lg font-medium", data: { confirm: "Tem certeza que deseja excluir esta venda?" } %>
+    <%= button_to "Cancelar Venda", sale_path(@sale), method: :delete, class: "bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-lg font-medium", data: { confirm: "Tem certeza que deseja excluir esta venda?" } %>
   </div>
 </div>

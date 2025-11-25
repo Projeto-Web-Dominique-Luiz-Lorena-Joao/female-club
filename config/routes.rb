@@ -7,17 +7,21 @@ Rails.application.routes.draw do
       get :search_customers
     end
   end
-  resources :suppliers do
-    member do
-      patch :reactivate
-    end
-  end
-  resources :employees
+
   resources :guarantors do
     collection do
       get :search_customers
     end
   end
+
+  resources :employees # ÚNICA DECLARAÇÃO DE EMPLOYEES
+
+  resources :suppliers do
+    member do
+      patch :reactivate
+    end
+  end
+
   resources :customers
   resources :products
   resources :services
