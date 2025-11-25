@@ -109,7 +109,8 @@ class GuarantorsController < ApplicationController
       :cpf,
       :phone,
       :address,
-      :relationship
+      :relationship,
+      :status
     )
   end
 

@@ -1,146 +1,165 @@
-<%= form_with(model: employee, class: "space-y-6") do |form| %>
-  <% if employee.errors.any? %>
-    <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded-md">
-      <div class="flex">
-        <span class="text-red-500 text-xl">⚠️</span>
-        <div class="ml-3">
-          <h3 class="text-sm font-medium text-red-800">
-            <%= pluralize(employee.errors.count, "erro") %>:
-          </h3>
-          <ul class="mt-2 text-sm text-red-700 list-disc list-inside">
-            <% employee.errors.full_messages.each do |message| %>
-              <li><%= message %></li>
-            <% end %>
-          </ul>
+<div class="space-y-6">
+  <%= form_with(model: employee, local: true, class: "space-y-8 max-w-4xl mx-auto") do |form| %>
+
+    <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+
+      <div class="px-6 py-4 bg-black border-b border-gray-200">
+        <h2 class="text-xl font-bold text-white">Dados do Funcionário</h2>
+      </div>
+
+      <div class="p-6">
+
+        <% if employee.errors.any? %>
+          <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded-md mb-6">
+            <div class="flex">
+              <span class="text-red-500 text-xl">⚠️</span>
+              <div class="ml-3">
+                <h3 class="text-sm font-medium text-red-800">
+                  <%= pluralize(employee.errors.count, "erro") %> ao salvar:
+                </h3>
+                <ul class="mt-2 text-sm text-red-700 list-disc list-inside">
+                  <% employee.errors.full_messages.each do |message| %>
+                    <li><%= message %></li>
+                  <% end %>
+                </ul>
+              </div>
+            </div>
+          </div>
+        <% end %>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+          <div class="md:col-span-2">
+            <%= form.label :full_name, "Nome Completo *", class: "block text-sm font-medium text-gray-700 mb-2" %>
+            <%= form.text_field :full_name,
+                class: "w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 
+                        focus:ring-2 focus:ring-gray-900 focus:border-transparent",
+                required: true %>
+          </div>
+
+          <div>
+            <%= form.label :cpf, "CPF *", class: "block text-sm font-medium text-gray-700 mb-2" %>
+            <%= form.text_field :cpf,
+                class: "w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 
+                        focus:ring-2 focus:ring-gray-900 focus:border-transparent",
+                placeholder: "000.000.000-00",
+                maxlength: 14,
+                required: true %>
+          </div>
+
+          <div>
+            <%= form.label :phone, "Telefone *", class: "block text-sm font-medium text-gray-700 mb-2" %>
+            <%= form.text_field :phone,
+                class: "w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100
+                        focus:ring-2 focus:ring-gray-900 focus:border-transparent",
+                placeholder: "(00) 00000-0000",
+                required: true %>
+          </div>
+
+          <div>
+            <%= form.label :email, "E-mail", class: "block text-sm font-medium text-gray-700 mb-2" %>
+            <%= form.email_field :email,
+                class: "w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100
+                        focus:ring-2 focus:ring-gray-900 focus:border-transparent",
+                placeholder: "email@exemplo.com" %>
+          </div>
+
+          <div>
+            <div class="flex items-center gap-1 mb-2">
+              <%= form.label :position, "Cargo *", class: "text-sm font-medium text-gray-700" %>
+            </div>
+
+            <%= form.select :position,
+                [
+                  ['Gerente', 'gerente'],
+                  ['Vendedor', 'vendedor'],
+                  ['Caixa', 'caixa'],
+                  ['Estoquista', 'estoquista'],
+                  ['Manicure', 'manicure'],
+                  ['Cabeleireira', 'cabeleireira'],
+                  ['Esteticista', 'esteticista'],
+                  ['Maquiador', 'maquiador'],
+                  ['Atendente', 'atendente'],
+                  ['Auxiliar', 'auxiliar']
+                ],
+                {},
+                class: "w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 
+                        focus:ring-2 focus:ring-gray-900 focus:border-transparent",
+                required: true %>
+          </div>
+
+          <div>
+            <%= form.label :admission_date, "Data de Admissão", class: "block text-sm font-medium text-gray-700 mb-2" %>
+            <%= form.date_field :admission_date,
+                class: "w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 
+                        focus:ring-2 focus:ring-gray-900 focus:border-transparent" %>
+          </div>
+
+          <div>
+            <%= form.label :salary, "Salário (R$)", class: "block text-sm font-medium text-gray-700 mb-2" %>
+            <%= form.number_field :salary,
+                step: 0.01,
+                class: "w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 
+                        focus:ring-2 focus:ring-gray-900 focus:border-transparent",
+                placeholder: "0.00" %>
+          </div>
+
+          <div>
+            <%= form.label :status, "Status", class: "block text-sm font-medium text-gray-700 mb-2" %>
+            <%= form.select :status,
+                [
+                  ['Ativo', 'ativo'],
+                  ['Inativo', 'inativo'],
+                  ['Férias', 'ferias'],
+                  ['Afastado', 'afastado']
+                ],
+                {},
+                class: "w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100
+                        focus:ring-2 focus:ring-gray-900 focus:border-transparent" %>
+          </div>
+
+          <div class="md:col-span-2">
+            <%= form.label :work_days, "Dias de Trabalho", class: "block text-sm font-medium text-gray-700 mb-2" %>
+            <%= form.text_field :work_days,
+                class: "w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100
+                        focus:ring-2 focus:ring-gray-900 focus:border-transparent",
+                placeholder: "Ex: Segunda a Sexta, 8h às 18h" %>
+          </div>
+
+          <div class="md:col-span-2">
+            <%= form.label :address, "Endereço", class: "block text-sm font-medium text-gray-700 mb-2" %>
+            <%= form.text_area :address,
+                rows: 2,
+                class: "w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100
+                        focus:ring-2 focus:ring-gray-900 focus:border-transparent" %>
+          </div>
+
+          <div class="md:col-span-2">
+            <%= form.label :notes, "Observações", class: "block text-sm font-medium text-gray-700 mb-2" %>
+            <%= form.text_area :notes,
+                rows: 3,
+                class: "w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100
+                        focus:ring-2 focus:ring-gray-900 focus:border-transparent" %>
+          </div>
+          <div class="flex justify-between items-center pt-2">
+            <div class="text-xs text-gray-500">* campos obrigatórios</div>
+          </div>
+
         </div>
       </div>
     </div>
+
+    <div class="flex justify-end space-x-3 pt-6 border-t border-gray-200">
+      <%= link_to "Cancelar", "javascript:history.back()",
+          class: "px-6 py-3 rounded-lg bg-gray-200 border border-gray-300 hover:bg-white 
+                 text-gray-700 font-medium transition" %>
+
+      <%= form.submit "Salvar Funcionário",
+          class: "px-6 py-3 bg-green-600 hover:bg-green-500 text-white rounded-lg 
+                 font-medium shadow-lg transition cursor-pointer" %>
+    </div>
   <% end %>
-
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-
-    <div class="md:col-span-2">
-      <%= form.label :full_name, "Nome Completo *", class: "block text-sm font-medium text-gray-700 mb-2" %>
-      <%= form.text_field :full_name,
-          class: "w-full px-4 py-2 border border-gray-300 rounded-lg",
-          required: true %>
-    </div>
-
-
-    <div>
-      <%= form.label :cpf, "CPF *", class: "block text-sm font-medium text-gray-700 mb-2" %>
-      <%= form.text_field :cpf,
-          class: "w-full px-4 py-2 border border-gray-300 rounded-lg",
-          placeholder: "000.000.000-00",
-          maxlength: 14,
-          required: true %>
-    </div>
-
-
-    <div>
-      <%= form.label :phone, "Telefone *", class: "block text-sm font-medium text-gray-700 mb-2" %>
-      <%= form.text_field :phone,
-          class: "w-full px-4 py-2 border border-gray-300 rounded-lg",
-          placeholder: "(00) 00000-0000",
-          required: true %>
-    </div>
-
-
-    <div>
-      <%= form.label :email, "E-mail", class: "block text-sm font-medium text-gray-700 mb-2" %>
-      <%= form.email_field :email,
-          class: "w-full px-4 py-2 border border-gray-300 rounded-lg",
-          placeholder: "email@exemplo.com" %>
-    </div>
-
-
-    <div>
-      <div class="flex items-center gap-1 mb-2">
-        <%= form.label :position, "Cargo", class: "text-sm font-medium text-gray-700" %>
-        <span class="text-xs font-bold text-gray-600">(obrigatório)</span>
-      </div>
-      <%= form.select :position,
-          [
-            ['Gerente', 'gerente'],
-            ['Vendedor', 'vendedor'],
-            ['Caixa', 'caixa'],
-            ['Estoquista', 'estoquista'],
-            ['Manicure', 'manicure'],
-            ['Cabeleireira', 'cabeleireira'],
-            ['Esteticista', 'esteticista'],
-            ['Maquiador', 'maquiador'],
-            ['Atendente', 'atendente'],
-            ['Auxiliar', 'auxiliar']
-          ],
-          {},
-          class: "w-full px-4 py-2 border border-gray-300 rounded-lg",
-          required: true,
-          id: "employee_position" %>
-    </div>
-
-
-    <div>
-      <%= form.label :admission_date, "Data de Admissão", class: "block text-sm font-medium text-gray-700 mb-2" %>
-      <%= form.date_field :admission_date,
-          class: "w-full px-4 py-2 border border-gray-300 rounded-lg" %>
-    </div>
-
-
-    <div>
-      <%= form.label :salary, "Salário (R$)", class: "block text-sm font-medium text-gray-700 mb-2" %>
-      <%= form.number_field :salary,
-          step: 0.01,
-          class: "w-full px-4 py-2 border border-gray-300 rounded-lg",
-          placeholder: "0.00" %>
-    </div>
-
-
-    <div>
-      <%= form.label :status, "Status", class: "block text-sm font-medium text-gray-700 mb-2" %>
-      <%= form.select :status,
-          options_for_select([
-            ['Ativo', 'ativo'],
-            ['Inativo', 'inativo'],
-            ['Férias', 'ferias'],
-            ['Afastado', 'afastado']
-          ], employee.status || 'ativo'),
-          {},
-          class: "w-full px-4 py-2 border border-gray-300 rounded-lg" %>
-    </div>
-
-
-    <div class="md:col-span-2">
-      <%= form.label :work_days, "Dias de Trabalho", class: "block text-sm font-medium text-gray-700 mb-2" %>
-      <%= form.text_field :work_days,
-          class: "w-full px-4 py-2 border border-gray-300 rounded-lg",
-          placeholder: "Ex: Segunda a Sexta, 8h às 18h" %>
-    </div>
-
-
-    <div class="md:col-span-2">
-      <%= form.label :address, "Endereço", class: "block text-sm font-medium text-gray-700 mb-2" %>
-      <%= form.text_area :address,
-          rows: 2,
-          class: "w-full px-4 py-2 border border-gray-300 rounded-lg" %>
-    </div>
-
-
-    <div class="md:col-span-2">
-      <%= form.label :notes, "Observações", class: "block text-sm font-medium text-gray-700 mb-2" %>
-      <%= form.text_area :notes,
-          rows: 3,
-          class: "w-full px-4 py-2 border border-gray-300 rounded-lg" %>
-    </div>
-  </div>
-
-  <div class="flex justify-end space-x-2 pt-6 ">
-    <%= link_to "Cancelar", employees_path,
-        class: "px-6 py-3 rounded-lg bg-gray-300 hover:bg-gray-200 text-gray-700 font-medium transition" %>
-    <%= form.submit "Salvar Funcionário",
-        class: "px-6 py-3 bg-green-600 hover:bg-green-500 text-white rounded-lg font-medium shadow-lg transition" %>
-  </div>
-
-<% end %>
+</div>
 
 <script>
 (function() {

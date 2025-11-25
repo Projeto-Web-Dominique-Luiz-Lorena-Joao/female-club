@@ -28,7 +28,7 @@
                     data: { confirm: "Tem certeza que deseja excluir este fiador?" },
                     class: "bg-red-500 hover:bg-red-400 text-white px-4 py-2 rounded-lg font-medium" %>
 
-      <%= link_to guarantors_path, class: "bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-lg font-medium flex items-center gap-2" do %>
+      <%= link_to guarantors_path, class: "bg-gray-300 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg font-medium flex items-center gap-2" do %>
 
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
             stroke="currentColor" stroke-width="2" fill="none"
@@ -43,7 +43,7 @@
   </div>
 
   <div class="bg-white rounded-lg shadow-lg overflow-hidden">
-    <div class="px-6 py-4 bg-gray-900">
+    <div class="px-6 py-4 bg-black">
       <h2 class="text-xl font-bold text-white">Informações Pessoais</h2>
     </div>
 
@@ -63,6 +63,21 @@
         <p class="mt-1 text-lg text-gray-900"><%= @guarantor.relationship&.titleize || '-' %></p>
       </div>
 
+      <div>
+        <p class="text-sm font-medium text-gray-500">Status</p>
+        <div class="mt-1">
+          <% if @guarantor.ativo? %>
+            <span class="px-3 py-1 text-sm font-medium rounded-full bg-green-100 text-green-800">
+              Ativo
+            </span>
+          <% elsif @guarantor.inativo? %>
+            <span class="px-3 py-1 text-sm font-medium rounded-full bg-red-100 text-red-800">
+              Inativo
+            </span>
+          <% end %>
+        </div>
+      </div>
+
       <% if @guarantor.address.present? %>
         <div class="col-span-2">
           <p class="text-sm font-medium text-gray-500">Endereço</p>
@@ -74,7 +89,7 @@
 
   <% if @guarantor.customer.present? %>
     <div class="bg-white rounded-lg shadow-lg overflow-hidden">
-      <div class="px-6 py-4 bg-gray-900">
+      <div class="px-6 py-4 bg-black">
         <h2 class="text-xl font-bold text-white">Informações do Cliente</h2>
       </div>
 

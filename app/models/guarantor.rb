@@ -14,6 +14,11 @@ class Guarantor < ApplicationRecord
     outro: "outro"
   }
 
+  enum :status, {
+    ativo: 'ativo',
+    inativo: 'inativo'
+  }, default: :ativo
+
   validates :full_name, presence: true, length: { minimum: 3, maximum: 100 }
   validates :cpf, format: { with: /\A\d{11}\z/, message: "deve conter 11 dígitos" },
                   allow_blank: true,
@@ -21,6 +26,7 @@ class Guarantor < ApplicationRecord
   validates :phone, format: { with: /\A\d{10,11}\z/, message: "deve conter 10 ou 11 dígitos" },
                     allow_blank: true
   validates :relationship, length: { maximum: 50 }, allow_blank: true
+  validates :status, presence: true, inclusion: { in: statuses.keys, message: "deve ser 'ativo' ou 'inativo'" }
 
   before_validation :normalize_cpf
   before_validation :normalize_phone
