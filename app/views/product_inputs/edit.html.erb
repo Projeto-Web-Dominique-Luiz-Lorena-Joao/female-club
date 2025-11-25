@@ -1,37 +1,78 @@
-<div class="container mx-auto px-4 py-8">
-  <div class="max-w-2xl mx-auto">
-    <h1 class="text-3xl font-bold text-gray-900 mb-6">Editar Entrada de Produto</h1>
+<div class="w-full mb-8 pb-4 border-b border-gray-200 px-8">
+  <div class="flex justify-between items-center max-w-4xl mx-auto">
 
-    <div class="bg-white shadow rounded-lg p-6">
-      <%= form_with(model: @product_input, local: true) do |form| %>
+    <div class="flex items-center gap-4">
+      <div class="bg-black p-3 rounded-2xl shadow-lg flex items-center justify-center">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" 
+          stroke-width="1.5" stroke="white" class="size-8">
+          <path stroke-linecap="round" stroke-linejoin="round" 
+          d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
+        </svg>
+      </div>
+
+      <div>
+        <h1 class="text-2xl font-medium text-gray-900">Editar Entrada de Produto</h1>
+        <p class="text-gray-600 text-sm mt-1">
+          Atualize os dados abaixo para modificar esta entrada no estoque
+        </p>
+      </div>
+    </div>
+
+    <%= link_to "javascript:history.back()", class: "bg-white border border-gray-300 hover:bg-gray-100 text-gray-700 px-4 py-2 rounded-lg font-medium flex items-center gap-2 transition shadow-sm" do %>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+           stroke="currentColor" stroke-width="3" fill="none"
+           class="w-4 h-4">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7 7-7M3 12h18" />
+      </svg>
+      Voltar
+    <% end %>
+
+  </div>
+</div>
+
+<div class="max-w-4xl mx-auto">
+  <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+    <div class="px-6 py-4 bg-black border-b border-gray-200">
+      <h2 class="text-xl font-bold text-white">Dados da Entrada</h2>
+    </div>
+
+    <div class="p-6">
+      <%= form_with(model: @product_input, local: true, data: { turbo: false }) do |form| %>
         <% if @product_input.errors.any? %>
-          <div class="mb-4 p-4 bg-red-50 border border-red-200 rounded">
-            <h2 class="text-lg font-semibold text-red-900 mb-2">
-              <%= pluralize(@product_input.errors.count, "erro") %> encontrado:
-            </h2>
-            <ul class="text-red-800">
-              <% @product_input.errors.full_messages.each do |message| %>
-                <li class="mb-1">• <%= message %></li>
-              <% end %>
-            </ul>
+          <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded-md mb-6">
+            <div class="flex">
+              <span class="text-red-500 text-xl">⚠️</span>
+              <div class="ml-3">
+                <h3 class="text-sm font-medium text-red-800">
+                  <%= pluralize(@product_input.errors.count, "erro") %> encontrado:
+                </h3>
+                <ul class="mt-2 text-sm text-red-700 list-disc list-inside">
+                  <% @product_input.errors.full_messages.each do |message| %>
+                    <li><%= message %></li>
+                  <% end %>
+                </ul>
+              </div>
+            </div>
           </div>
         <% end %>
 
+        <!-- Seção de Produto (não editável) -->
         <div class="mb-6">
           <label class="block text-sm font-medium text-gray-700 mb-2">
             Produto
           </label>
-          <div class="block w-full px-4 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-700">
+          <div class="block w-full px-4 py-2 h-11 border border-gray-300 rounded-lg bg-gray-100 text-gray-700">
             <%= @product_input.product.name %>
           </div>
           <p class="text-xs text-gray-500 mt-1">Produto não pode ser alterado</p>
         </div>
 
+        <!-- Seção de Seleção de Fornecedor -->
         <div class="mb-6">
           <label for="product_input_supplier_id" class="block text-sm font-medium text-gray-700 mb-2">
             Fornecedor
           </label>
-          <select name="product_input[supplier_id]" id="product_input_supplier_id" class="block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500">
+          <select name="product_input[supplier_id]" id="product_input_supplier_id" class="block w-full px-4 py-2 h-11 border border-gray-300 rounded-lg bg-gray-100 focus:ring-2 focus:ring-gray-900 focus:border-transparent">
             <option value="">Nenhum fornecedor</option>
             <% Supplier.where(status: "ativo").order(:legal_name).each do |supplier| %>
               <option value="<%= supplier.id %>" <%= "selected" if @product_input.supplier_id == supplier.id %>>
@@ -46,7 +87,7 @@
             <label for="product_input_quantity" class="block text-sm font-medium text-gray-700 mb-2">
               Quantidade <span class="text-red-600">*</span>
             </label>
-            <%= form.number_field :quantity, min: 1, class: "block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500", placeholder: "0", required: true %>
+            <%= form.number_field :quantity, min: 1, class: "block w-full px-4 py-2 h-11 border border-gray-300 rounded-lg bg-gray-100 focus:ring-2 focus:ring-gray-900 focus:border-transparent", placeholder: "0", required: true %>
           </div>
 
           <div>
@@ -54,7 +95,7 @@
               Custo Unitário
             </label>
             <% unit_cost_value = @product_input.unit_cost.present? ? sprintf('%.2f', @product_input.unit_cost).gsub('.', ',') : '' %>
-            <%= form.text_field :unit_cost, inputmode: "decimal", value: unit_cost_value, class: "block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500", placeholder: "0,00", data: { controller: "currency-mask" } %>
+            <%= form.text_field :unit_cost, inputmode: "decimal", value: unit_cost_value, class: "block w-full px-4 py-2 h-11 border border-gray-300 rounded-lg bg-gray-100 focus:ring-2 focus:ring-gray-900 focus:border-transparent", placeholder: "0,00", data: { controller: "currency-mask" } %>
           </div>
         </div>
 
@@ -63,14 +104,14 @@
             <label for="product_input_date_input" class="block text-sm font-medium text-gray-700 mb-2">
               Data da Entrada <span class="text-red-600">*</span>
             </label>
-            <%= form.date_field :date_input, class: "block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500", required: true %>
+            <%= form.date_field :date_input, class: "block w-full px-4 py-2 h-11 border border-gray-300 rounded-lg bg-gray-100 focus:ring-2 focus:ring-gray-900 focus:border-transparent", required: true %>
           </div>
 
           <div>
             <label for="product_input_date_input_time" class="block text-sm font-medium text-gray-700 mb-2">
               Horário
             </label>
-            <input type="time" id="product_input_date_input_time" name="product_input[date_input_time]" value="<%= @product_input.date_input.strftime('%H:%M') if @product_input.date_input.present? %>" class="block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500" />
+            <input type="time" id="product_input_date_input_time" name="product_input[date_input_time]" value="<%= @product_input.date_input.strftime('%H:%M') if @product_input.date_input.present? %>" class="block w-full px-4 py-2 h-11 border border-gray-300 rounded-lg bg-gray-100 focus:ring-2 focus:ring-gray-900 focus:border-transparent" />
           </div>
         </div>
 
@@ -78,19 +119,23 @@
           <label for="product_input_invoice_number" class="block text-sm font-medium text-gray-700 mb-2">
             Número da Nota Fiscal
           </label>
-          <%= form.text_field :invoice_number, class: "block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500", placeholder: "NF-123456" %>
+          <%= form.text_field :invoice_number, class: "block w-full px-4 py-2 h-11 border border-gray-300 rounded-lg bg-gray-100 focus:ring-2 focus:ring-gray-900 focus:border-transparent", placeholder: "NF-123456" %>
         </div>
 
         <div class="mb-6">
           <label for="product_input_notes" class="block text-sm font-medium text-gray-700 mb-2">
             Observações
           </label>
-          <%= form.text_area :notes, rows: 4, class: "block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500", placeholder: "Detalhes adicionais..." %>
+          <%= form.text_area :notes, rows: 4, class: "block w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 focus:ring-2 focus:ring-gray-900 focus:border-transparent", placeholder: "Detalhes adicionais sobre a entrada..." %>
         </div>
 
-        <div class="flex gap-4">
-          <%= form.submit "Atualizar Entrada", class: "bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded" %>
-          <%= link_to "Cancelar", product_input_path(@product_input), class: "bg-gray-400 hover:bg-gray-500 text-white font-bold py-2 px-6 rounded" %>
+        <div class="flex justify-between items-center pt-2 mb-4">
+          <div class="text-xs text-gray-500">* campos obrigatórios</div>
+        </div>
+
+        <div class="flex justify-end gap-3 pt-6 border-t border-gray-200">
+          <%= link_to "Cancelar", product_input_path(@product_input), class: "px-6 py-3 rounded-lg bg-gray-200 border border-gray-300 hover:bg-white text-gray-700 font-medium transition" %>
+          <%= form.submit "Atualizar Entrada", class: "px-6 py-3 bg-green-600 hover:bg-green-500 text-white rounded-lg font-medium shadow-lg transition cursor-pointer" %>
         </div>
       <% end %>
     </div>
