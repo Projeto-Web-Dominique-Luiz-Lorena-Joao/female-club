@@ -18,6 +18,7 @@ class InventoryStatusController < ApplicationController
 
     # Estatísticas
     @total_products = Product.where(active: true).count
+    @critical_stock = Product.where(active: true, stock_status: 'critico').count
     @low_stock = Product.where(active: true, stock_status: 'baixo').count
     @out_of_stock = Product.where(active: true, stock_status: 'fora_de_estoque').count
     @in_stock = Product.where(active: true, stock_status: 'em_estoque').count

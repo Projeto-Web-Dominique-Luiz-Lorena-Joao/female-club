@@ -11,7 +11,7 @@
     <% end %>
   </div>
 
-  <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
     <!-- Card Total de Produtos -->
     <div class="bg-white rounded-lg border border-gray-200 p-4">
       <div class="flex items-start">
@@ -60,14 +60,44 @@
     <!-- Card Estoque Baixo -->
     <div class="bg-white rounded-lg border border-gray-200 p-4">
       <div class="flex items-start">
+        <div class="flex-shrink-0 bg-yellow-100 rounded-lg p-3">
+          <svg class="h-6 w-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+          </svg>
+        </div>
+        <div class="ml-3 flex-1">
+          <p class="text-xs text-gray-500 font-medium">Estoque Baixo</p>
+          <p class="text-2xl font-bold text-yellow-600 mt-1"><%= Product.where(stock_status: 'baixo').count %></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card Estoque Crítico -->
+    <div class="bg-white rounded-lg border border-gray-200 p-4">
+      <div class="flex items-start">
         <div class="flex-shrink-0 bg-orange-100 rounded-lg p-3">
           <svg class="h-6 w-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
           </svg>
         </div>
         <div class="ml-3 flex-1">
-          <p class="text-xs text-gray-500 font-medium">Estoque Baixo</p>
-          <p class="text-2xl font-bold text-orange-600 mt-1"><%= Product.low_stock.count %></p>
+          <p class="text-xs text-gray-500 font-medium">Estoque Crítico</p>
+          <p class="text-2xl font-bold text-orange-600 mt-1"><%= Product.where(stock_status: 'critico').count %></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card Fora de Estoque -->
+    <div class="bg-white rounded-lg border border-gray-200 p-4">
+      <div class="flex items-start">
+        <div class="flex-shrink-0 bg-red-100 rounded-lg p-3">
+          <svg class="h-6 w-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </div>
+        <div class="ml-3 flex-1">
+          <p class="text-xs text-gray-500 font-medium">Fora de Estoque</p>
+          <p class="text-2xl font-bold text-red-600 mt-1"><%= Product.where(stock_status: 'fora_de_estoque').count %></p>
         </div>
       </div>
     </div>
@@ -167,8 +197,16 @@
               <td class="px-6 py-4 text-center">
                 <div class="flex flex-col items-center">
                   <p class="text-sm font-medium text-gray-900"><%= product.quantity || 0 %></p>
-                  <% if product.min_stock.present? && product.low_stock? %>
+                  <% if product.stock_status == "fora_de_estoque" %>
                     <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800 mt-1">
+                      Fora de Estoque
+                    </span>
+                  <% elsif product.stock_status == "critico" %>
+                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800 mt-1">
+                      Crítico (mín: <%= product.min_stock %>)
+                    </span>
+                  <% elsif product.stock_status == "baixo" %>
+                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 mt-1">
                       Baixo (mín: <%= product.min_stock %>)
                     </span>
                   <% elsif product.min_stock.present? %>

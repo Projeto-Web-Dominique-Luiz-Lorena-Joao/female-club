@@ -59,10 +59,12 @@ class Product < ApplicationRecord
   end
 
   def update_stock_status
-    if quantity && min_stock && quantity <= min_stock
-      self.stock_status = "baixo"
-    elsif quantity && quantity <= 0
+    if quantity.nil? || quantity <= 0
       self.stock_status = "fora_de_estoque"
+    elsif min_stock && quantity < min_stock
+      self.stock_status = "critico"
+    elsif min_stock && quantity < (min_stock + 3)
+      self.stock_status = "baixo"
     else
       self.stock_status = "em_estoque"
     end

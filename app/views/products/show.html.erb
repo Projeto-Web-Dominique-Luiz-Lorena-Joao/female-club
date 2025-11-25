@@ -88,18 +88,22 @@
         <!-- Card Estoque Atual -->
         <div class="bg-white rounded-lg border border-gray-200 p-4">
           <div class="flex items-start">
-            <div class="flex-shrink-0 bg-blue-100 rounded-lg p-3">
-              <svg class="h-6 w-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="flex-shrink-0 <%= @product.stock_status == 'fora_de_estoque' ? 'bg-red-100' : @product.stock_status == 'critico' ? 'bg-orange-100' : @product.stock_status == 'baixo' ? 'bg-yellow-100' : 'bg-blue-100' %> rounded-lg p-3">
+              <svg class="h-6 w-6 <%= @product.stock_status == 'fora_de_estoque' ? 'text-red-600' : @product.stock_status == 'critico' ? 'text-orange-600' : @product.stock_status == 'baixo' ? 'text-yellow-600' : 'text-blue-600' %>" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
               </svg>
             </div>
             <div class="ml-3 flex-1">
               <p class="text-xs text-gray-500 font-medium">Estoque Atual</p>
-              <p class="text-xl font-bold <%= @product.low_stock? ? 'text-red-600' : 'text-blue-600' %> mt-1">
+              <p class="text-xl font-bold <%= @product.stock_status == 'fora_de_estoque' ? 'text-red-600' : @product.stock_status == 'critico' ? 'text-orange-600' : @product.stock_status == 'baixo' ? 'text-yellow-600' : 'text-blue-600' %> mt-1">
                 <%= @product.quantity || 0 %>
               </p>
-              <% if @product.low_stock? %>
-                <p class="text-xs text-red-600 mt-1">⚠️ Estoque baixo</p>
+              <% if @product.stock_status == "fora_de_estoque" %>
+                <p class="text-xs text-red-600 mt-1">❌ Fora de estoque</p>
+              <% elsif @product.stock_status == "critico" %>
+                <p class="text-xs text-orange-600 mt-1">⚠️ Estoque crítico</p>
+              <% elsif @product.stock_status == "baixo" %>
+                <p class="text-xs text-yellow-600 mt-1">⚠️ Estoque baixo</p>
               <% end %>
             </div>
           </div>
@@ -272,7 +276,7 @@
 
             <div>
               <p class="text-xs text-gray-500 mb-1">Quantidade em Estoque</p>
-              <p class="text-base font-semibold <%= @product.low_stock? ? 'text-red-600' : 'text-blue-600' %>">
+              <p class="text-base font-semibold <%= @product.stock_status == 'fora_de_estoque' ? 'text-red-600' : @product.stock_status == 'critico' ? 'text-orange-600' : @product.stock_status == 'baixo' ? 'text-yellow-600' : 'text-blue-600' %>">
                 <%= @product.quantity || 0 %>
               </p>
             </div>
