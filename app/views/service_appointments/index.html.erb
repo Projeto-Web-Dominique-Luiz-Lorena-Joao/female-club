@@ -1,5 +1,4 @@
-<div class="max-w-7xl mx-auto space-y-6">
-  <!-- Header com Título e Botão de Novo -->
+<div class="max-w-screen mx-auto space-y-6">
   <div class="flex justify-between items-center">
     <div>
       <h1 class="text-3xl font-bold text-gray-900">Agendamentos de Serviço</h1>
@@ -9,7 +8,6 @@
       <%= link_to "Novo Agendamento", new_service_appointment_path, class: "bg-black hover:bg-gray-700 text-white px-6 py-3 rounded-lg font-medium shadow-lg transition duration-200 inline-flex items-center" %>
     </div>
   </div>
-
   <!-- Filtros -->
   <div class="bg-white rounded-lg shadow p-6">
     <%= form_with url: service_appointments_path, method: :get, local: true, class: "space-y-4" do |f| %>
