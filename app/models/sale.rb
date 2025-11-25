@@ -49,6 +49,7 @@ class Sale < ApplicationRecord
   before_validation :set_default_status, on: :create
   before_validation :set_default_payment_method, on: :create
   before_save :calculate_total_amount
+  after_commit :create_product_outputs, on: :create
 
   def overdue?
     due_date.present? && due_date < Date.today && pendente?
@@ -77,6 +78,18 @@ class Sale < ApplicationRecord
   end
 
   private
+
+  def create_product_outputs
+    sale_products.each do |sale_product|
+      ProductOutput.create(
+        product_id: sale_product.product_id,
+        quantity: sale_product.quantity,
+        output_type: 'venda',
+        date_output: sale_date,
+        created_by_id: nil
+      )
+    end
+  end
 
   def set_default_payment_method
     self.payment_method ||= 'pix'

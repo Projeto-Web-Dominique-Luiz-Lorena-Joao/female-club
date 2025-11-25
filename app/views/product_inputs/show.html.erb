@@ -1,0 +1,92 @@
+<div class="container mx-auto px-4 py-8">
+  <div class="max-w-2xl mx-auto">
+    <div class="flex justify-between items-center mb-6">
+      <h1 class="text-3xl font-bold text-gray-900">Detalhes da Entrada</h1>
+      <div class="space-x-2">
+        <%= link_to "Editar", edit_product_input_path(@product_input), class: "bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded" %>
+        <%= link_to "Voltar", product_inputs_path, class: "bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded" %>
+      </div>
+    </div>
+
+    <div class="bg-white shadow rounded-lg p-6">
+      <div class="grid grid-cols-2 gap-6 mb-6">
+        <div>
+          <h3 class="text-sm font-medium text-gray-500 uppercase">Produto</h3>
+          <p class="text-lg font-semibold text-gray-900 mt-1">
+            <%= link_to @product_input.product.name, product_path(@product_input.product), class: "text-blue-600 hover:text-blue-900" %>
+          </p>
+        </div>
+
+        <div>
+          <h3 class="text-sm font-medium text-gray-500 uppercase">Fornecedor</h3>
+          <p class="text-lg font-semibold text-gray-900 mt-1">
+            <% if @product_input.supplier %>
+              <%= link_to @product_input.supplier.legal_name, supplier_path(@product_input.supplier), class: "text-blue-600 hover:text-blue-900" %>
+            <% else %>
+              <span class="text-gray-500">Não especificado</span>
+            <% end %>
+          </p>
+        </div>
+
+        <div>
+          <h3 class="text-sm font-medium text-gray-500 uppercase">Quantidade</h3>
+          <p class="text-lg font-semibold text-gray-900 mt-1">
+            <%= @product_input.quantity %>
+          </p>
+        </div>
+
+        <div>
+          <h3 class="text-sm font-medium text-gray-500 uppercase">Custo Unitário</h3>
+          <p class="text-lg font-semibold text-gray-900 mt-1">
+            <% if @product_input.unit_cost %>
+              <%= number_to_currency(@product_input.unit_cost) %>
+            <% else %>
+              <span class="text-gray-500">-</span>
+            <% end %>
+          </p>
+        </div>
+
+        <div>
+          <h3 class="text-sm font-medium text-gray-500 uppercase">Custo Total</h3>
+          <p class="text-lg font-semibold text-green-700 mt-1">
+            <% if @product_input.unit_cost %>
+              <%= number_to_currency(@product_input.total_cost) %>
+            <% else %>
+              <span class="text-gray-500">-</span>
+            <% end %>
+          </p>
+        </div>
+
+        <div>
+          <h3 class="text-sm font-medium text-gray-500 uppercase">Data da Entrada</h3>
+          <p class="text-lg font-semibold text-gray-900 mt-1">
+            <%= l(@product_input.date_input, format: :long) %>
+          </p>
+        </div>
+
+        <% if @product_input.invoice_number.present? %>
+          <div>
+            <h3 class="text-sm font-medium text-gray-500 uppercase">Nota Fiscal</h3>
+            <p class="text-lg font-semibold text-gray-900 mt-1">
+              <%= @product_input.invoice_number %>
+            </p>
+          </div>
+        <% end %>
+
+        <div>
+          <h3 class="text-sm font-medium text-gray-500 uppercase">Registrado por</h3>
+          <p class="text-lg font-semibold text-gray-900 mt-1">
+            <%= @product_input.created_by&.email || "Sistema" %>
+          </p>
+        </div>
+      </div>
+
+      <% if @product_input.notes.present? %>
+        <div class="mb-6 p-4 bg-gray-50 rounded-lg">
+          <h3 class="text-sm font-medium text-gray-700 uppercase mb-2">Observações</h3>
+          <p class="text-gray-700 whitespace-pre-wrap"><%= @product_input.notes %></p>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

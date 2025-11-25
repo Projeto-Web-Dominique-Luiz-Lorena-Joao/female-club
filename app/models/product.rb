@@ -6,13 +6,15 @@ class Product < ApplicationRecord
   has_many :sale_products, dependent: :destroy
   has_many :sales, through: :sale_products
   has_many :stock_movements, dependent: :destroy
+  has_many :product_outputs, dependent: :destroy
+  has_many :product_inputs, dependent: :destroy
 
   validates :name, presence: true
   validates :code, uniqueness: true, allow_nil: true
   validates :price, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
   validates :purchase_price, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
   validates :sale_price, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
-  validates :quantity, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
+  validates :quantity, numericality: { greater_than_or_equal_to: 0, only_integer: true }, allow_nil: true
   validates :min_stock, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
 
   scope :active, -> { where(active: true) }
@@ -54,6 +56,17 @@ class Product < ApplicationRecord
 
   def stock_value
     (quantity || 0) * (purchase_price || 0)
+  end
+
+  def update_stock_status
+    if quantity && min_stock && quantity <= min_stock
+      self.stock_status = "baixo"
+    elsif quantity && quantity <= 0
+      self.stock_status = "fora_de_estoque"
+    else
+      self.stock_status = "em_estoque"
+    end
+    save
   end
 
   private

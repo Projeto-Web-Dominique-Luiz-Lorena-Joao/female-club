@@ -1,0 +1,98 @@
+<div class="container mx-auto px-4 py-8">
+  <div class="max-w-2xl mx-auto">
+    <h1 class="text-3xl font-bold text-gray-900 mb-6">Editar Entrada de Produto</h1>
+
+    <div class="bg-white shadow rounded-lg p-6">
+      <%= form_with(model: @product_input, local: true) do |form| %>
+        <% if @product_input.errors.any? %>
+          <div class="mb-4 p-4 bg-red-50 border border-red-200 rounded">
+            <h2 class="text-lg font-semibold text-red-900 mb-2">
+              <%= pluralize(@product_input.errors.count, "erro") %> encontrado:
+            </h2>
+            <ul class="text-red-800">
+              <% @product_input.errors.full_messages.each do |message| %>
+                <li class="mb-1">• <%= message %></li>
+              <% end %>
+            </ul>
+          </div>
+        <% end %>
+
+        <div class="mb-6">
+          <label class="block text-sm font-medium text-gray-700 mb-2">
+            Produto
+          </label>
+          <div class="block w-full px-4 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-700">
+            <%= @product_input.product.name %>
+          </div>
+          <p class="text-xs text-gray-500 mt-1">Produto não pode ser alterado</p>
+        </div>
+
+        <div class="mb-6">
+          <label for="product_input_supplier_id" class="block text-sm font-medium text-gray-700 mb-2">
+            Fornecedor
+          </label>
+          <select name="product_input[supplier_id]" id="product_input_supplier_id" class="block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500">
+            <option value="">Nenhum fornecedor</option>
+            <% Supplier.where(status: "ativo").order(:legal_name).each do |supplier| %>
+              <option value="<%= supplier.id %>" <%= "selected" if @product_input.supplier_id == supplier.id %>>
+                <%= supplier.legal_name %>
+              </option>
+            <% end %>
+          </select>
+        </div>
+
+        <div class="grid grid-cols-2 gap-6 mb-6">
+          <div>
+            <label for="product_input_quantity" class="block text-sm font-medium text-gray-700 mb-2">
+              Quantidade <span class="text-red-600">*</span>
+            </label>
+            <%= form.number_field :quantity, min: 1, class: "block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500", placeholder: "0", required: true %>
+          </div>
+
+          <div>
+            <label for="product_input_unit_cost" class="block text-sm font-medium text-gray-700 mb-2">
+              Custo Unitário
+            </label>
+            <% unit_cost_value = @product_input.unit_cost.present? ? sprintf('%.2f', @product_input.unit_cost).gsub('.', ',') : '' %>
+            <%= form.text_field :unit_cost, inputmode: "decimal", value: unit_cost_value, class: "block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500", placeholder: "0,00", data: { controller: "currency-mask" } %>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-6 mb-6">
+          <div>
+            <label for="product_input_date_input" class="block text-sm font-medium text-gray-700 mb-2">
+              Data da Entrada <span class="text-red-600">*</span>
+            </label>
+            <%= form.date_field :date_input, class: "block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500", required: true %>
+          </div>
+
+          <div>
+            <label for="product_input_date_input_time" class="block text-sm font-medium text-gray-700 mb-2">
+              Horário
+            </label>
+            <input type="time" id="product_input_date_input_time" name="product_input[date_input_time]" value="<%= @product_input.date_input.strftime('%H:%M') if @product_input.date_input.present? %>" class="block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500" />
+          </div>
+        </div>
+
+        <div class="mb-6">
+          <label for="product_input_invoice_number" class="block text-sm font-medium text-gray-700 mb-2">
+            Número da Nota Fiscal
+          </label>
+          <%= form.text_field :invoice_number, class: "block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500", placeholder: "NF-123456" %>
+        </div>
+
+        <div class="mb-6">
+          <label for="product_input_notes" class="block text-sm font-medium text-gray-700 mb-2">
+            Observações
+          </label>
+          <%= form.text_area :notes, rows: 4, class: "block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500", placeholder: "Detalhes adicionais..." %>
+        </div>
+
+        <div class="flex gap-4">
+          <%= form.submit "Atualizar Entrada", class: "bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded" %>
+          <%= link_to "Cancelar", product_input_path(@product_input), class: "bg-gray-400 hover:bg-gray-500 text-white font-bold py-2 px-6 rounded" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

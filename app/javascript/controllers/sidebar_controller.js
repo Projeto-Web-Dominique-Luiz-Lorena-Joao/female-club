@@ -14,6 +14,21 @@ export default class extends Controller {
     this.updateState()
   }
 
+  toggleSubmenu(event) {
+    const submenuId = event.currentTarget.getAttribute("data-submenu-id")
+    const submenu = document.getElementById(`${submenuId}-submenu`)
+
+    if (submenu) {
+      submenu.classList.toggle("hidden")
+
+      // Rotate the arrow icon
+      const arrow = event.currentTarget.querySelector("svg:last-child")
+      if (arrow) {
+        arrow.classList.toggle("rotate-180")
+      }
+    }
+  }
+
   updateState() {
     if (this.collapsed) {
       this.sidebarTarget.classList.remove("w-72")

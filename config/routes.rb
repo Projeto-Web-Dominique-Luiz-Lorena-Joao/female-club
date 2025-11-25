@@ -17,6 +17,21 @@ Rails.application.routes.draw do
   resources :customers
   resources :products
   resources :services
+  resources :product_inputs do
+    collection do
+      get :search_products
+      get :list_products
+      get :search_suppliers
+      get :list_suppliers
+    end
+  end
+  resources :product_outputs do
+    collection do
+      get :search_products
+      get :list_products
+    end
+  end
+  get "inventory_status", to: "inventory_status#index"
   resources :sales do
     collection do
       get :search_employees
