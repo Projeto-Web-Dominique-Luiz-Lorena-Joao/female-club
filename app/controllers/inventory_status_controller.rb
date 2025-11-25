@@ -1,7 +1,7 @@
 class InventoryStatusController < ApplicationController
   def index
     @products = Product.where(active: true)
-                       .select(:id, :name, :code, :quantity, :min_stock, :stock_status)
+                       .select(:id, :name, :code, :brand, :category, :quantity, :min_stock, :stock_status, :sale_price, :purchase_price, :active)
                        .order(:name)
                        .page(params[:page])
                        .per(20)
