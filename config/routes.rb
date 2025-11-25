@@ -1,4 +1,9 @@
 Rails.application.routes.draw do
+  namespace :api do
+    get 'employees/search', to: 'employees#search'
+    get 'suppliers/search', to: 'suppliers#search'
+  end
+
   resources :expenses
   resources :service_appointments do
     collection do
@@ -7,13 +12,21 @@ Rails.application.routes.draw do
       get :search_customers
     end
   end
-  resources :suppliers
-  resources :employees
+
   resources :guarantors do
     collection do
       get :search_customers
     end
   end
+
+  resources :employees # ÚNICA DECLARAÇÃO DE EMPLOYEES
+
+  resources :suppliers do
+    member do
+      patch :reactivate
+    end
+  end
+
   resources :customers
   resources :products
   resources :services
@@ -44,13 +57,13 @@ Rails.application.routes.draw do
   # root 'devise/sessions#new'
 
   # root 'home#index'
-  get 'employee', to: 'home#employees'
-  get 'customers', to: 'home#customers'
-  get 'suppliers', to: 'home#suppliers'
-  get 'sales', to: 'home#sales'
-  get 'products', to: 'home#products'
-  get 'services', to: 'home#services'
-  get 'expenses', to: 'home#expenses'
+  get "employee", to: "home#employees"
+  get "customers", to: "home#customers"
+  get "suppliers", to: "home#suppliers"
+  get "sales", to: "home#sales"
+  get "products", to: "home#products"
+  get "services", to: "home#services"
+  get "expenses", to: "home#expenses"
 
   # get "up" => "rails/health#show", as: :rails_health_check
 end

@@ -1,9 +1,9 @@
 class ServiceAppointmentsController < ApplicationController
-  before_action :set_service_appointment, only: [:show, :edit, :update, :destroy]
+  before_action :set_service_appointment, only: [ :show, :edit, :update, :destroy ]
 
   def search_services
     query = params[:query].to_s.strip
-    @services = Service.where(active: 'ativo')
+    @services = Service.where(active: "ativo")
                        .where("name ILIKE ?", "%#{query}%")
                        .order(:name)
                        .limit(10)
@@ -13,7 +13,7 @@ class ServiceAppointmentsController < ApplicationController
 
   def search_employees
     query = params[:query].to_s.strip
-    @employees = Employee.where(status: 'ativo')
+    @employees = Employee.where(status: "ativo")
                          .where("full_name ILIKE ?", "%#{query}%")
                          .order(:full_name)
                          .limit(10)
@@ -33,6 +33,16 @@ class ServiceAppointmentsController < ApplicationController
   def index
     @service_appointments = ServiceAppointment.includes(:service, :employee, :customer).order(appointment_date: :desc)
 
+    # Busca unificada
+    if params[:search].present?
+      search_term = params[:search].strip
+      @service_appointments = @service_appointments.left_joins(:service, :employee, :customer)
+                                                   .where("services.name ILIKE ? OR employees.full_name ILIKE ? OR customers.full_name ILIKE ?",
+                                                          "%#{search_term}%", "%#{search_term}%", "%#{search_term}%")
+                                                   .distinct
+    end
+
+    # Filtros individuais (mantidos para compatibilidade)
     @service_appointments = @service_appointments.by_service(params[:service_id]) if params[:service_id].present?
     @service_appointments = @service_appointments.by_customer(params[:customer_id]) if params[:customer_id].present?
     @service_appointments = @service_appointments.by_employee(params[:employee_id]) if params[:employee_id].present?
@@ -53,7 +63,7 @@ class ServiceAppointmentsController < ApplicationController
     @service_appointment = ServiceAppointment.new(service_appointment_params)
 
     if @service_appointment.save
-      redirect_to @service_appointment, notice: 'Agendamento criado com sucesso!'
+      redirect_to @service_appointment, notice: "Agendamento criado com sucesso!"
     else
       render :new, status: :unprocessable_entity
     end
@@ -64,7 +74,7 @@ class ServiceAppointmentsController < ApplicationController
 
   def update
     if @service_appointment.update(service_appointment_params)
-      redirect_to @service_appointment, notice: 'Agendamento atualizado com sucesso!'
+      redirect_to @service_appointment, notice: "Agendamento atualizado com sucesso!"
     else
       render :edit, status: :unprocessable_entity
     end
@@ -72,9 +82,9 @@ class ServiceAppointmentsController < ApplicationController
 
   def destroy
     if @service_appointment.destroy
-      redirect_to service_appointments_url, notice: 'Agendamento excluído com sucesso!'
+      redirect_to service_appointments_url, notice: "Agendamento excluído com sucesso!"
     else
-      redirect_to service_appointments_url, alert: 'Erro ao excluir agendamento.'
+      redirect_to service_appointments_url, alert: "Erro ao excluir agendamento."
     end
   end
 

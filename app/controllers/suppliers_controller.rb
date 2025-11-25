@@ -1,7 +1,7 @@
 # app/controllers/suppliers_controller.rb
 class SuppliersController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_supplier, only: [:show, :edit, :update, :destroy]
+  before_action :set_supplier, only: [ :show, :edit, :update, :destroy, :reactivate ]
 
   def index
     @suppliers = Supplier.all.order(created_at: :desc)
@@ -14,19 +14,19 @@ class SuppliersController < ApplicationController
     # Filtro por status
     if params[:status].present?
       case params[:status]
-      when 'ativo'
+      when "ativo"
         @suppliers = @suppliers.active
-      when 'inativo'
+      when "inativo"
         @suppliers = @suppliers.inactive
       end
     end
 
     if params[:search].present?
       search_term = params[:search].strip
-    clean_search = search_term.gsub(/\D/, '')
+    clean_search = search_term.gsub(/\D/, "")
 
-    conditions = ['legal_name ILIKE ? OR trade_name ILIKE ? OR email ILIKE ?']
-    values = ["%#{search_term}%", "%#{search_term}%", "%#{search_term}%"]
+    conditions = [ "legal_name ILIKE ? OR trade_name ILIKE ? OR email ILIKE ?" ]
+    values = [ "%#{search_term}%", "%#{search_term}%", "%#{search_term}%" ]
 
     # Só adiciona busca no telefone se tiver números
     if clean_search.present?
@@ -34,7 +34,7 @@ class SuppliersController < ApplicationController
       values << "%#{clean_search}%"
     end
 
-    @suppliers = @suppliers.where(conditions.join(' OR '), *values)
+    @suppliers = @suppliers.where(conditions.join(" OR "), *values)
     end
 
     # Estatísticas
@@ -60,7 +60,7 @@ class SuppliersController < ApplicationController
     @supplier = Supplier.new(supplier_params)
 
     if @supplier.save
-      redirect_to suppliers_path, notice: 'Fornecedor cadastrado com sucesso!'
+      redirect_to suppliers_path, notice: "Fornecedor cadastrado com sucesso!"
     else
       render :new, status: :unprocessable_entity
     end
@@ -68,15 +68,23 @@ class SuppliersController < ApplicationController
 
   def update
     if @supplier.update(supplier_params)
-      redirect_to suppliers_path, notice: 'Fornecedor atualizado com sucesso!'
+      redirect_to suppliers_path, notice: "Fornecedor atualizado com sucesso!"
     else
       render :edit, status: :unprocessable_entity
     end
   end
 
   def destroy
-    @supplier.destroy
-    redirect_to suppliers_path, notice: 'Fornecedor excluído com sucesso!'
+    @supplier.update(active: false)
+    redirect_to suppliers_path, notice: "Fornecedor inativado com sucesso. Você pode reativá-lo quando quiser."
+  end
+
+  def reactivate
+    if @supplier.update(active: true)
+      redirect_to supplier_path(@supplier), notice: "Fornecedor reativado com sucesso. Você pode inativá-lo quando quiser."
+    else
+      redirect_to supplier_path(@supplier), alert: "Não foi possível reativar o fornecedor."
+    end
   end
 
   private

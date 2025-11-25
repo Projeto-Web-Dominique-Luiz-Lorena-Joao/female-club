@@ -49,8 +49,15 @@
           <p class="text-gray-500 mb-1">Tipo de Despesa:</p>
           <p class="font-semibold text-gray-900"><%= @expense.expense_type_label %></p>
         </div>
+
+        <div>
+          <p class="text-gray-500 mb-1">Status:</p>
+          <span class="inline-block px-2 py-0.5 rounded-full text-xs font-semibold <%= @expense.status == 'ativa' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' %>">
+            <%= @expense.status_label %>
+          </span>
+        </div>
         
-        <div class="md:col-span-2">
+        <div>
           <p class="text-gray-500 mb-1">Forma de Pagamento:</p>
           <p class="font-semibold text-gray-900">
             <% payment_methods = { "dinheiro" => "Dinheiro", "cartao_credito" => "Cartão de Crédito", "cartao_debito" => "Cartão de Débito", "pix" => "PIX", "transferencia" => "Transferência", "boleto" => "Boleto" } %>

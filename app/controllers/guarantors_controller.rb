@@ -26,6 +26,13 @@ class GuarantorsController < ApplicationController
 
       @guarantors = @guarantors.where(conditions.join(' OR '), *values)
     end
+
+    if params[:status].present?
+    @guarantors = @guarantors.where(status: params[:status])
+  end
+
+      @total_guarantors = Guarantor.count
+      @active_guarantors = Guarantor.where(status: 'ativo').count
   end
 
   def show

@@ -2,7 +2,6 @@
   <div class="flex justify-between items-start">
     <div>
       <h1 class="text-3xl font-bold text-gray-900"><%= @customer.full_name %></h1>
-      </span>
     </div>
     <div class="flex space-x-3">
       <%= link_to edit_customer_path(@customer), class: "bg-black hover:bg-gray-700 text-white px-8 py-2 rounded-lg font-medium" do %>
@@ -17,27 +16,57 @@
           </svg>
           Voltar
       <% end %>
-
-
     </div>
   </div>
 
   <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-    <div class="bg-white rounded-lg shadow p-6">
-      <p class="text-gray-500 text-sm font-medium">Total de Compras</p>
-      <p class="text-4xl font-bold text-blue-600 mt-2"><%= @customer.purchases_count %></p>
+    <!-- Card Total de Compras -->
+    <div class="bg-white rounded-lg border border-gray-200 p-4">
+      <div class="flex items-start">
+        <div class="flex-shrink-0 bg-blue-100 rounded-lg p-3">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6 text-blue-600">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007ZM8.625 10.5a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm7.5 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
+          </svg>
+        </div>
+        <div class="ml-3 flex-1">
+          <p class="text-xs text-gray-500 font-medium">Total de Compras</p>
+          <p class="text-2xl font-bold text-gray-900 mt-1"><%= @customer.purchases_count %></p>
+        </div>
+      </div>
     </div>
-    <div class="bg-white rounded-lg shadow p-6">
-      <p class="text-gray-500 text-sm font-medium">Valor Total Gasto</p>
-      <p class="text-3xl font-bold text-green-600 mt-2">
-        R$ <%= number_with_delimiter(@customer.total_purchases.to_f.round(2), delimiter: '.', separator: ',') %>
-      </p>
+
+    <!-- Card Valor Total Gasto -->
+    <div class="bg-white rounded-lg border border-gray-200 p-4">
+      <div class="flex items-start">
+        <div class="flex-shrink-0 bg-green-100 rounded-lg p-3">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6 text-green-600">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+          </svg>
+        </div>
+        <div class="ml-3 flex-1">
+          <p class="text-xs text-gray-500 font-medium">Valor Total Gasto</p>
+          <p class="text-2xl font-bold text-green-600 mt-1">
+            R$ <%= number_with_delimiter(@customer.total_purchases.to_f.round(2), delimiter: '.', separator: ',') %>
+          </p>
+        </div>
+      </div>
     </div>
-    <div class="bg-white rounded-lg shadow p-6">
-      <p class="text-gray-500 text-sm font-medium">Última Compra</p>
-      <p class="text-2xl font-bold text-gray-900 mt-2">
-        <%= @customer.last_purchase_date ? I18n.l(@customer.last_purchase_date, format: :short) : 'Nunca' rescue 'Nunca' %>
-      </p>
+
+    <!-- Card Última Compra -->
+    <div class="bg-white rounded-lg border border-gray-200 p-4">
+      <div class="flex items-start">
+        <div class="flex-shrink-0 bg-gray-100 rounded-lg p-3">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6 text-gray-600">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5" />
+          </svg>
+        </div>
+        <div class="ml-3 flex-1">
+          <p class="text-xs text-gray-500 font-medium">Última Compra</p>
+          <p class="text-2xl font-bold text-gray-900 mt-1">
+            <%= @customer.last_purchase_date ? I18n.l(@customer.last_purchase_date, format: :short) : 'Nunca' rescue 'Nunca' %>
+          </p>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -83,7 +112,7 @@
       <% end %>
 
       <% if @customer.guarantor.present? %>
-        <div class="col-span-2 pt-4 border-t">
+        <div class="col-span-2 pt-4 border-t border-gray-200">
           <div class="flex items-center justify-between">
             <p class="text-sm font-medium text-gray-500 mb-2">Fiador</p>
             <%= link_to guarantor_path(@customer.guarantor),
@@ -94,7 +123,7 @@
               Ver Fiador
             <% end %>
           </div>
-          <div class="mt-2 p-4 bg-green-50 border border-green-200 rounded-lg">
+          <div class="mt-2 p-4 bg-gray-100 border border-gray-200 rounded-lg">
             <p class="text-lg font-semibold text-gray-900"><%= @customer.guarantor.full_name %></p>
             <p class="text-sm text-gray-600 mt-1">
               <span class="font-medium">Parentesco:</span> <%= @customer.guarantor.relationship.titleize %>
@@ -115,12 +144,6 @@
       <h2 class="text-xl font-bold text-white">Histórico de Compras</h2>
     </div>
     <div class="p-6">
-</div>
-
-<div>
-      <%= button_to "Deletar Cliente",
-                    customer_path(@customer),
-                    method: :delete,
-                    data: { confirm: "Tem certeza que deseja excluir este cliente?" },
-                    class: "bg-red-200 hover:bg-red-100 text-red-700 px-4 py-2 rounded-lg font-medium" %>
+    </div>
+  </div>
 </div>
