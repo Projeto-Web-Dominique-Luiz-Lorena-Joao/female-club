@@ -6,12 +6,12 @@
       <p class="text-gray-600 mt-1">Gerencie os agendamentos de serviços das clientes</p>
     </div>
     <div>
-      <%= link_to "Novo Agendamento", new_service_appointment_path, class: "bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium" %>
+      <%= link_to "Novo Agendamento", new_service_appointment_path, class: "bg-black hover:bg-gray-700 text-white px-6 py-3 rounded-lg font-medium shadow-lg transition duration-200 inline-flex items-center" %>
     </div>
   </div>
 
   <!-- Filtros -->
-  <div class="bg-white rounded-lg shadow p-4">
+  <div class="bg-white rounded-lg shadow p-6">
     <%= form_with url: service_appointments_path, method: :get, local: true, class: "space-y-4" do |f| %>
       <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
         <!-- Filtro Serviço com Autocomplete -->
@@ -91,8 +91,8 @@
       </div>
 
       <div class="flex gap-2">
-        <%= f.submit "Filtrar", class: "bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium" %>
-        <%= link_to "Limpar Filtros", service_appointments_path, class: "bg-gray-300 hover:bg-gray-400 text-gray-800 px-6 py-2 rounded-lg font-medium" %>
+        <%= f.submit "Buscar", class: "bg-black hover:bg-gray-700 text-white px-6 py-2 rounded-lg font-medium transition duration-200" %>
+        <%= link_to "Limpar", service_appointments_path, class: "bg-gray-300 hover:bg-gray-200 text-gray-700 px-6 py-2 rounded-lg font-medium transition duration-200" %>
       </div>
     <% end %>
   </div>
@@ -101,19 +101,21 @@
   <div class="bg-white rounded-lg shadow-lg overflow-hidden">
     <div class="overflow-x-auto">
       <table class="min-w-full divide-y divide-gray-200">
-        <thead class="bg-gray-50">
+        <thead class="bg-black">
           <tr>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Data/Hora</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Serviço</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cliente</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Funcionário</th>
-            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Ações</th>
+            <th class="px-6 py-3 text-center text-xs font-medium text-white uppercase">Data/Hora</th>
+            <th class="px-6 py-3 text-center text-xs font-medium text-white uppercase">Serviço</th>
+            <th class="px-6 py-3 text-center text-xs font-medium text-white uppercase">Cliente</th>
+            <th class="px-6 py-3 text-center text-xs font-medium text-white uppercase">Funcionário</th>
+            <th class="px-6 py-3 text-center text-xs font-medium text-white uppercase">Status</th>
+            <th class="px-6 py-3 text-center text-xs font-medium text-white uppercase">Ações</th>
           </tr>
         </thead>
         <tbody class="bg-white divide-y divide-gray-200">
+
           <% if @service_appointments.any? %>
             <% @service_appointments.each do |appointment| %>
+
               <tr class="hover:bg-gray-50">
                 <td class="px-6 py-4 text-sm text-gray-900">
                   <% if appointment.appointment_date %>
@@ -123,9 +125,9 @@
                     <span class="text-gray-400">-</span>
                   <% end %>
                 </td>
-                <td class="px-6 py-4 text-sm text-gray-900">
+                <td class="px-6 py-4 text-sm text-gray-900 text-center">
                   <% if appointment.service %>
-                    <%= link_to appointment.service.name, service_path(appointment.service), class: "text-blue-600 hover:text-blue-800" %>
+                    <%= link_to appointment.service.name, service_path(appointment.service), class: "text-gray-900" %>
                   <% else %>
                     <span class="text-gray-400">-</span>
                   <% end %>

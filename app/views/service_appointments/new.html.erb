@@ -1,14 +1,35 @@
-<div class="max-w-2xl mx-auto">
-  <!-- Header -->
-  <div class="flex justify-between items-start mb-6">
-    <div>
-      <h1 class="text-3xl font-bold text-gray-900">Novo Agendamento</h1>
-      <p class="text-gray-600 mt-1">Crie um novo agendamento de serviço</p>
-    </div>
-  </div>
+<div class="w-full mb-8 pb-4 border-b border-gray-200 px-8">
+  <div class="flex justify-between items-center max-w-4xl mx-auto">
 
-  <!-- Formulário -->
-  <div class="bg-white rounded-lg shadow-lg p-6">
-    <%= render "form", service_appointment: @service_appointment %>
+    <div class="flex items-center gap-4">
+      <div class="bg-black p-3 rounded-2xl shadow-lg flex items-center justify-center">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" 
+          stroke-width="1.5" stroke="white" class="size-8">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5" />
+        </svg>
+
+      </div>
+
+      <div>
+        <h1 class="text-2xl font-medium text-gray-900">Novo Agendamento</h1>
+        <p class="text-gray-600 text-sm mt-1">
+          Crie um novo agendamento de serviço
+        </p>
+      </div>
+    </div>
+
+    <%= link_to service_appointments_path, class: "bg-white border border-gray-300 hover:bg-gray-100 text-gray-700 px-4 py-2 rounded-lg font-medium flex items-center gap-2 transition shadow-sm" do %>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+           stroke="currentColor" stroke-width="3" fill="none"
+           class="w-4 h-4">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7 7-7M3 12h18" />
+      </svg>
+      Voltar
+    <% end %>
+
   </div>
 </div>
+
+<div class="rounded-lg">
+    <%= render "form", service_appointment: @service_appointment %>
+  </div>
