@@ -43,6 +43,45 @@ function aplicarMascarasCPFeTelefone() {
   });
 
   // ==========================================
+  // MÁSCARA DE DINHEIRO
+  // ==========================================
+  const moneyInputs = document.querySelectorAll('input#expense_amount_display, input[name="expense[amount]"], input[name*="[amount]"], input#expense_amount');
+  console.log(`💰 Campos Dinheiro encontrados: ${moneyInputs.length}`);
+
+  moneyInputs.forEach((input, index) => {
+    // Evitar aplicar múltiplas vezes
+    if (input.dataset.mascaraDinheiro === 'aplicada') {
+      console.log(`⏭️ Dinheiro ${index + 1} já tem máscara`);
+      return;
+    }
+
+    input.dataset.mascaraDinheiro = 'aplicada';
+    input.type = 'text'; // Mudar para text para permitir máscara
+
+    input.addEventListener('input', function(e) {
+      let value = e.target.value.replace(/\D/g, '');
+
+      if (value === '') {
+        e.target.value = '';
+        return;
+      }
+
+      // Converter para número com centavos
+      value = (parseInt(value) / 100).toFixed(2);
+
+      // Formatar com vírgula
+      value = value.replace('.', ',');
+
+      // Adicionar pontos nos milhares
+      value = value.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+
+      e.target.value = value;
+    });
+
+    console.log(`✅ Máscara Dinheiro aplicada no campo ${index + 1}`);
+  });
+
+  // ==========================================
   // MÁSCARA DE TELEFONE
   // ==========================================
   const phoneInputs = document.querySelectorAll('input[name="employee[phone]"], input[name*="[phone]"]');
@@ -82,7 +121,7 @@ function aplicarMascarasCPFeTelefone() {
     console.log(`✅ Máscara Telefone aplicada no campo ${index + 1}`);
   });
 
-  if (cpfInputs.length > 0 || phoneInputs.length > 0) {
+  if (cpfInputs.length > 0 || phoneInputs.length > 0 || moneyInputs.length > 0) {
     console.log('✅✅✅ MÁSCARAS ATIVADAS COM SUCESSO! ✅✅✅');
   } else {
     console.warn('⚠️ Nenhum campo encontrado nesta página');

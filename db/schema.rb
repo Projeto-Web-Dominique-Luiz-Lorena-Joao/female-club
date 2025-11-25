@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_11_24_235117) do
+ActiveRecord::Schema[8.0].define(version: 2025_11_25_133717) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -82,7 +82,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_24_235117) do
 
   create_table "expenses", force: :cascade do |t|
     t.bigint "employee_id", null: false
-    t.bigint "supplier_id", null: false
+    t.bigint "supplier_id"
     t.date "expense_date", null: false
     t.string "expense_type", null: false
     t.decimal "amount", precision: 10, scale: 2, null: false
@@ -91,6 +91,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_24_235117) do
     t.string "category", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "status", default: "ativa", null: false
     t.index ["category"], name: "index_expenses_on_category"
     t.index ["employee_id", "created_at"], name: "index_expenses_on_employee_id_and_created_at"
     t.index ["employee_id"], name: "index_expenses_on_employee_id"
