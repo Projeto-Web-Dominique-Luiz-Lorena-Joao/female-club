@@ -8,7 +8,11 @@ Rails.application.routes.draw do
     end
   end
   resources :suppliers
-  resources :employees
+  resources :employees do
+    member do
+      patch :reactivate
+    end
+  end
   resources :guarantors do
     collection do
       get :search_customers
@@ -41,9 +45,6 @@ Rails.application.routes.draw do
 
   get "dashboard", to: "home#dashboard"
 
-  # root 'devise/sessions#new'
-
-  # root 'home#index'
   get 'employee', to: 'home#employees'
   get 'customers', to: 'home#customers'
   get 'suppliers', to: 'home#suppliers'
@@ -51,6 +52,4 @@ Rails.application.routes.draw do
   get 'products', to: 'home#products'
   get 'services', to: 'home#services'
   get 'expenses', to: 'home#expenses'
-
-  # get "up" => "rails/health#show", as: :rails_health_check
 end
