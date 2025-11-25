@@ -1,4 +1,9 @@
 Rails.application.routes.draw do
+  namespace :api do
+    get 'employees/search', to: 'employees#search'
+    get 'suppliers/search', to: 'suppliers#search'
+  end
+
   resources :expenses
   resources :service_appointments do
     collection do

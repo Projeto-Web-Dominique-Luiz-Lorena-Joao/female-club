@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_11_24_235117) do
+ActiveRecord::Schema[8.0].define(version: 2025_11_25_133717) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -82,7 +82,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_24_235117) do
 
   create_table "expenses", force: :cascade do |t|
     t.bigint "employee_id", null: false
-    t.bigint "supplier_id", null: false
+    t.bigint "supplier_id"
     t.date "expense_date", null: false
     t.string "expense_type", null: false
     t.decimal "amount", precision: 10, scale: 2, null: false
@@ -91,6 +91,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_24_235117) do
     t.string "category", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "status", default: "ativa", null: false
     t.index ["category"], name: "index_expenses_on_category"
     t.index ["employee_id", "created_at"], name: "index_expenses_on_employee_id_and_created_at"
     t.index ["employee_id"], name: "index_expenses_on_employee_id"
@@ -114,6 +115,42 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_24_235117) do
     t.index ["status"], name: "index_guarantors_on_status"
   end
 
+  create_table "product_inputs", force: :cascade do |t|
+    t.bigint "product_id", null: false
+    t.bigint "supplier_id"
+    t.integer "quantity", default: 0, null: false
+    t.decimal "unit_cost", precision: 10, scale: 2
+    t.datetime "date_input", null: false
+    t.string "invoice_number"
+    t.text "notes"
+    t.bigint "created_by_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_by_id"], name: "index_product_inputs_on_created_by_id"
+    t.index ["date_input"], name: "index_product_inputs_on_date_input"
+    t.index ["product_id", "date_input"], name: "index_product_inputs_on_product_id_and_date_input"
+    t.index ["product_id"], name: "index_product_inputs_on_product_id"
+    t.index ["supplier_id", "date_input"], name: "index_product_inputs_on_supplier_id_and_date_input"
+    t.index ["supplier_id"], name: "index_product_inputs_on_supplier_id"
+  end
+
+  create_table "product_outputs", force: :cascade do |t|
+    t.bigint "product_id", null: false
+    t.integer "quantity", default: 0, null: false
+    t.string "output_type", null: false
+    t.datetime "date_output", null: false
+    t.text "notes"
+    t.bigint "created_by_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_by_id"], name: "index_product_outputs_on_created_by_id"
+    t.index ["date_output"], name: "index_product_outputs_on_date_output"
+    t.index ["output_type", "date_output"], name: "index_product_outputs_on_output_type_and_date_output"
+    t.index ["output_type"], name: "index_product_outputs_on_output_type"
+    t.index ["product_id", "date_output"], name: "index_product_outputs_on_product_id_and_date_output"
+    t.index ["product_id"], name: "index_product_outputs_on_product_id"
+  end
+
   create_table "products", force: :cascade do |t|
     t.bigint "supplier_id"
     t.string "name", null: false
@@ -122,7 +159,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_24_235117) do
     t.boolean "active", default: true
     t.string "brand"
     t.string "color"
-    t.float "quantity"
+    t.integer "quantity", default: 0, null: false
     t.decimal "purchase_price", precision: 10, scale: 2
     t.decimal "sale_price", precision: 10, scale: 2
     t.string "category"
@@ -133,6 +170,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_24_235117) do
     t.string "code"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.float "quantity_in", default: 0.0
+    t.string "stock_status", default: "normal"
+    t.datetime "last_replenishment_date"
+    t.index ["stock_status"], name: "index_products_on_stock_status"
     t.index ["supplier_id"], name: "index_products_on_supplier_id"
   end
 
@@ -265,6 +306,11 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_24_235117) do
   add_foreign_key "customers", "guarantors"
   add_foreign_key "expenses", "employees"
   add_foreign_key "expenses", "suppliers"
+  add_foreign_key "product_inputs", "products"
+  add_foreign_key "product_inputs", "suppliers"
+  add_foreign_key "product_inputs", "users", column: "created_by_id"
+  add_foreign_key "product_outputs", "products"
+  add_foreign_key "product_outputs", "users", column: "created_by_id"
   add_foreign_key "products", "suppliers"
   add_foreign_key "sale_products", "products"
   add_foreign_key "sale_products", "sales"
