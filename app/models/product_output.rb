@@ -40,15 +40,38 @@ class ProductOutput < ApplicationRecord
 
   # Callback para atualizar quantidade do produto
   before_create :update_product_quantity_on_create
+  before_update :update_product_quantity_on_update
   after_destroy :update_product_quantity_on_destroy
 
   private
 
   def update_product_quantity_on_create
     product.decrement!(:quantity, quantity)
+    product.update_stock_status
+  end
+
+  def update_product_quantity_on_update
+    return unless quantity_changed? || product_id_changed?
+
+    if product_id_changed?
+      # Se mudou o produto, reverte a quantidade no produto antigo
+      old_product = Product.find(product_id_was)
+      old_product.increment!(:quantity, quantity_was)
+      old_product.update_stock_status
+
+      # E aplica no novo produto
+      product.decrement!(:quantity, quantity)
+      product.update_stock_status
+    elsif quantity_changed?
+      # Se apenas a quantidade mudou, ajusta a diferença
+      difference = quantity - quantity_was
+      product.decrement!(:quantity, difference)
+      product.update_stock_status
+    end
   end
 
   def update_product_quantity_on_destroy
     product.increment!(:quantity, quantity)
+    product.update_stock_status
   end
 end
