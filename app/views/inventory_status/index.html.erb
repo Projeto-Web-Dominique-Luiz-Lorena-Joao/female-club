@@ -88,7 +88,7 @@
   <!-- Filtros -->
   <div class="bg-white rounded-lg border border-gray-200">
     <%= form_with url: inventory_status_path, method: :get, class: "flex items-center gap-3 p-4", local: true do |f| %>
-      
+
       <%= f.text_field :search,
             placeholder: "Buscar pelo nome do produto",
             value: params[:search],
@@ -190,10 +190,4 @@
     <% end %>
   </div>
 
-  <!-- Paginação -->
-  <% if @products.respond_to?(:total_pages) && @products.total_pages > 1 %>
-    <div class="flex justify-center">
-      <%= paginate @products, theme: 'bootstrap-5' %>
-    </div>
-  <% end %>
 </div>

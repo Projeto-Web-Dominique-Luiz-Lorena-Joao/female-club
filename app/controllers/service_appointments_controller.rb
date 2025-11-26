@@ -49,7 +49,6 @@ class ServiceAppointmentsController < ApplicationController
     @service_appointments = @service_appointments.by_date(params[:date]) if params[:date].present?
     @service_appointments = @service_appointments.by_status(params[:status]) if params[:status].present?
 
-    @service_appointments = @service_appointments.page(params[:page]).per(15)
   end
 
   def show

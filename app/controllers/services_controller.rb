@@ -10,7 +10,6 @@ class ServicesController < ApplicationController
       @services = @services.where(active: params[:active])
     end
 
-    @services = @services.page(params[:page]).per(15)
   end
 
   # GET /services/:id

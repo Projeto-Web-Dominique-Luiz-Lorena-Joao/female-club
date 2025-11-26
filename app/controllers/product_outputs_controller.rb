@@ -4,7 +4,7 @@ class ProductOutputsController < ApplicationController
   skip_before_action :set_product, only: [:search_products, :list_products, :new]
 
   def index
-    @product_outputs = ProductOutput.recent.page(params[:page]).per(20)
+    @product_outputs = ProductOutput.recent
     @product_outputs = @product_outputs.by_product(params[:product_id]) if params[:product_id].present?
     @product_outputs = @product_outputs.by_output_type(params[:output_type]) if params[:output_type].present?
     @product_outputs = @product_outputs.by_date_range(params[:start_date].to_date, params[:end_date].to_date) if params[:start_date].present? && params[:end_date].present?

@@ -12,9 +12,6 @@ class ProductsController < ApplicationController
     @products = @products.search(params[:search]) if params[:search].present?
 
     @products = @products.order(created_at: :desc)
-
-    # Paginação (se usar kaminari ou pagy)
-    # @products = @products.page(params[:page]).per(20)
   end
 
   def show

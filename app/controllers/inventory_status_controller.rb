@@ -3,8 +3,6 @@ class InventoryStatusController < ApplicationController
     @products = Product.where(active: true)
                        .includes(:product_inputs, :product_outputs)
                        .order(:name)
-                       .page(params[:page])
-                       .per(20)
 
     # Filtros opcionais
     if params[:stock_status].present?

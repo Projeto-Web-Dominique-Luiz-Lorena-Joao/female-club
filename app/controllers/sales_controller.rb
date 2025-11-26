@@ -29,8 +29,6 @@ class SalesController < ApplicationController
       @sales = @sales.recent
     end
 
-    # Aplicar paginação DEPOIS de todas as ordenações
-    @sales = @sales.page(params[:page]).per(20)
   end
 
   def show
