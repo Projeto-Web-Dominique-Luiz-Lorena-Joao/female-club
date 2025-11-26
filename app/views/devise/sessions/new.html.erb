@@ -23,7 +23,7 @@
         <div>
           <div class="flex justify-between items-center mb-2">
             <%= f.label :password, "Senha", class: "block text-sm font-medium text-gray-700" %>
-            <%= link_to "Esqueceu a senha?", new_password_path(resource_name), class: "text-sm text-gray-600 hover:text-gray-900" %>
+            
           </div>
           <div class="relative">
             <%= f.password_field :password, 
@@ -56,11 +56,6 @@
 
         <div>
           <%= f.submit "Entrar", class: "w-full bg-black hover:bg-gray-800 text-white font-medium py-3 px-4 rounded-lg transition duration-200 cursor-pointer" %>
-        </div>
-
-        <div class="text-center text-sm text-gray-600">
-          Não tem uma conta? 
-          <%= link_to "Solicitar acesso", new_registration_path(resource_name), class: "text-gray-900 font-medium hover:underline" %>
         </div>
       <% end %>
     </div>

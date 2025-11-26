@@ -9,10 +9,6 @@
       <% if @sale.pendente? %>
         <%= button_to "Marcar como paga", mark_as_paid_sale_path(@sale), method: :patch, class: "bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg font-medium flex items-center gap-2" %>
       <% end %>
-
-      <%= link_to edit_sale_path(@sale), class: "bg-black hover:bg-gray-700 text-white px-8 py-2 rounded-lg font-medium" do %>
-        Editar
-      <% end %>
       <%= link_to sales_path, class: "bg-white border border-gray-300 hover:bg-gray-100 text-gray-700 px-4 py-2 rounded-lg font-medium flex items-center gap-2 transition shadow-sm" do %>
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
            stroke="currentColor" stroke-width="3" fill="none"

@@ -10,7 +10,7 @@
         Editar
       <% end %>
       <%= link_to "javascript:history.back()",
-          class: "bg-gray-300 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg font-medium flex items-center gap-2" do %>
+          class: "bg-white border border-gray-300 hover:bg-gray-100 text-gray-700 px-4 py-2 rounded-lg font-medium flex items-center gap-2 transition shadow-sm" do %>
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
             stroke="currentColor" stroke-width="2" fill="none"
             class="w-5 h-5">
@@ -104,13 +104,6 @@
               <p class="text-xl font-bold <%= @product.stock_status == 'fora_de_estoque' ? 'text-red-600' : @product.stock_status == 'critico' ? 'text-orange-600' : @product.stock_status == 'baixo' ? 'text-yellow-600' : 'text-blue-600' %> mt-1">
                 <%= [@product.quantity, 0].max %>
               </p>
-              <% if @product.stock_status == "fora_de_estoque" %>
-                <p class="text-xs text-red-600 mt-1">Fora de estoque</p>
-              <% elsif @product.stock_status == "critico" %>
-                <p class="text-xs text-orange-600 mt-1">Estoque crítico</p>
-              <% elsif @product.stock_status == "baixo" %>
-                <p class="text-xs text-yellow-600 mt-1">Estoque baixo</p>
-              <% end %>
             </div>
           </div>
         </div>
