@@ -57,7 +57,7 @@
             <% end %>
           </div>
           <div class="text-center pt-2 border-t border-gray-100">
-            <p class="text-xs text-gray-500">Estoque: <%= @product.quantity || 0 %></p>
+            <p class="text-xs text-gray-500">Estoque: <%= [@product.quantity, 0].max %></p>
           </div>
         </div>
       </div>
@@ -102,7 +102,7 @@
             <div class="ml-3 flex-1">
               <p class="text-xs text-gray-500 font-medium">Estoque Atual</p>
               <p class="text-xl font-bold <%= @product.stock_status == 'fora_de_estoque' ? 'text-red-600' : @product.stock_status == 'critico' ? 'text-orange-600' : @product.stock_status == 'baixo' ? 'text-yellow-600' : 'text-blue-600' %> mt-1">
-                <%= @product.quantity || 0 %>
+                <%= [@product.quantity, 0].max %>
               </p>
               <% if @product.stock_status == "fora_de_estoque" %>
                 <p class="text-xs text-red-600 mt-1">❌ Fora de estoque</p>
@@ -257,7 +257,7 @@
             <div>
               <p class="text-xs text-gray-500 mb-1">Quantidade em Estoque</p>
               <p class="text-base font-semibold <%= @product.stock_status == 'fora_de_estoque' ? 'text-red-600' : @product.stock_status == 'critico' ? 'text-orange-600' : @product.stock_status == 'baixo' ? 'text-yellow-600' : 'text-blue-600' %>">
-                <%= @product.quantity || 0 %>
+                <%= [@product.quantity, 0].max %>
               </p>
             </div>
 

@@ -193,7 +193,7 @@
 
               <td class="px-6 py-4 text-center">
                 <div class="flex flex-col items-center">
-                  <p class="text-sm font-medium text-gray-900"><%= product.quantity || 0 %></p>
+                  <p class="text-sm font-medium text-gray-900"><%= [product.quantity, 0].max %></p>
                   <% if product.stock_status == "fora_de_estoque" %>
                     <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800 mt-1">
                       Fora de Estoque

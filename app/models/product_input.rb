@@ -25,7 +25,6 @@ class ProductInput < ApplicationRecord
 
   def update_product_stock
     product.with_lock do
-      product.quantity = (product.quantity || 0) + quantity
       product.quantity_in = (product.quantity_in || 0) + quantity
       product.last_replenishment_date = Time.current
       product.save!
@@ -40,13 +39,12 @@ class ProductInput < ApplicationRecord
       old_quantity = quantity_before_last_save || quantity
 
       old_product.with_lock do
-        old_product.quantity = (old_product.quantity || 0) - old_quantity
-        old_product.quantity_in = (old_product.quantity_in || 0) - old_quantity
+        new_qty_in = (old_product.quantity_in || 0) - old_quantity
+        old_product.quantity_in = [new_qty_in, 0].max
         old_product.save!
       end
 
       product.with_lock do
-        product.quantity = (product.quantity || 0) + quantity
         product.quantity_in = (product.quantity_in || 0) + quantity
         product.last_replenishment_date = Time.current
         product.save!
@@ -57,7 +55,6 @@ class ProductInput < ApplicationRecord
       difference = quantity - old_quantity
 
       product.with_lock do
-        product.quantity = (product.quantity || 0) + difference
         product.quantity_in = (product.quantity_in || 0) + difference
         product.last_replenishment_date = Time.current if difference > 0
         product.save!
@@ -67,8 +64,10 @@ class ProductInput < ApplicationRecord
 
   def rollback_product_stock
     product.with_lock do
-      product.quantity = (product.quantity || 0) - quantity
-      product.quantity_in = (product.quantity_in || 0) - quantity
+      new_quantity_in = (product.quantity_in || 0) - quantity
+
+      # Garantir que o estoque não fique negativo
+      product.quantity_in = [new_quantity_in, 0].max
       product.save!
     end
   end

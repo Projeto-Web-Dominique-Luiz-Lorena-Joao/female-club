@@ -1,6 +1,7 @@
 class ProductOutputsController < ApplicationController
   before_action :set_product_output, only: [:show, :edit, :update, :destroy]
   before_action :set_product, only: [:new, :create]
+  skip_before_action :set_product, only: [:search_products, :list_products, :new]
 
   def index
     @product_outputs = ProductOutput.recent.page(params[:page]).per(20)
@@ -41,6 +42,21 @@ class ProductOutputsController < ApplicationController
   def destroy
     @product_output.destroy
     redirect_to product_outputs_url, notice: "Saída de produto removida com sucesso."
+  end
+
+  def search_products
+    query = params[:query].to_s.strip
+    @products = Product.active
+                      .where("name ILIKE ? OR code ILIKE ?", "%#{query}%", "%#{query}%")
+                      .order(:name)
+                      .limit(10)
+
+    render json: @products.map { |p| { id: p.id, name: p.name, subtitle: "Est. Atual: #{p.quantity.to_i}" } }
+  end
+
+  def list_products
+    @products = Product.active.order(:name)
+    render json: @products.map { |p| { id: p.id, name: p.name, subtitle: "Est. Atual: #{p.quantity.to_i}" } }
   end
 
   private

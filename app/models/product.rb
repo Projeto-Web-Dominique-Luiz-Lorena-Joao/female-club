@@ -13,6 +13,7 @@ class Product < ApplicationRecord
   validates :code, uniqueness: true, allow_nil: true
   validates :sale_price, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
   validates :min_stock, presence: true, numericality: { greater_than_or_equal_to: 0, only_integer: true }
+  validates :quantity_in, numericality: { greater_than_or_equal_to: 0, only_integer: true }, allow_nil: true
 
   scope :active, -> { where(active: true) }
   scope :inactive, -> { where(active: false) }
@@ -22,7 +23,10 @@ class Product < ApplicationRecord
   }
 
   before_save :normalize_strings
+  before_save :ensure_non_negative_stock
   after_save :update_stock_status_if_needed
+  after_create_commit :update_stock_status!
+  after_update_commit :update_stock_status!
 
   enum :category, {
   beleza_cosmeticos: "Beleza e Cosméticos",
@@ -42,7 +46,9 @@ class Product < ApplicationRecord
   def quantity
     total_inputs = product_inputs.sum(:quantity)
     total_outputs = product_outputs.sum(:quantity)
-    total_inputs - total_outputs
+    calculated_quantity = total_inputs - total_outputs
+    # Garantir que nunca retorne valor negativo
+    [calculated_quantity, 0].max
   end
 
   def low_stock?
@@ -122,8 +128,13 @@ class Product < ApplicationRecord
     self.category = category&.strip
   end
 
+  def ensure_non_negative_stock
+    # Garantir que quantity_in nunca seja negativo
+    self.quantity_in = 0 if quantity_in && quantity_in < 0
+  end
+
   def update_stock_status_if_needed
-    if saved_change_to_quantity? || saved_change_to_min_stock?
+    if saved_change_to_quantity_in? || saved_change_to_min_stock?
       update_stock_status!
     end
   end
