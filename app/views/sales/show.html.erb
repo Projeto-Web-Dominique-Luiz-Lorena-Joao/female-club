@@ -170,7 +170,7 @@
             <%= link_to @sale.employee_name, employee_path(@sale.employee), class: "text-blue-600 hover:text-blue-800" %>
           </p>
           <div class="text-sm text-gray-600 space-y-1">
-            <p><%= @sale.employee.phone %></p>
+            <p><%= @sale.employee.formatted_phone %></p>
             <p class="text-gray-500"><%= @sale.employee.position.humanize %></p>
           </div>
         </div>
