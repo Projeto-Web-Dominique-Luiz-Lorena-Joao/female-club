@@ -28,8 +28,23 @@ class SaleProduct < ApplicationRecord
 
     available_quantity = product.quantity || 0
 
-    if available_quantity < quantity
-      errors.add(:quantity, "Estoque insuficiente! Disponível: #{available_quantity} unidades. Solicitado: #{quantity} unidades.")
+    # Se está editando uma venda existente, precisa considerar a quantidade anterior
+    # Exemplo:
+    #   - Estoque original: 100 unidades
+    #   - Venda criada com: 80 unidades → ProductOutput criada, estoque fica 20
+    #   - Editar venda para: 50 unidades → quantidade_anterior era 80
+    #   - Estoque ajustado: 20 (atual) + 80 (anterior) = 100 disponível para esta venda
+    #   - 100 >= 50 → Validação passa ✓
+    if persisted? && quantity_was.present?
+      adjusted_available = available_quantity + quantity_was
+      return if adjusted_available >= quantity
+
+      errors.add(:quantity, "Estoque insuficiente! Disponível para esta venda: #{adjusted_available} unidades. Solicitado: #{quantity} unidades.")
+    else
+      # Nova venda - validação normal
+      if available_quantity < quantity
+        errors.add(:quantity, "Estoque insuficiente! Disponível: #{available_quantity} unidades. Solicitado: #{quantity} unidades.")
+      end
     end
   end
 end

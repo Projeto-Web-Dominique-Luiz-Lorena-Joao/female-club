@@ -3,6 +3,9 @@ class ProductsController < ApplicationController
   before_action :set_product, only: [:show, :edit, :update, :destroy]
 
   def index
+    # Atualizar status de estoque de todos os produtos para garantir consistência
+    Product.all.each(&:refresh_stock_status!)
+
     @products = Product.all
 
     @products = @products.active if params[:active] == 'true'
@@ -15,6 +18,7 @@ class ProductsController < ApplicationController
   end
 
   def show
+    @product.refresh_stock_status!
   end
 
   def new

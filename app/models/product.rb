@@ -18,6 +18,7 @@ class Product < ApplicationRecord
   scope :active, -> { where(active: true) }
   scope :inactive, -> { where(active: false) }
   scope :by_category, ->(category) { where(category: category) }
+  scope :low_stock, -> { where(stock_status: ['critico', 'baixo']) }
   scope :search, ->(term) {
     where("name ILIKE ? OR code ILIKE ? OR brand ILIKE ?", "%#{term}%", "%#{term}%", "%#{term}%")
   }
@@ -63,6 +64,11 @@ class Product < ApplicationRecord
   def update_stock_status!
     new_status = calculate_stock_status
     update_column(:stock_status, new_status) if stock_status != new_status
+  end
+
+  def refresh_stock_status!
+    new_status = calculate_stock_status
+    update_column(:stock_status, new_status)
   end
 
   def calculate_stock_status

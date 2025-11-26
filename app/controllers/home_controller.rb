@@ -2,11 +2,14 @@ class HomeController < ApplicationController
   before_action :authenticate_user!
 
   def dashboard
+    # Atualizar status de estoque de todos os produtos para garantir consistência
+    Product.all.each(&:refresh_stock_status!)
+
     # KPIs
     @vendas_mes = '6.800,00'
     @total_vendas = 342
     @clientes_ativos = 156
-    @estoque_baixo = 12
+    @estoque_baixo = Product.where(stock_status: ['critico', 'baixo']).count
 
     # Dados do gráfico de vendas (últimos 8 meses)
     @vendas_data = [4500, 5200, 4800, 6200, 6000, 6500, 7500, 8000]

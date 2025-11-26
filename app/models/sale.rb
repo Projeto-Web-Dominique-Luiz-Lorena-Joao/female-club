@@ -50,6 +50,7 @@ class Sale < ApplicationRecord
   before_validation :set_default_payment_method, on: :create
   before_save :calculate_total_amount
   after_commit :create_product_outputs, on: :create
+  after_commit :sync_product_outputs, on: :update
 
   def overdue?
     due_date.present? && due_date < Date.today && pendente?
@@ -88,6 +89,57 @@ class Sale < ApplicationRecord
         date_output: sale_date,
         created_by_id: nil
       )
+    end
+  end
+
+  def sync_product_outputs
+    # Sincroniza as ProductOutputs com as quantidades atualizadas na venda
+    # Quando edita uma venda, precisa atualizar ou recriar as saídas de estoque
+
+    # Primeiro, encontra todos os product_ids que ainda estão na venda
+    current_product_ids = sale_products.where.not(id: nil).pluck(:product_id).compact
+
+    # Remove ProductOutputs que foram marcadas para destruição (product não está mais na venda)
+    # Usa DATE() para comparar apenas a data, ignorando a hora
+    ProductOutput.where(output_type: 'venda', created_by_id: nil)
+                 .where("DATE(date_output) = ?", sale_date)
+                 .where.not(product_id: current_product_ids)
+                 .delete_all
+
+    # Sincroniza as quantidades dos produtos que ainda estão na venda
+    sale_products.each do |sale_product|
+      next if sale_product.product_id.blank?
+
+      # Encontra a ProductOutput correspondente a este sale_product
+      # Usa DATE() para comparar apenas a data, ignorando a hora
+      product_output = ProductOutput.where(
+        product_id: sale_product.product_id,
+        output_type: 'venda',
+        created_by_id: nil
+      ).where("DATE(date_output) = ?", sale_date).first
+
+      if product_output
+        # Se a quantidade mudou, atualiza
+        if product_output.quantity != sale_product.quantity
+          old_qty = product_output.quantity
+          new_qty = sale_product.quantity
+          product_output.update(quantity: new_qty)
+          Rails.logger.info "SYNC: Produto #{sale_product.product_id} atualizado de #{old_qty} para #{new_qty} unidades"
+          # Atualiza o status de estoque do produto após a mudança
+          sale_product.product&.refresh_stock_status!
+        end
+      else
+        # Se não existe ProductOutput, cria
+        ProductOutput.create(
+          product_id: sale_product.product_id,
+          quantity: sale_product.quantity,
+          output_type: 'venda',
+          date_output: sale_date,
+          created_by_id: nil
+        )
+        Rails.logger.info "SYNC: ProductOutput criada para produto #{sale_product.product_id} com #{sale_product.quantity} unidades"
+        sale_product.product&.refresh_stock_status!
+      end
     end
   end
 

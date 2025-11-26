@@ -4,6 +4,9 @@ class InventoryStatusController < ApplicationController
                        .includes(:product_inputs, :product_outputs)
                        .order(:name)
 
+    # Atualizar status de estoque de todos os produtos para garantir consistência
+    Product.where(active: true).each(&:refresh_stock_status!)
+
     # Filtros opcionais
     if params[:stock_status].present?
       @products = @products.where(stock_status: params[:stock_status])
