@@ -1,3 +1,4 @@
+# config/routes.rb
 Rails.application.routes.draw do
   namespace :api do
     get "employees/search", to: "employees#search"
@@ -78,20 +79,23 @@ Rails.application.routes.draw do
   devise_for :users
 
   authenticated :user do
-    root to: "home#dashboard", as: :authenticated_root
+    # ALTERADO: Usar o novo DashboardController
+    root to: "dashboard#index", as: :authenticated_root
   end
 
   unauthenticated do
     root to: redirect("/users/sign_in")
   end
 
-  get "dashboard", to: "home#dashboard"
+  # ALTERADO: Rota do dashboard usando o novo controller
+  get "dashboard", to: "dashboard#index"
 
+  # Manter rotas antigas do HomeController se ainda precisar
   get "employee", to: "home#employees"
-  get "customers", to: "home#customers"
-  get "suppliers", to: "home#suppliers"
-  get "sales", to: "home#sales"
-  get "products", to: "home#products"
-  get "services", to: "home#services"
-  get "expenses", to: "home#expenses"
+  get "customers_page", to: "home#customers"
+  get "suppliers_page", to: "home#suppliers"
+  get "sales_page", to: "home#sales"
+  get "products_page", to: "home#products"
+  get "services_page", to: "home#services"
+  get "expenses_page", to: "home#expenses"
 end

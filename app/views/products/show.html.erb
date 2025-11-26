@@ -105,11 +105,11 @@
                 <%= [@product.quantity, 0].max %>
               </p>
               <% if @product.stock_status == "fora_de_estoque" %>
-                <p class="text-xs text-red-600 mt-1">❌ Fora de estoque</p>
+                <p class="text-xs text-red-600 mt-1">Fora de estoque</p>
               <% elsif @product.stock_status == "critico" %>
-                <p class="text-xs text-orange-600 mt-1">⚠️ Estoque crítico</p>
+                <p class="text-xs text-orange-600 mt-1">Estoque crítico</p>
               <% elsif @product.stock_status == "baixo" %>
-                <p class="text-xs text-yellow-600 mt-1">⚠️ Estoque baixo</p>
+                <p class="text-xs text-yellow-600 mt-1">Estoque baixo</p>
               <% end %>
             </div>
           </div>
