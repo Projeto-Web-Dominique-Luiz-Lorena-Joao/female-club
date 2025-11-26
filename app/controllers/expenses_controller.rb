@@ -9,6 +9,7 @@ class ExpensesController < ApplicationController
     @expenses = @expenses.by_category(params[:category]) if params[:category].present?
     @expenses = @expenses.by_payment_method(params[:payment_method]) if params[:payment_method].present?
     @expenses = @expenses.by_date_range(params[:start_date].to_date, params[:end_date].to_date) if params[:start_date].present? && params[:end_date].present?
+    @expenses = @expenses.where(status: params[:status]) if params[:status].present?
   end
 
   def show
@@ -51,6 +52,6 @@ class ExpensesController < ApplicationController
   end
 
   def expense_params
-    params.require(:expense).permit(:employee_id, :supplier_id, :expense_date, :expense_type, :amount, :payment_method, :notes, :category)
+    params.require(:expense).permit(:employee_id, :supplier_id, :expense_date, :expense_type, :amount, :payment_method, :notes, :category, :status)
   end
 end

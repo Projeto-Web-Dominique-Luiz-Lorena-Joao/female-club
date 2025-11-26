@@ -1,39 +1,45 @@
-<div class="min-h-screen bg-gray-50 p-8">
-  <div class="max-w-7xl mx-auto">
-    <!-- Header -->
-    <div class="flex justify-between items-center mb-8">
-      <div>
-        <h1 class="text-4xl font-bold text-gray-900">Despesas</h1>
-        <p class="text-gray-600 mt-2">Gerenciar despesas do clube feminino</p>
-      </div>
-      <%= link_to "Adicionar Despesa", new_expense_path, class: "bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 font-medium" %>
+<div class="space-y-6">
+
+  <div class="flex justify-between items-center">
+    <div>
+      <h1 class="text-3xl font-bold text-gray-900">Despesas</h1>
+      <p class="mt-2 text-gray-600">Gerenciar despesas</p>
     </div>
+    <%= link_to new_expense_path,
+        class: "bg-black hover:bg-gray-700 text-white px-6 py-3 rounded-lg font-medium shadow-lg transition duration-200 inline-flex items-center" do %>
+      Adicionar Despesa
+    <% end %>
+  </div>
+
+  <div class="bg-white rounded-lg shadow p-6">
+    <%= form_with url: expenses_path, method: :get, local: true, class: "space-y-4" do |f| %>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
 
     <!-- Filters -->
     <div class="bg-white rounded-lg shadow p-6 mb-8">
-      <%= form_with url: expenses_path, method: :get, local: true, class: "grid grid-cols-1 md:grid-cols-5 gap-4" do |f| %>
+      <%= form_with url: expenses_path, method: :get, local: true, class: "grid grid-cols-1 md:grid-cols-6 gap-4" do |f| %>
         <div>
-          <%= f.label :employee_id, "Funcionário", class: "block text-sm font-medium text-gray-700 mb-2" %>
+          <%= f.label :employee_id, "Funcionário", class: "block text-sm font-medium text-gray-700 mb-1" %>
           <%= f.collection_select :employee_id,
               Employee.all,
               :id,
               :full_name,
               { prompt: "Todos", selected: params[:employee_id] },
-              class: "w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" %>
+              class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500" %>
         </div>
 
         <div>
-          <%= f.label :supplier_id, "Fornecedor", class: "block text-sm font-medium text-gray-700 mb-2" %>
+          <%= f.label :supplier_id, "Fornecedor", class: "block text-sm font-medium text-gray-700 mb-1" %>
           <%= f.collection_select :supplier_id,
               Supplier.all,
               :id,
               :display_name,
               { prompt: "Todos", selected: params[:supplier_id] },
-              class: "w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" %>
+              class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500" %>
         </div>
 
         <div>
-          <%= f.label :expense_type, "Tipo", class: "block text-sm font-medium text-gray-700 mb-2" %>
+          <%= f.label :expense_type, "Tipo", class: "block text-sm font-medium text-gray-700 mb-1" %>
           <%= f.select :expense_type,
               [
                 ["Todos", ""],
@@ -48,11 +54,11 @@
                 ["Outro", "other"]
               ],
               { selected: params[:expense_type] },
-              class: "w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" %>
+              class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500" %>
         </div>
 
         <div>
-          <%= f.label :category, "Categoria", class: "block text-sm font-medium text-gray-700 mb-2" %>
+          <%= f.label :category, "Categoria", class: "block text-sm font-medium text-gray-700 mb-1" %>
           <%= f.select :category,
               [
                 ["Todas", ""],
@@ -62,6 +68,27 @@
                 ["Rara", "rara"]
               ],
               { selected: params[:category] },
+              class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500" %>
+        </div>
+      </div>
+
+<<<<<<< HEAD
+      <div class="flex justify-start space-x-2">
+        <%= f.submit "Filtrar", class: "bg-black hover:bg-gray-700 text-white px-6 py-2 rounded-lg font-medium transition duration-200 cursor-pointer" %>
+        <%= link_to "Limpar", expenses_path, class: "bg-gray-300 hover:bg-gray-200 text-gray-700 px-6 py-2 rounded-lg font-medium transition duration-200" %>
+      </div>
+    <% end %>
+  </div>
+=======
+        <div>
+          <%= f.label :status, "Status", class: "block text-sm font-medium text-gray-700 mb-2" %>
+          <%= f.select :status,
+              [
+                ["Todos", ""],
+                ["Ativa", "ativa"],
+                ["Inativa", "inativa"]
+              ],
+              { selected: params[:status] },
               class: "w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" %>
         </div>
 
@@ -70,61 +97,92 @@
         </div>
       <% end %>
     </div>
+>>>>>>> 3904a8a (fix: colocação de coluna status em despesas)
 
-    <!-- Expenses Table -->
-    <div class="bg-white rounded-lg shadow overflow-hidden">
-      <% if @expenses.any? %>
-        <table class="w-full">
-          <thead class="bg-gray-100 border-b border-gray-200">
+  <div class="bg-white rounded-lg shadow overflow-hidden">
+    <% if @expenses.any? %>
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-black">
             <tr>
+<<<<<<< HEAD
+              <th class="px-6 py-3 text-center text-xs font-medium text-white uppercase">Data</th>
+              <th class="px-6 py-3 text-center text-xs font-medium text-white uppercase">Funcionário</th>
+              <th class="px-6 py-3 text-center text-xs font-medium text-white uppercase">Fornecedor</th>
+              <th class="px-6 py-3 text-center text-xs font-medium text-white uppercase">Tipo</th>
+              <th class="px-6 py-3 text-center text-xs font-medium text-white uppercase">Categoria</th>
+              <th class="px-6 py-3 text-center text-xs font-medium text-white uppercase">Valor</th>
+              <th class="px-6 py-3 text-center text-xs font-medium text-white uppercase">Ações</th>
+=======
               <th class="px-6 py-3 text-left text-sm font-semibold text-gray-900">Data</th>
               <th class="px-6 py-3 text-left text-sm font-semibold text-gray-900">Funcionário</th>
               <th class="px-6 py-3 text-left text-sm font-semibold text-gray-900">Fornecedor</th>
               <th class="px-6 py-3 text-left text-sm font-semibold text-gray-900">Tipo</th>
               <th class="px-6 py-3 text-left text-sm font-semibold text-gray-900">Categoria</th>
+              <th class="px-6 py-3 text-left text-sm font-semibold text-gray-900">Status</th>
               <th class="px-6 py-3 text-right text-sm font-semibold text-gray-900">Valor</th>
               <th class="px-6 py-3 text-left text-sm font-semibold text-gray-900">Ações</th>
+>>>>>>> 3904a8a (fix: colocação de coluna status em despesas)
             </tr>
           </thead>
-          <tbody>
+          <tbody class="bg-white divide-y divide-gray-200">
             <% @expenses.each do |expense| %>
-              <tr class="border-b border-gray-200 hover:bg-gray-50">
-                <td class="px-6 py-4 text-sm text-gray-900">
+              <tr class="hover:bg-gray-50">
+                <td class="px-6 py-4 text-center text-sm text-gray-900">
                   <%= l(expense.expense_date, format: :long) %>
                 </td>
-                <td class="px-6 py-4 text-sm text-gray-900">
+                <td class="px-6 py-4 text-center text-sm text-gray-900">
                   <%= expense.employee.full_name %>
                 </td>
-                <td class="px-6 py-4 text-sm text-gray-900">
+<<<<<<< HEAD
+                <td class="px-6 py-4 text-center text-sm text-gray-900">
                   <%= expense.supplier.display_name %>
-                </td>
+=======
                 <td class="px-6 py-4 text-sm text-gray-900">
+                  <%= expense.supplier&.display_name || '-' %>
+>>>>>>> 3904a8a (fix: colocação de coluna status em despesas)
+                </td>
+                <td class="px-6 py-4 text-center text-sm text-gray-900">
                   <%= expense.expense_type_label %>
                 </td>
-                <td class="px-6 py-4 text-sm">
-                  <span class="px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+                <td class="px-6 py-4 text-center text-sm">
+                  <span class="px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
                     <%= expense.category_label %>
                   </span>
                 </td>
+<<<<<<< HEAD
+                <td class="px-6 py-4 text-center text-sm font-semibold text-gray-900">
+=======
+                <td class="px-6 py-4 text-sm">
+                  <span class="px-3 py-1 rounded-full text-sm font-medium <%= expense.status == 'ativa' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' %>">
+                    <%= expense.status_label %>
+                  </span>
+                </td>
                 <td class="px-6 py-4 text-sm text-gray-900 text-right font-medium">
+>>>>>>> 3904a8a (fix: colocação de coluna status em despesas)
                   R$ <%= number_with_precision(expense.amount, precision: 2, delimiter: ',', separator: '.') %>
                 </td>
-                <td class="px-6 py-4 text-sm">
-                  <div class="flex gap-2">
-                    <%= link_to "Ver", expense_path(expense), class: "text-blue-600 hover:text-blue-900" %>
-                    <%= link_to "Editar", edit_expense_path(expense), class: "text-yellow-600 hover:text-yellow-900" %>
-                    <%= link_to "Deletar", expense_path(expense), method: :delete, data: { confirm: "Tem certeza?" }, class: "text-red-600 hover:text-red-900" %>
+                <td class="px-6 py-4 text-center">
+                  <div class="flex justify-center items-center space-x-2">
+                    <%= link_to "Visualizar", expense_path(expense), class: "bg-blue-200 text-blue-700 px-5 py-2 rounded-lg hover:bg-blue-100 text-center text-sm font-medium" %>
                   </div>
                 </td>
               </tr>
             <% end %>
           </tbody>
         </table>
-      <% else %>
-        <div class="p-8 text-center">
-          <p class="text-gray-500 text-lg">Nenhuma despesa registrada</p>
-        </div>
-      <% end %>
-    </div>
+      </div>
+
+      <div class="px-6 py-4 border-t border-gray-200">
+        <%#= paginate @expenses %>
+      </div>
+
+    <% else %>
+      <div class="text-center py-12">
+        <p class="mt-4 text-xl text-gray-600">Nenhuma despesa registrada</p>
+        <%= link_to "Adicionar Despesa", new_expense_path,
+            class: "mt-4 inline-block bg-black hover:bg-gray-700 text-white px-6 py-3 rounded-lg font-medium transition duration-200" %>
+      </div>
+    <% end %>
   </div>
 </div>
