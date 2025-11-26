@@ -1,5 +1,5 @@
 class SalesController < ApplicationController
-  before_action :set_sale, only: [:show, :edit, :update, :destroy, :mark_as_paid]
+  before_action :set_sale, only: [:show, :edit, :update, :mark_as_paid]
 
   def index
     @sales = Sale.includes(:customer, :employee)
@@ -81,11 +81,6 @@ class SalesController < ApplicationController
       load_form_data
       render :edit, status: :unprocessable_entity
     end
-  end
-
-  def destroy
-    @sale.destroy
-    redirect_to sales_url, notice: 'Venda excluída com sucesso.'
   end
 
   def mark_as_paid

@@ -51,6 +51,7 @@ class Sale < ApplicationRecord
   before_save :calculate_total_amount
   after_commit :create_product_outputs, on: :create
   after_commit :sync_product_outputs, on: :update
+  after_commit :return_stock_on_cancellation, on: :update
 
   def overdue?
     due_date.present? && due_date < Date.today && pendente?
@@ -139,6 +140,47 @@ class Sale < ApplicationRecord
         )
         Rails.logger.info "SYNC: ProductOutput criada para produto #{sale_product.product_id} com #{sale_product.quantity} unidades"
         sale_product.product&.refresh_stock_status!
+      end
+    end
+  end
+
+  def return_stock_on_cancellation
+    # Retorna estoque ao cancelar uma venda
+    # Verifica se o status é 'cancelado' e ainda não foi processado
+    return unless status == 'cancelado'
+    return if @already_processed_cancellation  # Impede duplicação de devolução
+
+    # Marca como já processado
+    @already_processed_cancellation = true
+
+    # Usa transação para garantir atomicidade
+    ActiveRecord::Base.transaction do
+      sale_products.each do |sale_product|
+        next if sale_product.product_id.blank?
+
+        product = sale_product.product
+        quantity_to_return = sale_product.quantity
+
+        # Remove a ProductOutput correspondente à venda cancelada
+        # A ProductOutput será deletada, o que aumenta automaticamente a quantidade do produto
+        ProductOutput.where(
+          product_id: product.id,
+          output_type: 'venda',
+          created_by_id: nil
+        ).where("DATE(date_output) = ?", sale_date).delete_all
+
+        # Cria um registro de movimentação de estoque para auditoria
+        StockMovement.create!(
+          product_id: product.id,
+          employee_id: employee_id,
+          movement_type: 'cancellation_return',
+          quantity: quantity_to_return,
+          sale_id: id,
+          description: "Devolução de estoque - Venda #{id} cancelada"
+        )
+
+        # Atualiza o status de estoque do produto
+        product.refresh_stock_status!
       end
     end
   end

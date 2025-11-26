@@ -269,6 +269,10 @@
 
   <!-- Botão de Cancelar Venda -->
   <div class="mt-6 text-center">
-    <%= button_to "Cancelar Venda", sale_path(@sale), method: :delete, class: "bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-lg font-medium", data: { confirm: "Tem certeza que deseja excluir esta venda?" } %>
+    <% if @sale.status != 'cancelado' %>
+      <%= button_to "Cancelar Venda", sale_path(@sale), method: :patch, params: { sale: { status: 'cancelado' } }, class: "bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-lg font-medium", data: { confirm: "Tem certeza que deseja cancelar esta venda? O estoque será devolvido automaticamente." } %>
+    <% else %>
+      <p class="text-gray-600 font-medium">Venda cancelada em <%= @sale.updated_at.strftime('%d/%m/%Y às %H:%M') %></p>
+    <% end %>
   </div>
 </div>

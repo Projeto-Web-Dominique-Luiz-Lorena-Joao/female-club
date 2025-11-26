@@ -10,7 +10,8 @@ class StockMovement < ApplicationRecord
     perda_extravio: "perda_extravio",
     devolucao: "devolucao",
     ajuste_estoque: "ajuste_estoque",
-    transferencia: "transferencia"
+    transferencia: "transferencia",
+    cancellation_return: "cancellation_return"
   }
 
   validates :product_id, presence: true
@@ -33,7 +34,8 @@ class StockMovement < ApplicationRecord
       perda_extravio: "Perda/Extravio",
       devolucao: "Devolução",
       ajuste_estoque: "Ajuste de Estoque",
-      transferencia: "Transferência"
+      transferencia: "Transferência",
+      cancellation_return: "Devolução por Cancelamento"
     }
   end
 
