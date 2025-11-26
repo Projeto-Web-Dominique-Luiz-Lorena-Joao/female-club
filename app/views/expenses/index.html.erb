@@ -15,6 +15,9 @@
     <%= form_with url: expenses_path, method: :get, local: true, class: "space-y-4" do |f| %>
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
 
+    <!-- Filters -->
+    <div class="bg-white rounded-lg shadow p-6 mb-8">
+      <%= form_with url: expenses_path, method: :get, local: true, class: "grid grid-cols-1 md:grid-cols-6 gap-4" do |f| %>
         <div>
           <%= f.label :employee_id, "Funcionário", class: "block text-sm font-medium text-gray-700 mb-1" %>
           <%= f.collection_select :employee_id,
@@ -69,12 +72,32 @@
         </div>
       </div>
 
+<<<<<<< HEAD
       <div class="flex justify-start space-x-2">
         <%= f.submit "Filtrar", class: "bg-black hover:bg-gray-700 text-white px-6 py-2 rounded-lg font-medium transition duration-200 cursor-pointer" %>
         <%= link_to "Limpar", expenses_path, class: "bg-gray-300 hover:bg-gray-200 text-gray-700 px-6 py-2 rounded-lg font-medium transition duration-200" %>
       </div>
     <% end %>
   </div>
+=======
+        <div>
+          <%= f.label :status, "Status", class: "block text-sm font-medium text-gray-700 mb-2" %>
+          <%= f.select :status,
+              [
+                ["Todos", ""],
+                ["Ativa", "ativa"],
+                ["Inativa", "inativa"]
+              ],
+              { selected: params[:status] },
+              class: "w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" %>
+        </div>
+
+        <div class="flex items-end">
+          <%= f.submit "Filtrar", class: "w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 font-medium" %>
+        </div>
+      <% end %>
+    </div>
+>>>>>>> 3904a8a (fix: colocação de coluna status em despesas)
 
   <div class="bg-white rounded-lg shadow overflow-hidden">
     <% if @expenses.any? %>
@@ -82,6 +105,7 @@
         <table class="min-w-full divide-y divide-gray-200">
           <thead class="bg-black">
             <tr>
+<<<<<<< HEAD
               <th class="px-6 py-3 text-center text-xs font-medium text-white uppercase">Data</th>
               <th class="px-6 py-3 text-center text-xs font-medium text-white uppercase">Funcionário</th>
               <th class="px-6 py-3 text-center text-xs font-medium text-white uppercase">Fornecedor</th>
@@ -89,6 +113,16 @@
               <th class="px-6 py-3 text-center text-xs font-medium text-white uppercase">Categoria</th>
               <th class="px-6 py-3 text-center text-xs font-medium text-white uppercase">Valor</th>
               <th class="px-6 py-3 text-center text-xs font-medium text-white uppercase">Ações</th>
+=======
+              <th class="px-6 py-3 text-left text-sm font-semibold text-gray-900">Data</th>
+              <th class="px-6 py-3 text-left text-sm font-semibold text-gray-900">Funcionário</th>
+              <th class="px-6 py-3 text-left text-sm font-semibold text-gray-900">Fornecedor</th>
+              <th class="px-6 py-3 text-left text-sm font-semibold text-gray-900">Tipo</th>
+              <th class="px-6 py-3 text-left text-sm font-semibold text-gray-900">Categoria</th>
+              <th class="px-6 py-3 text-left text-sm font-semibold text-gray-900">Status</th>
+              <th class="px-6 py-3 text-right text-sm font-semibold text-gray-900">Valor</th>
+              <th class="px-6 py-3 text-left text-sm font-semibold text-gray-900">Ações</th>
+>>>>>>> 3904a8a (fix: colocação de coluna status em despesas)
             </tr>
           </thead>
           <tbody class="bg-white divide-y divide-gray-200">
@@ -100,8 +134,13 @@
                 <td class="px-6 py-4 text-center text-sm text-gray-900">
                   <%= expense.employee.full_name %>
                 </td>
+<<<<<<< HEAD
                 <td class="px-6 py-4 text-center text-sm text-gray-900">
                   <%= expense.supplier.display_name %>
+=======
+                <td class="px-6 py-4 text-sm text-gray-900">
+                  <%= expense.supplier&.display_name || '-' %>
+>>>>>>> 3904a8a (fix: colocação de coluna status em despesas)
                 </td>
                 <td class="px-6 py-4 text-center text-sm text-gray-900">
                   <%= expense.expense_type_label %>
@@ -111,7 +150,16 @@
                     <%= expense.category_label %>
                   </span>
                 </td>
+<<<<<<< HEAD
                 <td class="px-6 py-4 text-center text-sm font-semibold text-gray-900">
+=======
+                <td class="px-6 py-4 text-sm">
+                  <span class="px-3 py-1 rounded-full text-sm font-medium <%= expense.status == 'ativa' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' %>">
+                    <%= expense.status_label %>
+                  </span>
+                </td>
+                <td class="px-6 py-4 text-sm text-gray-900 text-right font-medium">
+>>>>>>> 3904a8a (fix: colocação de coluna status em despesas)
                   R$ <%= number_with_precision(expense.amount, precision: 2, delimiter: ',', separator: '.') %>
                 </td>
                 <td class="px-6 py-4 text-center">
