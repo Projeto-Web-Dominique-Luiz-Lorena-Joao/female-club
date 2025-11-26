@@ -8,7 +8,7 @@
   </div>
 
   <!-- Cards de Estatísticas -->
-  <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+  <div class="grid grid-cols-1 md:grid-cols-5 gap-6">
     <!-- Card Total de Produtos -->
     <div class="bg-white rounded-lg border border-gray-200 p-4">
       <div class="flex items-start">
@@ -42,80 +42,78 @@
     <!-- Card Estoque Baixo -->
     <div class="bg-white rounded-lg border border-gray-200 p-4">
       <div class="flex items-start">
+        <div class="flex-shrink-0 bg-yellow-100 rounded-lg p-3">
+          <svg class="h-6 w-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+          </svg>
+        </div>
+        <div class="ml-3 flex-1">
+          <p class="text-xs text-gray-500 font-medium">Estoque Baixo</p>
+          <p class="text-2xl font-bold text-yellow-600 mt-1"><%= @low_stock %></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card Estoque Crítico -->
+    <div class="bg-white rounded-lg border border-gray-200 p-4">
+      <div class="flex items-start">
         <div class="flex-shrink-0 bg-orange-100 rounded-lg p-3">
           <svg class="h-6 w-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
           </svg>
         </div>
         <div class="ml-3 flex-1">
-          <p class="text-xs text-gray-500 font-medium">Estoque Baixo</p>
-          <p class="text-2xl font-bold text-orange-600 mt-1"><%= @low_stock %></p>
+          <p class="text-xs text-gray-500 font-medium">Estoque Crítico</p>
+          <p class="text-2xl font-bold text-orange-600 mt-1"><%= @critical_stock %></p>
         </div>
       </div>
     </div>
 
-    <div class="bg-orange-50 border border-orange-200 rounded-lg p-6">
-      <div class="flex items-center justify-between">
-        <div>
-          <p class="text-sm text-orange-600 font-medium">Estoque Crítico</p>
-          <p class="text-3xl font-bold text-orange-900"><%= @critical_stock %></p>
+    <!-- Card Fora de Estoque -->
+    <div class="bg-white rounded-lg border border-gray-200 p-4">
+      <div class="flex items-start">
+        <div class="flex-shrink-0 bg-red-100 rounded-lg p-3">
+          <svg class="h-6 w-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
         </div>
-        <svg class="w-12 h-12 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
-        </svg>
-      </div>
-    </div>
-
-    <div class="bg-red-50 border border-red-200 rounded-lg p-6">
-      <div class="flex items-center justify-between">
-        <div>
-          <p class="text-sm text-red-600 font-medium">Fora de Estoque</p>
-          <p class="text-3xl font-bold text-red-900"><%= @out_of_stock %></p>
+        <div class="ml-3 flex-1">
+          <p class="text-xs text-gray-500 font-medium">Fora de Estoque</p>
+          <p class="text-2xl font-bold text-red-600 mt-1"><%= @out_of_stock %></p>
         </div>
       </div>
     </div>
   </div>
 
   <!-- Filtros -->
-  <div class="bg-white rounded-lg shadow p-6">
-    <%= form_with url: inventory_status_path, method: :get, class: "space-y-4", local: true do |f| %>
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+  <div class="bg-white rounded-lg border border-gray-200">
+    <%= form_with url: inventory_status_path, method: :get, class: "flex items-center gap-3 p-4", local: true do |f| %>
+      
+      <%= f.text_field :search,
+            placeholder: "Buscar pelo nome do produto",
+            value: params[:search],
+            class: "flex-1 px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent" %>
 
-        <div>
-          <%= f.text_field :search,
-                placeholder: "Buscar por nome ou código",
-                value: params[:search],
-                class: "w-full px-4 py-2 border border-gray-300 rounded-lg" %>
-        </div>
+      <%= f.select :stock_status,
+            options_for_select(
+              [
+                ["Todos os Status", ""],
+                ["Em Estoque", "em_estoque"],
+                ["Estoque Baixo", "baixo"],
+                ["Estoque Crítico", "critico"],
+                ["Fora de Estoque", "fora_de_estoque"]
+              ],
+              params[:stock_status]
+            ),
+            {},
+            { class: "px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent bg-white" } %>
 
-        <div>
-          <%= f.select :stock_status,
-                options_for_select(
-                  [
-                    ["Todos os Status", ""],
-                    ["Em Estoque", "em_estoque"],
-                    ["Estoque Baixo", "baixo"],
-                    ["Fora de Estoque", "fora_de_estoque"]
-                  ],
-                  params[:stock_status]
-                ),
-                { class: "w-full px-4 py-2 border border-gray-300 rounded-lg" } %>
-        </div>
+      <%= f.submit "Buscar",
+            class: "bg-black hover:bg-gray-800 text-white px-6 py-2.5 rounded-lg font-medium transition duration-200 cursor-pointer" %>
 
-        <div class="flex items-center space-x-2">
-          <%= f.check_box :low_stock_only, { checked: params[:low_stock_only] == "true" }, "true", "false" %>
-          <%= f.label :low_stock_only, "Mostrar apenas estoque baixo", class: "text-sm text-gray-700" %>
-        </div>
+      <%= link_to "Limpar", inventory_status_path,
+            class: "bg-gray-300 hover:bg-gray-200 text-gray-700 px-6 py-2.5 rounded-lg font-medium transition duration-200" %>
 
-        <div class="flex justify-end space-x-2 items-center">
-          <%= f.submit "Filtrar",
-                class: "bg-black hover:bg-gray-700 text-white px-6 py-2 rounded-lg font-medium transition duration-200" %>
-
-          <%= link_to "Limpar", inventory_status_path,
-                class: "bg-gray-300 hover:bg-gray-200 text-gray-700 px-6 py-2 rounded-lg font-medium transition duration-200" %>
-        </div>
-
-      </div>
     <% end %>
   </div>
 
@@ -187,8 +185,6 @@
 
       <div class="text-center py-12">
         <p class="mt-4 text-xl text-gray-600">Nenhum produto encontrado</p>
-        <%= link_to "Cadastrar primeiro produto", new_product_path,
-            class: "mt-4 inline-block bg-black hover:bg-gray-700 text-white px-6 py-3 rounded-lg font-medium transition duration-200" %>
       </div>
 
     <% end %>
