@@ -37,31 +37,37 @@ export default class extends Controller {
       this.contentTarget.classList.remove("ml-72")
       this.contentTarget.classList.add("ml-20")
       
-      this.textTargets.forEach(el => {
-        el.classList.add("hidden")
-      })
+      // Adiciona delay antes de esconder os textos
+      setTimeout(() => {
+        this.textTargets.forEach(el => {
+          el.classList.add("opacity-0")
+        })
+      }, 100)
       
-      this.linkTargets.forEach(el => {
-        el.classList.add("justify-center", "px-0")
-        el.classList.remove("px-3")
-      })
+      setTimeout(() => {
+        this.textTargets.forEach(el => {
+          el.classList.add("hidden")
+        })
+      }, 300)
       
       this.arrowTarget.classList.add("rotate-180")
     } else {
       this.sidebarTarget.classList.remove("w-20")
       this.sidebarTarget.classList.add("w-72")
       
-      this.contentTarget.classList.remove("ml-28")
+      this.contentTarget.classList.remove("ml-20")
       this.contentTarget.classList.add("ml-72")
       
+      // Remove hidden primeiro, depois faz fade in
       this.textTargets.forEach(el => {
         el.classList.remove("hidden")
       })
       
-      this.linkTargets.forEach(el => {
-        el.classList.remove("justify-center", "px-0")
-        el.classList.add("px-3")
-      })
+      setTimeout(() => {
+        this.textTargets.forEach(el => {
+          el.classList.remove("opacity-0")
+        })
+      }, 100)
       
       this.arrowTarget.classList.remove("rotate-180")
     }

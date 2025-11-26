@@ -1,7 +1,7 @@
 Rails.application.routes.draw do
   namespace :api do
-    get 'employees/search', to: 'employees#search'
-    get 'suppliers/search', to: 'suppliers#search'
+    get "employees/search", to: "employees#search"
+    get "suppliers/search", to: "suppliers#search"
   end
 
   resources :expenses do
@@ -10,7 +10,6 @@ Rails.application.routes.draw do
       patch :reactivate
     end
   end
-
 
   resources :service_appointments do
     collection do
@@ -41,6 +40,7 @@ Rails.application.routes.draw do
   resources :customers
   resources :products
   resources :services
+
   resources :product_inputs do
     collection do
       get :search_products
@@ -49,13 +49,20 @@ Rails.application.routes.draw do
       get :list_suppliers
     end
   end
+
   resources :product_outputs do
     collection do
       get :search_products
       get :list_products
     end
   end
-  get "inventory_status", to: "inventory_status#index"
+
+  # --- ESTOQUE PRINCIPAL (botão do menu) ---
+  get "inventory", to: "inventory#index", as: :inventory
+
+  # --- ESTADO DO ESTOQUE (submenu) ---
+  get "inventory_status", to: "inventory_status#index", as: :inventory_status
+
   resources :sales do
     collection do
       get :search_employees
@@ -80,9 +87,6 @@ Rails.application.routes.draw do
 
   get "dashboard", to: "home#dashboard"
 
-  # root 'devise/sessions#new'
-
-  # root 'home#index'
   get "employee", to: "home#employees"
   get "customers", to: "home#customers"
   get "suppliers", to: "home#suppliers"
@@ -90,6 +94,4 @@ Rails.application.routes.draw do
   get "products", to: "home#products"
   get "services", to: "home#services"
   get "expenses", to: "home#expenses"
-
-  # get "up" => "rails/health#show", as: :rails_health_check
 end
