@@ -13,8 +13,19 @@
     
     <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+    
+    <script>
+      (function() {
+        const isCollapsed = localStorage.getItem("sidebarCollapsed") === "true";
+        if (isCollapsed) {
+          document.documentElement.classList.add('sidebar-collapsed');
+        }
+      })();
+    </script>
+    
     <%= javascript_importmap_tags %>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
     <style>
       body {
         font-family: 'Inter', sans-serif;
@@ -29,6 +40,36 @@
           opacity: 1;
           transform: translateY(0);
         }
+      }
+
+      
+      .sidebar-collapsed aside[data-sidebar-target="sidebar"] {
+        width: 5rem !important;
+        transition: width 500ms ease-in-out !important;
+      }
+      
+      .sidebar-collapsed main[data-sidebar-target="content"] {
+        margin-left: 5rem !important;
+        transition: margin-left 500ms ease-in-out !important;
+      }
+      
+      .sidebar-collapsed [data-sidebar-target="text"] {
+        opacity: 0 !important;
+        max-width: 0 !important;
+        visibility: hidden !important;
+        pointer-events: none !important;
+      }
+      
+      .sidebar-collapsed [data-sidebar-target="arrow"] {
+        transform: rotate(180deg) !important;
+      }
+
+      
+      .sidebar-collapsed button[data-submenu-id] svg:last-child,
+      .sidebar-collapsed a[data-submenu-id] svg:last-child {
+        opacity: 0 !important;
+        max-width: 0 !important;
+        visibility: hidden !important;
       }
     </style>
   </head>

@@ -27,7 +27,6 @@
   background: rgba(255, 255, 255, 0.5);
 }
 
-/* Firefox scrollbar */
 * {
   scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
   scrollbar-width: thin;

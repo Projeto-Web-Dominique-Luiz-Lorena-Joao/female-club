@@ -1,7 +1,17 @@
-<aside class="bg-black text-white flex flex-col h-screen transition-all duration-500 ease-in-out fixed left-0 top-0 z-40 w-72"
+<aside class="bg-black text-white flex flex-col h-screen transition-all duration-500 ease-in-out fixed left-0 top-0 z-50 w-72 overflow-x-hidden overflow-y-auto"
        data-sidebar-target="sidebar">
 
-  <div class="p-4 pl-5 border-b border-gray-700 relative">
+
+<button data-action="click->sidebar#toggle" 
+        class="fixed top-8 left-[268px] bg-gray-800 hover:bg-gray-700 rounded-full p-1.5 border border-gray-600 z-[60] shadow-lg transition-all duration-500 ease-in-out"
+        data-sidebar-target="toggleButton">
+  <svg class="w-4 h-4 text-white transition-transform duration-300" 
+       data-sidebar-target="arrow"
+       fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+  </svg>
+</button>
+  <div class="p-4 pl-5 border-b border-gray-700 relative flex-shrink-0">
     <div class="flex items-center">
       <div class="w-10 h-10 rounded flex items-center justify-center flex-shrink-0 overflow-hidden">
         <%= image_tag "logo-female-club.jpg", class: "w-full h-full object-cover", alt: "Female Club" %>
@@ -9,18 +19,9 @@
       <h1 class="text-xl font-bold transition-all duration-500 ease-in-out ml-3 whitespace-nowrap overflow-hidden" 
           data-sidebar-target="text">Female Club</h1>
     </div>
-
-    <button data-action="click->sidebar#toggle" 
-            class="absolute top-1/2 -translate-y-1/2 -right-3 bg-gray-800 hover:bg-gray-700 rounded-full p-1 border border-gray-600 z-50">
-      <svg class="w-4 h-4 text-white transition-transform duration-300" 
-           data-sidebar-target="arrow"
-           fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-      </svg>
-    </button>
   </div>
 
-  <nav class="flex-1 py-6 px-3 overflow-y-auto">
+  <nav class="flex-1 py-6 px-3 overflow-y-auto overflow-x-hidden">
 
     <%= link_to dashboard_path, class: "flex items-center justify-start px-4 py-3 min-h-[48px] rounded-lg transition-all duration-300 mb-2 #{active_class(dashboard_path)}", title: "Dashboard", data: { sidebarTarget: "link" } do %>
       <svg class="w-5 h-5 flex-shrink-0 min-w-[1.25rem]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -29,36 +30,38 @@
       <span class="ml-3 whitespace-nowrap transition-all duration-500 ease-in-out" data-sidebar-target="text">Dashboard</span>
     <% end %>
 
-    <button data-action="click->sidebar#toggleSubmenu" data-submenu-id="estoque" 
-            class="flex items-center justify-start w-full px-4 py-3 min-h-[48px] text-gray-300 hover:bg-white/10 hover:text-white rounded-lg transition-all duration-300 mb-2" 
-            title="Estoque" data-sidebar-target="link">
+    <%= link_to inventory_status_path, 
+        data: { action: "click->sidebar#toggleSubmenu", submenu_id: "estoque", sidebar_target: "link" },
+        class: "flex items-center justify-start w-full px-4 py-3 min-h-[48px] rounded-lg transition-all duration-300 mb-2 #{active_submenu?(inventory_status_path, product_inputs_path, product_outputs_path) ? 'bg-white/10 text-white' : 'text-gray-300 hover:bg-white/10 hover:text-white'}", 
+        id: "estoque-parent",
+        title: "Estoque" do %>
       <svg class="w-5 h-5 flex-shrink-0 min-w-[1.25rem]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
       </svg>
       <span class="ml-3 whitespace-nowrap transition-all duration-500 ease-in-out" data-sidebar-target="text">Estoque</span>
       <svg class="w-4 h-4 ml-auto flex-shrink-0 transition-transform duration-300 min-w-[1rem]" 
-           data-sidebar-target="text" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+           fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
       </svg>
-    </button>
+    <% end %>
 
     <div id="estoque-submenu" class="hidden ml-8 space-y-1 mb-2">
 
-      <%= link_to inventory_status_path, class: "flex items-center justify-start px-4 py-2 min-h-[40px] text-sm text-gray-400 hover:bg-white/5 hover:text-white rounded-lg transition-all duration-300", title: "Visualizar Estoque", data: { sidebarTarget: "link" } do %>
+      <%= link_to inventory_status_path, class: "flex items-center justify-start px-4 py-2 min-h-[40px] text-sm rounded-lg transition-all duration-300 #{active_class(inventory_status_path)}", title: "Visualizar Estoque", data: { sidebarTarget: "link" } do %>
         <svg class="w-4 h-4 flex-shrink-0 min-w-[1rem]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
         </svg>
         <span class="ml-2 whitespace-nowrap transition-all duration-500 ease-in-out" data-sidebar-target="text">Estado Atual</span>
       <% end %>
 
-      <%= link_to product_inputs_path, class: "flex items-center justify-start px-4 py-2 min-h-[40px] text-sm text-gray-400 hover:bg-white/5 hover:text-white rounded-lg transition-all duration-300", title: "Registrar Entrada de Produto", data: { sidebarTarget: "link" } do %>
+      <%= link_to product_inputs_path, class: "flex items-center justify-start px-4 py-2 min-h-[40px] text-sm rounded-lg transition-all duration-300 #{active_class(product_inputs_path)}", title: "Registrar Entrada de Produto", data: { sidebarTarget: "link" } do %>
         <svg class="w-4 h-4 flex-shrink-0 min-w-[1rem]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
         </svg>
         <span class="ml-2 whitespace-nowrap transition-all duration-500 ease-in-out" data-sidebar-target="text">Entrada</span>
       <% end %>
 
-      <%= link_to product_outputs_path, class: "flex items-center justify-start px-4 py-2 min-h-[40px] text-sm text-gray-400 hover:bg-white/5 hover:text-white rounded-lg transition-all duration-300", title: "Registrar Saída de Produto", data: { sidebarTarget: "link" } do %>
+      <%= link_to product_outputs_path, class: "flex items-center justify-start px-4 py-2 min-h-[40px] text-sm rounded-lg transition-all duration-300 #{active_class(product_outputs_path)}", title: "Registrar Saída de Produto", data: { sidebarTarget: "link" } do %>
         <svg class="w-4 h-4 flex-shrink-0 min-w-[1rem]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"/>
         </svg>
@@ -132,15 +135,7 @@
 
   </nav>
 
-  <div class="border-t border-gray-700 py-4 px-3 space-y-2">
-
-    <%= link_to "#", class: "flex items-center justify-start px-4 py-3 min-h-[48px] text-gray-300 hover:bg-white/10 hover:text-white rounded-lg transition-all duration-300 mb-2", title: "Configurações", data: { sidebarTarget: "link" } do %>
-      <svg class="w-5 h-5 flex-shrink-0 min-w-[1.25rem]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-      </svg>
-      <span class="ml-3 whitespace-nowrap transition-all duration-500 ease-in-out" data-sidebar-target="text">Configurações</span>
-    <% end %>
+  <div class="border-t border-gray-700 py-4 px-3 space-y-2 flex-shrink-0">
 
     <%= button_to destroy_user_session_path, method: :delete, class: "flex items-center justify-start w-full px-4 py-3 min-h-[48px] text-gray-300 hover:bg-red-800 hover:text-white rounded-lg transition-all duration-300", title: "Sair", data: { sidebarTarget: "link" } do %>
       <svg class="w-5 h-5 flex-shrink-0 min-w-[1.25rem]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
