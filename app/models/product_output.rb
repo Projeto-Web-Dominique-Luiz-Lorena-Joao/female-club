@@ -16,6 +16,7 @@ class ProductOutput < ApplicationRecord
   validates :quantity, presence: true, numericality: { only_integer: true, greater_than: 0 }
   validates :output_type, presence: true, inclusion: { in: output_types.keys.map(&:to_s) }
   validates :date_output, presence: true
+  validate :quantity_cannot_exceed_available_stock
 
   scope :recent, -> { order(date_output: :desc) }
   scope :by_product, ->(product_id) { where(product_id: product_id) }
@@ -46,7 +47,6 @@ class ProductOutput < ApplicationRecord
   private
 
   def update_product_quantity_on_create
-    product.decrement!(:quantity, quantity)
     product.update_stock_status
   end
 
@@ -54,24 +54,36 @@ class ProductOutput < ApplicationRecord
     return unless quantity_changed? || product_id_changed?
 
     if product_id_changed?
-      # Se mudou o produto, reverte a quantidade no produto antigo
+      # Se mudou o produto, atualiza status do produto antigo
       old_product = Product.find(product_id_was)
-      old_product.increment!(:quantity, quantity_was)
       old_product.update_stock_status
 
-      # E aplica no novo produto
-      product.decrement!(:quantity, quantity)
+      # E atualiza status do novo produto
       product.update_stock_status
     elsif quantity_changed?
-      # Se apenas a quantidade mudou, ajusta a diferença
-      difference = quantity - quantity_was
-      product.decrement!(:quantity, difference)
+      # Se apenas a quantidade mudou, atualiza status
       product.update_stock_status
     end
   end
 
   def update_product_quantity_on_destroy
-    product.increment!(:quantity, quantity)
     product.update_stock_status
+  end
+
+  def quantity_cannot_exceed_available_stock
+    return unless product && quantity
+
+    # Calcula o estoque disponível
+    current_stock = product.quantity
+
+    # Se for uma edição, adiciona a quantidade anterior ao estoque disponível
+    if persisted?
+      current_stock += quantity_was
+    end
+
+    # Verifica se a quantidade da saída excede o estoque disponível
+    if quantity > current_stock
+      errors.add(:quantity, "não pode exceder o estoque disponível (#{current_stock} unidades)")
+    end
   end
 end

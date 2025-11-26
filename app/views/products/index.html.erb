@@ -186,9 +186,6 @@
               <td class="px-6 py-4 text-center text-sm text-green-600">
                 <% if product.sale_price.present? %>
                   <p class="font-medium">R$ <%= number_with_precision(product.sale_price, precision: 2, delimiter: ",", separator: ".") %></p>
-                  <% if product.purchase_price.present? && product.purchase_price > 0 %>
-                    </p>
-                  <% end %>
                 <% else %>
                   <span class="text-gray-400">-</span>
                 <% end %>

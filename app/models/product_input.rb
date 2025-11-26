@@ -25,7 +25,6 @@ class ProductInput < ApplicationRecord
   private
 
   def update_product_quantity_on_create
-    product.increment!(:quantity, quantity)
     product.increment!(:quantity_in, quantity)
     product.update(last_replenishment_date: Time.current)
     product.update_stock_status
@@ -37,26 +36,22 @@ class ProductInput < ApplicationRecord
     if product_id_changed?
       # Se mudou o produto, reverte a quantidade no produto antigo
       old_product = Product.find(product_id_was)
-      old_product.decrement!(:quantity, quantity_was)
       old_product.decrement!(:quantity_in, quantity_was)
       old_product.update_stock_status
 
       # E aplica no novo produto
-      product.increment!(:quantity, quantity)
       product.increment!(:quantity_in, quantity)
       product.update(last_replenishment_date: Time.current)
       product.update_stock_status
     elsif quantity_changed?
       # Se apenas a quantidade mudou, ajusta a diferença
       difference = quantity - quantity_was
-      product.increment!(:quantity, difference)
       product.increment!(:quantity_in, difference)
       product.update_stock_status
     end
   end
 
   def update_product_quantity_on_destroy
-    product.decrement!(:quantity, quantity)
     product.decrement!(:quantity_in, quantity)
     product.update_stock_status
   end

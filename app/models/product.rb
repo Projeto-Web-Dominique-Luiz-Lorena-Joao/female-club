@@ -11,18 +11,14 @@ class Product < ApplicationRecord
 
   validates :name, presence: true
   validates :code, uniqueness: true, allow_nil: true
-  validates :price, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
-  validates :purchase_price, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
   validates :sale_price, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
-  validates :quantity, numericality: { greater_than_or_equal_to: 0, only_integer: true }, allow_nil: true
-  validates :min_stock, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
+  validates :min_stock, presence: true, numericality: { greater_than_or_equal_to: 0, only_integer: true }
 
   scope :active, -> { where(active: true) }
   scope :inactive, -> { where(active: false) }
   scope :by_category, ->(category) { where(category: category) }
-  scope :low_stock, -> { where('quantity <= min_stock') }
   scope :search, ->(term) {
-    where('name ILIKE ? OR code ILIKE ? OR brand ILIKE ?', "%#{term}%", "%#{term}%", "%#{term}%")
+    where("name ILIKE ? OR code ILIKE ? OR brand ILIKE ?", "%#{term}%", "%#{term}%", "%#{term}%")
   }
 
   before_save :normalize_strings
@@ -39,23 +35,22 @@ class Product < ApplicationRecord
   outros: "Outros"
 }
 
-  validates :name, presence: true
-  validates :price, :purchase_price, :sale_price,
-            numericality: { greater_than_or_equal_to: 0 },
-            allow_nil: true
 
+
+  # Calcula a quantidade atual baseada nas entradas e saídas
+  def quantity
+    total_inputs = product_inputs.sum(:quantity)
+    total_outputs = product_outputs.sum(:quantity)
+    total_inputs - total_outputs
+  end
 
   def low_stock?
+    return false unless min_stock
     quantity <= min_stock
   end
 
-  def profit_margin
-    return 0 if purchase_price.nil? || sale_price.nil? || purchase_price.zero?
-    ((sale_price - purchase_price) / purchase_price * 100).round(2)
-  end
-
   def stock_value
-    (quantity || 0) * (purchase_price || 0)
+    quantity * (sale_price || 0)
   end
 
   def update_stock_status
