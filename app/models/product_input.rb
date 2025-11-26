@@ -13,10 +13,9 @@ class ProductInput < ApplicationRecord
   scope :by_supplier, ->(supplier_id) { where(supplier_id: supplier_id) }
   scope :by_date_range, ->(start_date, end_date) { where(date_input: start_date..end_date) }
 
-  # Callback para atualizar quantidade do produto
-  before_create :update_product_quantity_on_create
-  before_update :update_product_quantity_on_update
-  after_destroy :update_product_quantity_on_destroy
+  after_create_commit :update_product_stock
+  after_update_commit :handle_product_update
+  after_destroy_commit :rollback_product_stock
 
   def total_cost
     (quantity || 0) * (unit_cost || 0)
@@ -24,35 +23,53 @@ class ProductInput < ApplicationRecord
 
   private
 
-  def update_product_quantity_on_create
-    product.increment!(:quantity_in, quantity)
-    product.update(last_replenishment_date: Time.current)
-    product.update_stock_status
-  end
-
-  def update_product_quantity_on_update
-    return unless quantity_changed? || product_id_changed?
-
-    if product_id_changed?
-      # Se mudou o produto, reverte a quantidade no produto antigo
-      old_product = Product.find(product_id_was)
-      old_product.decrement!(:quantity_in, quantity_was)
-      old_product.update_stock_status
-
-      # E aplica no novo produto
-      product.increment!(:quantity_in, quantity)
-      product.update(last_replenishment_date: Time.current)
-      product.update_stock_status
-    elsif quantity_changed?
-      # Se apenas a quantidade mudou, ajusta a diferença
-      difference = quantity - quantity_was
-      product.increment!(:quantity_in, difference)
-      product.update_stock_status
+  def update_product_stock
+    product.with_lock do
+      product.quantity = (product.quantity || 0) + quantity
+      product.quantity_in = (product.quantity_in || 0) + quantity
+      product.last_replenishment_date = Time.current
+      product.save!
     end
   end
 
-  def update_product_quantity_on_destroy
-    product.decrement!(:quantity_in, quantity)
-    product.update_stock_status
+  def handle_product_update
+    return unless saved_change_to_quantity? || saved_change_to_product_id?
+
+    if saved_change_to_product_id?
+      old_product = Product.find(product_id_before_last_save)
+      old_quantity = quantity_before_last_save || quantity
+
+      old_product.with_lock do
+        old_product.quantity = (old_product.quantity || 0) - old_quantity
+        old_product.quantity_in = (old_product.quantity_in || 0) - old_quantity
+        old_product.save!
+      end
+
+      product.with_lock do
+        product.quantity = (product.quantity || 0) + quantity
+        product.quantity_in = (product.quantity_in || 0) + quantity
+        product.last_replenishment_date = Time.current
+        product.save!
+      end
+
+    elsif saved_change_to_quantity?
+      old_quantity = quantity_before_last_save
+      difference = quantity - old_quantity
+
+      product.with_lock do
+        product.quantity = (product.quantity || 0) + difference
+        product.quantity_in = (product.quantity_in || 0) + difference
+        product.last_replenishment_date = Time.current if difference > 0
+        product.save!
+      end
+    end
+  end
+
+  def rollback_product_stock
+    product.with_lock do
+      product.quantity = (product.quantity || 0) - quantity
+      product.quantity_in = (product.quantity_in || 0) - quantity
+      product.save!
+    end
   end
 end
