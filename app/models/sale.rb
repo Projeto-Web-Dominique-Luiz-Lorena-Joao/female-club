@@ -94,25 +94,17 @@ class Sale < ApplicationRecord
   end
 
   def sync_product_outputs
-    # Sincroniza as ProductOutputs com as quantidades atualizadas na venda
-    # Quando edita uma venda, precisa atualizar ou recriar as saídas de estoque
 
-    # Primeiro, encontra todos os product_ids que ainda estão na venda
     current_product_ids = sale_products.where.not(id: nil).pluck(:product_id).compact
 
-    # Remove ProductOutputs que foram marcadas para destruição (product não está mais na venda)
-    # Usa DATE() para comparar apenas a data, ignorando a hora
     ProductOutput.where(output_type: 'venda', created_by_id: nil)
                  .where("DATE(date_output) = ?", sale_date)
                  .where.not(product_id: current_product_ids)
                  .delete_all
 
-    # Sincroniza as quantidades dos produtos que ainda estão na venda
     sale_products.each do |sale_product|
       next if sale_product.product_id.blank?
 
-      # Encontra a ProductOutput correspondente a este sale_product
-      # Usa DATE() para comparar apenas a data, ignorando a hora
       product_output = ProductOutput.where(
         product_id: sale_product.product_id,
         output_type: 'venda',
@@ -120,13 +112,11 @@ class Sale < ApplicationRecord
       ).where("DATE(date_output) = ?", sale_date).first
 
       if product_output
-        # Se a quantidade mudou, atualiza
         if product_output.quantity != sale_product.quantity
           old_qty = product_output.quantity
           new_qty = sale_product.quantity
           product_output.update(quantity: new_qty)
           Rails.logger.info "SYNC: Produto #{sale_product.product_id} atualizado de #{old_qty} para #{new_qty} unidades"
-          # Atualiza o status de estoque do produto após a mudança
           sale_product.product&.refresh_stock_status!
         end
       else
@@ -145,15 +135,10 @@ class Sale < ApplicationRecord
   end
 
   def return_stock_on_cancellation
-    # Retorna estoque ao cancelar uma venda
-    # Verifica se o status é 'cancelado' e ainda não foi processado
     return unless status == 'cancelado'
-    return if @already_processed_cancellation  # Impede duplicação de devolução
 
-    # Marca como já processado
     @already_processed_cancellation = true
 
-    # Usa transação para garantir atomicidade
     ActiveRecord::Base.transaction do
       sale_products.each do |sale_product|
         next if sale_product.product_id.blank?
@@ -161,15 +146,12 @@ class Sale < ApplicationRecord
         product = sale_product.product
         quantity_to_return = sale_product.quantity
 
-        # Remove a ProductOutput correspondente à venda cancelada
-        # A ProductOutput será deletada, o que aumenta automaticamente a quantidade do produto
         ProductOutput.where(
           product_id: product.id,
           output_type: 'venda',
           created_by_id: nil
         ).where("DATE(date_output) = ?", sale_date).delete_all
 
-        # Cria um registro de movimentação de estoque para auditoria
         StockMovement.create!(
           product_id: product.id,
           employee_id: employee_id,
@@ -179,7 +161,6 @@ class Sale < ApplicationRecord
           description: "Devolução de estoque - Venda #{id} cancelada"
         )
 
-        # Atualiza o status de estoque do produto
         product.refresh_stock_status!
       end
     end
@@ -194,19 +175,15 @@ class Sale < ApplicationRecord
   end
 
   def calculate_total_amount
-    # Implementar lógica se necessário, baseado em sale_items
-    # self.total_amount = sale_items.sum(&:subtotal)
   end
 
   def reject_product(attributes)
-    # Reject if product_id is blank (unless it's marked for destruction)
     should_reject = attributes['product_id'].blank? && attributes['_destroy'].to_s != '1'
     Rails.logger.info "REJECT PRODUCT: product_id=#{attributes['product_id']&.inspect}, _destroy=#{attributes['_destroy']&.inspect}, should_reject=#{should_reject}"
     should_reject
   end
 
   def reject_service(attributes)
-    # Reject if service_id is blank (unless it's marked for destruction)
     should_reject = attributes['service_id'].blank? && attributes['_destroy'].to_s != '1'
     Rails.logger.info "REJECT SERVICE: service_id=#{attributes['service_id']&.inspect}, _destroy=#{attributes['_destroy']&.inspect}, should_reject=#{should_reject}"
     should_reject

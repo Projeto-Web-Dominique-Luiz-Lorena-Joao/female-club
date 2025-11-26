@@ -1,5 +1,4 @@
 <div class="container mx-auto px-4 max-w-4xl">
-  <!-- Header com botões de ação -->
   <div class="flex justify-between items-center mb-6">
     <div>
       <h1 class="text-2xl font-bold text-gray-900">EXTRATO DE VENDA</h1>
@@ -10,7 +9,7 @@
       <% if @sale.pendente? %>
         <%= button_to "Marcar como paga", mark_as_paid_sale_path(@sale), method: :patch, class: "bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg font-medium flex items-center gap-2" %>
       <% end %>
-      
+
       <%= link_to edit_sale_path(@sale), class: "bg-black hover:bg-gray-700 text-white px-8 py-2 rounded-lg font-medium" do %>
         Editar
       <% end %>
@@ -25,9 +24,7 @@
     </div>
   </div>
 
-  <!-- Card Principal -->
   <div class="bg-white rounded-lg shadow-lg overflow-hidden">
-    <!-- Header Preto -->
     <div class="bg-black text-white px-6 py-6">
       <div class="flex items-center gap-3 mb-2">
         <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8">
@@ -37,9 +34,7 @@
       </div>
     </div>
 
-    <!-- Conteúdo -->
     <div class="p-6">
-      <!-- Status e Informações Principais -->
       <div class="grid grid-cols-2 gap-4 mb-6">
         <div>
           <p class="text-sm text-gray-500 mb-1">Status:</p>
@@ -60,7 +55,6 @@
         </div>
       </div>
 
-      <!-- Alerta de Vencimento -->
       <% if @sale.overdue? %>
         <div class="bg-red-50 border border-red-200 rounded-lg px-4 py-3 mb-6 flex items-center gap-2">
           <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-red-500">
@@ -70,7 +64,6 @@
         </div>
       <% end %>
 
-      <!-- Informações Adicionais -->
       <div class="grid grid-cols-3 gap-4 mb-6 text-sm">
         <% if @sale.due_date.present? %>
           <div>
@@ -78,7 +71,7 @@
             <p class="font-semibold"><%= @sale.due_date.strftime("%d/%m/%Y") %></p>
           </div>
         <% end %>
-        
+
         <div>
           <p class="text-gray-500 mb-1">Forma de Pagamento:</p>
           <p class="font-semibold"><%= @sale.payment_method.humanize.upcase %></p>
@@ -94,7 +87,6 @@
 
       <hr class="my-6 border-gray-200">
 
-      <!-- Resumo de Valores -->
       <div class="mb-6">
         <div class="flex items-center gap-2 mb-3">
           <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-gray-700">
@@ -102,13 +94,13 @@
           </svg>
           <h2 class="font-semibold text-gray-900">Resumo de Valores</h2>
         </div>
-        
+
         <div class="bg-gray-50 rounded-lg p-4 space-y-2">
           <div class="flex justify-between">
             <span class="text-gray-600">Subtotal:</span>
             <span class="font-semibold">R$ <%= number_to_currency(@sale.total_amount, unit: "", precision: 2, delimiter: ".", separator: ",") %></span>
           </div>
-          
+
           <% if @sale.discount_percentage.present? && @sale.discount_percentage > 0 %>
             <div class="flex justify-between text-red-600">
               <span>Desconto (<%= @sale.discount_percentage %>%):</span>
@@ -131,7 +123,6 @@
 
       <hr class="my-6 border-gray-200">
 
-      <!-- Cliente -->
       <div class="mb-6">
         <div class="flex items-center gap-2 mb-3">
           <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-gray-700">
@@ -139,7 +130,7 @@
           </svg>
           <h2 class="font-semibold text-gray-900">Cliente</h2>
         </div>
-        
+
         <div class="bg-gray-50 rounded-lg p-4">
           <p class="font-medium text-gray-900 mb-2">
             <%= link_to @sale.customer_name, @sale.customer.present? ? customer_path(@sale.customer) : "#", class: "text-blue-600 hover:text-blue-800" %>
@@ -155,7 +146,6 @@
 
       <hr class="my-6 border-gray-200">
 
-      <!-- Atendido por -->
       <div class="mb-6">
         <div class="flex items-center gap-2 mb-3">
           <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-gray-700">
@@ -164,7 +154,7 @@
 
           <h2 class="font-semibold text-gray-900">Atendido por</h2>
         </div>
-        
+
         <div class="bg-gray-50 rounded-lg p-4">
           <p class="font-medium text-gray-900 mb-2">
             <%= link_to @sale.employee_name, employee_path(@sale.employee), class: "text-blue-600 hover:text-blue-800" %>
@@ -176,7 +166,6 @@
         </div>
       </div>
 
-      <!-- Produtos -->
       <% if @sale.sale_products.any? %>
         <hr class="my-6 border-gray-200">
         <div class="mb-6">
@@ -186,7 +175,7 @@
             </svg>
             <h2 class="font-semibold text-gray-900">Produtos</h2>
           </div>
-          
+
           <div class="overflow-x-auto">
             <table class="w-full text-sm">
               <thead class="bg-blue-100 text-gray-700">
@@ -212,7 +201,6 @@
         </div>
       <% end %>
 
-      <!-- Serviços -->
       <% if @sale.sale_services.any? %>
         <hr class="my-6 border-gray-200">
         <div class="mb-6">
@@ -222,7 +210,7 @@
             </svg>
             <h2 class="font-semibold text-gray-900">Serviços</h2>
           </div>
-          
+
           <div class="overflow-x-auto">
             <table class="w-full text-sm">
               <thead class="bg-green-100 text-gray-700">
@@ -248,7 +236,6 @@
         </div>
       <% end %>
 
-      <!-- Observações -->
       <% if @sale.notes.present? %>
         <hr class="my-6 border-gray-200">
         <div class="mb-4">
@@ -258,7 +245,7 @@
             </svg>
             <h2 class="font-semibold text-gray-900">Observações</h2>
           </div>
-          
+
           <div class="bg-gray-50 rounded-lg p-4">
             <p class="text-gray-700 text-sm whitespace-pre-wrap"><%= @sale.notes %></p>
           </div>
@@ -267,7 +254,6 @@
     </div>
   </div>
 
-  <!-- Botão de Cancelar Venda -->
   <div class="mt-6 text-center">
     <% if @sale.status != 'cancelado' %>
       <%= button_to "Cancelar Venda", sale_path(@sale), method: :patch, params: { sale: { status: 'cancelado' } }, class: "bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-lg font-medium", data: { confirm: "Tem certeza que deseja cancelar esta venda? O estoque será devolvido automaticamente." } %>
