@@ -1,5 +1,17 @@
 Rails.application.routes.draw do
-  resources :expenses
+  namespace :api do
+    get 'employees/search', to: 'employees#search'
+    get 'suppliers/search', to: 'suppliers#search'
+  end
+
+  resources :expenses do
+    member do
+      patch :cancel
+      patch :reactivate
+    end
+  end
+
+
   resources :service_appointments do
     collection do
       get :search_services
@@ -14,7 +26,12 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :employees # ÚNICA DECLARAÇÃO DE EMPLOYEES
+  resources :employees do
+    member do
+      patch :reactivate
+    end
+  end
+ # ÚNICA DECLARAÇÃO DE EMPLOYEES
 
   resources :suppliers do
     member do

@@ -1,5 +1,5 @@
 class ExpensesController < ApplicationController
-  before_action :set_expense, only: [:show, :edit, :update, :destroy]
+  before_action :set_expense, only: [:show, :edit, :update, :destroy, :cancel, :reactivate]
 
   def index
     @expenses = Expense.recent
@@ -9,6 +9,7 @@ class ExpensesController < ApplicationController
     @expenses = @expenses.by_category(params[:category]) if params[:category].present?
     @expenses = @expenses.by_payment_method(params[:payment_method]) if params[:payment_method].present?
     @expenses = @expenses.by_date_range(params[:start_date].to_date, params[:end_date].to_date) if params[:start_date].present? && params[:end_date].present?
+    @expenses = @expenses.where(status: params[:status]) if params[:status].present?
   end
 
   def show
@@ -44,6 +45,17 @@ class ExpensesController < ApplicationController
     redirect_to expenses_url, notice: "Despesa removida com sucesso."
   end
 
+ def cancel
+  @expense.update(status: :inativa)  # Zera o valor + muda status
+  redirect_to @expense, notice: "Despesa inativada com sucesso."
+end
+
+def reactivate
+  @expense.update(status: :ativa)  # Reativa, mas mantém valor zerado
+  redirect_to @expense, notice: "Despesa reativada com sucesso."
+end
+
+
   private
 
   def set_expense
@@ -51,6 +63,6 @@ class ExpensesController < ApplicationController
   end
 
   def expense_params
-    params.require(:expense).permit(:employee_id, :supplier_id, :expense_date, :expense_type, :amount, :payment_method, :notes, :category)
+    params.require(:expense).permit(:employee_id, :supplier_id, :expense_date, :expense_type, :amount, :payment_method, :notes, :category, :status)
   end
 end
