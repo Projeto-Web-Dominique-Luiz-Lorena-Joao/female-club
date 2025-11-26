@@ -31,7 +31,6 @@ Rails.application.routes.draw do
       patch :reactivate
     end
   end
- # ÚNICA DECLARAÇÃO DE EMPLOYEES
 
   resources :suppliers do
     member do

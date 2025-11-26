@@ -17,6 +17,14 @@
         </svg>
         Voltar
       <% end %>
+     <%= link_to "javascript:history.back()", class: "bg-white border border-gray-300 hover:bg-gray-100 text-gray-700 px-4 py-2 rounded-lg font-medium flex items-center gap-2 transition shadow-sm" do %>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+           stroke="currentColor" stroke-width="3" fill="none"
+           class="w-4 h-4">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7 7-7M3 12h18" />
+      </svg>
+      Voltar
+    <% end %>
     </div>
   </div>
 
@@ -124,7 +132,15 @@
 
     </div>
   </div>
+  <!-- Agendamentos e Vendas -->
+  <%# if @service_appointments.any? || @sale_services.any? %>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
+      <!-- Agendamentos de Serviço -->
+      <%# if @service_appointments.any? %>
+      <%# end %>
+    </div>
+  <%# end %>
   <!-- Data de Criação/Atualização -->
   <div class="bg-gray-50 rounded-lg p-4 text-sm text-gray-600 space-y-1 border border-gray-200">
     <p>Criado em: <%= l(@service.created_at, format: :short) %></p>
