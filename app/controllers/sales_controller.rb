@@ -1,5 +1,5 @@
 class SalesController < ApplicationController
-  before_action :set_sale, only: [:show, :edit, :update, :destroy, :mark_as_paid]
+  before_action :set_sale, only: [:show, :edit, :update, :destroy, :mark_as_paid, :cancel]
 
   def index
     @sales = Sale.includes(:customer, :employee)
@@ -95,6 +95,14 @@ class SalesController < ApplicationController
       redirect_to @sale, notice: 'Venda marcada como paga.'
     else
       redirect_to @sale, alert: 'Erro ao marcar venda como paga.'
+    end
+  end
+
+  def cancel
+    if @sale.cancel_sale!
+      redirect_to sales_url, notice: 'Venda cancelada com sucesso e produtos retornados ao estoque.'
+    else
+      redirect_to @sale, alert: 'Erro ao cancelar venda.'
     end
   end
 

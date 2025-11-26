@@ -2,6 +2,8 @@ class ProductOutput < ApplicationRecord
   belongs_to :product
   belongs_to :created_by, class_name: 'User', optional: true
 
+  attr_accessor :skip_stock_validation
+
   enum :output_type, {
     venda: "venda",
     extravio: "extravio",
@@ -18,6 +20,8 @@ class ProductOutput < ApplicationRecord
   validates :date_output, presence: true
   validate :ensure_sufficient_stock, on: :create
   validate :ensure_sufficient_stock_on_update, on: :update
+
+  after_destroy :update_product_stock_status
 
   scope :recent, -> { order(date_output: :desc) }
   scope :by_product, ->(product_id) { where(product_id: product_id) }
@@ -44,6 +48,7 @@ class ProductOutput < ApplicationRecord
   private
 
   def ensure_sufficient_stock
+    return if skip_stock_validation
     return unless product && quantity
 
     available_stock = product.quantity
@@ -53,6 +58,7 @@ class ProductOutput < ApplicationRecord
   end
 
   def ensure_sufficient_stock_on_update
+    return if skip_stock_validation
     return unless product && quantity
     return unless saved_change_to_quantity? || saved_change_to_product_id?
 
@@ -74,6 +80,10 @@ class ProductOutput < ApplicationRecord
         end
       end
     end
+  end
+
+  def update_product_stock_status
+    product&.update_stock_status!
   end
 
 end

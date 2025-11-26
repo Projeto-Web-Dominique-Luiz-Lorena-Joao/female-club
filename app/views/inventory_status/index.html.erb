@@ -196,8 +196,8 @@
 
   <!-- Paginação -->
   <% if @products.respond_to?(:total_pages) && @products.total_pages > 1 %>
-    <div class="flex justify-center">
-      <%= paginate @products, theme: 'bootstrap-5' %>
+    <div class="flex justify-center mt-6">
+      <%= paginate @products %>
     </div>
   <% end %>
 </div>

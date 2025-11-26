@@ -69,6 +69,27 @@ class Sale < ApplicationRecord
     update(status: 'pago', paid_date: Date.today)
   end
 
+  def cancel_sale!
+    transaction do
+      # Reverter os ProductOutputs criados quando a venda foi registrada
+      # Deletar todas as saídas associadas a esta venda
+      sale_products.each do |sale_product|
+        # Encontrar e deletar o ProductOutput correspondente
+        product_output = ProductOutput.where(
+          output_type: 'venda',
+          product_id: sale_product.product_id,
+          quantity: sale_product.quantity,
+          date_output: sale_date
+        ).first
+
+        product_output.destroy if product_output.present?
+      end
+
+      # Marcar a venda como cancelada
+      update(status: 'cancelado')
+    end
+  end
+
   def customer_name
     customer&.full_name || 'Cliente Avulso'
   end
@@ -81,13 +102,19 @@ class Sale < ApplicationRecord
 
   def create_product_outputs
     sale_products.each do |sale_product|
-      ProductOutput.create(
-        product_id: sale_product.product_id,
-        quantity: sale_product.quantity,
-        output_type: 'venda',
-        date_output: sale_date,
-        created_by_id: nil
-      )
+      begin
+        product_output = ProductOutput.new(
+          product_id: sale_product.product_id,
+          quantity: sale_product.quantity,
+          output_type: 'venda',
+          date_output: sale_date,
+          created_by_id: nil
+        )
+        product_output.skip_stock_validation = true
+        product_output.save!
+      rescue => e
+        Rails.logger.error("Failed to create ProductOutput for Sale ##{id}: #{e.message}")
+      end
     end
   end
 
