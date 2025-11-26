@@ -125,7 +125,6 @@
       <table class="min-w-full divide-y divide-gray-200">
         <thead class="bg-black">
           <tr>
-            <th class="px-6 py-3 text-center text-xs font-medium text-white uppercase">Código</th>
             <th class="px-6 py-3 text-center text-xs font-medium text-white uppercase">Produto</th>
             <th class="px-6 py-3 text-center text-xs font-medium text-white uppercase">Quantidade</th>
             <th class="px-6 py-3 text-center text-xs font-medium text-white uppercase">Estoque Mínimo</th>
@@ -136,10 +135,6 @@
         <tbody class="bg-white divide-y divide-gray-200">
           <% @products.each do |product| %>
             <tr class="hover:bg-gray-50">
-
-              <td class="px-6 py-4 text-center">
-                <span class="text-sm font-medium text-gray-900"><%= product.code %></span>
-              </td>
 
               <td class="px-6 py-4 text-center">
                 <p class="text-sm font-medium text-gray-900">
