@@ -63,6 +63,9 @@ Rails.application.routes.draw do
   # --- ESTADO DO ESTOQUE (submenu) ---
   get "inventory_status", to: "inventory_status#index", as: :inventory_status
 
+  # --- RELATÓRIO MENSAL ---
+  get "monthly_reports", to: "monthly_reports#index", as: :monthly_reports
+
   resources :sales do
     collection do
       get :search_employees

@@ -1,0 +1,326 @@
+<div class="mb-8">
+  <div class="mb-8 flex justify-between items-center">
+    <div>
+      <h2 class="text-3xl font-bold text-gray-900">Relatório Mensal</h2>
+      <p class="text-gray-600 mt-1">Estatísticas financeiras de <%= @current_month.strftime('%B de %Y') %></p>
+    </div>
+
+    <!-- Seletor de mês -->
+    <div class="flex items-center gap-4">
+      <%= link_to monthly_reports_path(month: @current_month.prev_month), class: "p-2 rounded-lg hover:bg-gray-100 transition-colors" do %>
+        <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+        </svg>
+      <% end %>
+
+      <span class="text-lg font-semibold text-gray-900"><%= @current_month.strftime('%B %Y') %></span>
+
+      <%= link_to monthly_reports_path(month: @current_month.next_month), class: "p-2 rounded-lg hover:bg-gray-100 transition-colors" do %>
+        <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- KPI Cards - Linha 1 -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+    <!-- Lucro Líquido -->
+    <div class="bg-white rounded-lg shadow p-6 border-l-4 <%= @net_profit >= 0 ? 'border-green-500' : 'border-red-500' %>">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-gray-600 text-sm font-medium">Lucro Líquido</h3>
+        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+        </svg>
+      </div>
+      <p class="text-2xl font-bold <%= @net_profit >= 0 ? 'text-green-600' : 'text-red-600' %> mb-2">
+        R$ <%= number_to_currency(@net_profit, unit: '', delimiter: '.', separator: ',', precision: 2) %>
+      </p>
+      <p class="text-xs text-gray-500">Receita - custos do mês</p>
+    </div>
+
+    <!-- Receitas Totais -->
+    <div class="bg-white rounded-lg shadow p-6 border-l-4 border-blue-500">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-gray-600 text-sm font-medium">Receitas Totais</h3>
+        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+      </div>
+      <p class="text-2xl font-bold text-blue-600 mb-2">
+        R$ <%= number_to_currency(@total_revenue, unit: '', delimiter: '.', separator: ',', precision: 2) %>
+      </p>
+      <p class="text-xs text-gray-500">Total de vendas não canceladas</p>
+    </div>
+
+    <!-- Despesas Totais -->
+    <div class="bg-white rounded-lg shadow p-6 border-l-4 border-orange-500">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-gray-600 text-sm font-medium">Despesas Totais</h3>
+        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/>
+        </svg>
+      </div>
+      <p class="text-2xl font-bold text-orange-600 mb-2">
+        R$ <%= number_to_currency(@total_expenses, unit: '', delimiter: '.', separator: ',', precision: 2) %>
+      </p>
+      <p class="text-xs text-gray-500">Total gasto no mês</p>
+    </div>
+
+    <!-- Recebido -->
+    <div class="bg-white rounded-lg shadow p-6 border-l-4 border-green-500">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-gray-600 text-sm font-medium">Recebido</h3>
+        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+      </div>
+      <p class="text-2xl font-bold text-green-600 mb-2">
+        R$ <%= number_to_currency(@received, unit: '', delimiter: '.', separator: ',', precision: 2) %>
+      </p>
+      <p class="text-xs text-gray-500">Vendas já pagas</p>
+    </div>
+  </div>
+
+  <!-- KPI Cards - Linha 2 -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+    <!-- Atrasados -->
+    <div class="bg-white rounded-lg shadow p-6 border-l-4 border-red-500">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-gray-600 text-sm font-medium">Atrasados</h3>
+        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+      </div>
+      <p class="text-2xl font-bold text-red-600 mb-2">
+        R$ <%= number_to_currency(@overdue_amount, unit: '', delimiter: '.', separator: ',', precision: 2) %>
+      </p>
+      <p class="text-xs text-gray-500">
+        <%= @overdue_count %> <%= @overdue_count == 1 ? 'venda atrasada' : 'vendas atrasadas' %>
+      </p>
+    </div>
+
+    <!-- A Receber -->
+    <div class="bg-white rounded-lg shadow p-6 border-l-4 border-yellow-500">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-gray-600 text-sm font-medium">A Receber</h3>
+        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+      </div>
+      <p class="text-2xl font-bold text-yellow-600 mb-2">
+        R$ <%= number_to_currency(@pending_amount, unit: '', delimiter: '.', separator: ',', precision: 2) %>
+      </p>
+      <p class="text-xs text-gray-500">Vendas pendentes futuras</p>
+    </div>
+
+    <!-- Projeção de Gastos -->
+    <div class="bg-white rounded-lg shadow p-6 border-l-4 border-purple-500">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-gray-600 text-sm font-medium">Projeção de Gastos</h3>
+        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+        </svg>
+      </div>
+      <p class="text-2xl font-bold text-purple-600 mb-2">
+        R$ <%= number_to_currency(@projected_expenses, unit: '', delimiter: '.', separator: ',', precision: 2) %>
+      </p>
+      <div class="flex items-center justify-between text-xs text-gray-500">
+        <span>Gasto: R$ <%= number_to_currency(@spent_so_far, unit: '', delimiter: '.', separator: ',', precision: 2) %></span>
+        <span class="<%= @remaining_budget >= 0 ? 'text-green-600' : 'text-red-600' %> font-semibold">
+          Restante: R$ <%= number_to_currency(@remaining_budget.abs, unit: '', delimiter: '.', separator: ',', precision: 2) %>
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Gráficos -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+    <!-- Fluxo de Caixa Diário -->
+    <div class="bg-white rounded-lg shadow p-6">
+      <h3 class="text-lg font-semibold text-gray-900 mb-4">Fluxo de Caixa Diário</h3>
+      <canvas id="cashFlowChart" height="300"></canvas>
+    </div>
+
+    <!-- Receitas vs Despesas -->
+    <div class="bg-white rounded-lg shadow p-6">
+      <h3 class="text-lg font-semibold text-gray-900 mb-4">Receitas vs Despesas</h3>
+      <canvas id="revenueExpensesChart" height="300"></canvas>
+    </div>
+  </div>
+
+  <!-- Detalhamento de Despesas Projetadas -->
+  <div class="bg-white rounded-lg shadow p-6">
+    <h3 class="text-lg font-semibold text-gray-900 mb-4">Detalhamento da Projeção de Gastos</h3>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div class="p-4 bg-gray-50 rounded-lg">
+        <p class="text-sm text-gray-600 mb-1">Despesas Fixas Mensais</p>
+        <p class="text-xl font-bold text-gray-900">R$ <%= number_to_currency(@fixed_monthly, unit: '', delimiter: '.', separator: ',', precision: 2) %></p>
+      </div>
+      <div class="p-4 bg-gray-50 rounded-lg">
+        <p class="text-sm text-gray-600 mb-1">Média Esporádicas (3 meses)</p>
+        <p class="text-xl font-bold text-gray-900">R$ <%= number_to_currency(@sporadic_average, unit: '', delimiter: '.', separator: ',', precision: 2) %></p>
+      </div>
+      <div class="p-4 bg-blue-50 rounded-lg">
+        <p class="text-sm text-blue-600 mb-1">Total Projetado</p>
+        <p class="text-xl font-bold text-blue-900">R$ <%= number_to_currency(@projected_expenses, unit: '', delimiter: '.', separator: ',', precision: 2) %></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Gráfico de Fluxo de Caixa
+    const cashFlowCtx = document.getElementById('cashFlowChart');
+    if (cashFlowCtx) {
+      new Chart(cashFlowCtx.getContext('2d'), {
+        type: 'line',
+        data: {
+          labels: <%= raw @chart_labels.to_json %>,
+          datasets: [
+            {
+              label: 'Receitas',
+              data: <%= raw @chart_revenue_data.to_json %>,
+              borderColor: 'rgb(34, 197, 94)',
+              backgroundColor: 'rgba(34, 197, 94, 0.1)',
+              tension: 0.4,
+              fill: true,
+              borderWidth: 2
+            },
+            {
+              label: 'Despesas',
+              data: <%= raw @chart_expenses_data.to_json %>,
+              borderColor: 'rgb(249, 115, 22)',
+              backgroundColor: 'rgba(249, 115, 22, 0.1)',
+              tension: 0.4,
+              fill: true,
+              borderWidth: 2
+            },
+            {
+              label: 'Saldo Diário',
+              data: <%= raw @chart_balance_data.to_json %>,
+              borderColor: 'rgb(59, 130, 246)',
+              backgroundColor: 'rgba(59, 130, 246, 0.1)',
+              tension: 0.4,
+              fill: true,
+              borderWidth: 2,
+              borderDash: [5, 5]
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: true,
+              position: 'top'
+            },
+            tooltip: {
+              mode: 'index',
+              intersect: false,
+              callbacks: {
+                label: function(context) {
+                  let label = context.dataset.label || '';
+                  if (label) {
+                    label += ': ';
+                  }
+                  label += 'R$ ' + context.parsed.y.toFixed(2);
+                  return label;
+                }
+              }
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              grid: {
+                color: 'rgba(0, 0, 0, 0.08)'
+              },
+              ticks: {
+                callback: function(value) {
+                  return 'R$ ' + value.toFixed(0);
+                }
+              }
+            },
+            x: {
+              grid: {
+                color: 'rgba(0, 0, 0, 0.08)'
+              }
+            }
+          }
+        }
+      });
+    }
+
+    // Gráfico de Receitas vs Despesas (Barras)
+    const revenueExpensesCtx = document.getElementById('revenueExpensesChart');
+    if (revenueExpensesCtx) {
+      new Chart(revenueExpensesCtx.getContext('2d'), {
+        type: 'bar',
+        data: {
+          labels: <%= raw @chart_labels.to_json %>,
+          datasets: [
+            {
+              label: 'Receitas',
+              data: <%= raw @chart_revenue_data.to_json %>,
+              backgroundColor: 'rgba(34, 197, 94, 0.8)',
+              borderColor: 'rgb(34, 197, 94)',
+              borderWidth: 1
+            },
+            {
+              label: 'Despesas',
+              data: <%= raw @chart_expenses_data.to_json %>,
+              backgroundColor: 'rgba(249, 115, 22, 0.8)',
+              borderColor: 'rgb(249, 115, 22)',
+              borderWidth: 1
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: true,
+              position: 'top'
+            },
+            tooltip: {
+              mode: 'index',
+              intersect: false,
+              callbacks: {
+                label: function(context) {
+                  let label = context.dataset.label || '';
+                  if (label) {
+                    label += ': ';
+                  }
+                  label += 'R$ ' + context.parsed.y.toFixed(2);
+                  return label;
+                }
+              }
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              grid: {
+                color: 'rgba(0, 0, 0, 0.08)'
+              },
+              ticks: {
+                callback: function(value) {
+                  return 'R$ ' + value.toFixed(0);
+                }
+              }
+            },
+            x: {
+              grid: {
+                display: false
+              }
+            }
+          }
+        }
+      });
+    }
+  });
+</script>
