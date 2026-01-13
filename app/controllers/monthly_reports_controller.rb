@@ -2,9 +2,21 @@ class MonthlyReportsController < ApplicationController
   before_action :authenticate_user!
 
   def index
-    @current_month = params[:month]&.to_date || Date.today.beginning_of_month
+    # Determina o mês atual baseado nos parâmetros ou usa o mês atual
+    if params[:year] && params[:month]
+      @current_month = Date.new(params[:year].to_i, params[:month].to_i, 1)
+    elsif params[:month]
+      @current_month = params[:month].to_date
+    else
+      @current_month = Date.today.beginning_of_month
+    end
+
     @start_date = @current_month.beginning_of_month
     @end_date = @current_month.end_of_month
+
+    # Calcula o ano inicial baseado no primeiro registro
+    @first_year = calculate_first_year
+    @available_years = (@first_year..Date.today.year).to_a
 
     calculate_monthly_stats
     calculate_daily_cash_flow
@@ -131,5 +143,18 @@ class MonthlyReportsController < ApplicationController
 
     # Quanto ainda pode gastar
     @remaining_budget = @projected_expenses - @spent_so_far
+  end
+
+  def calculate_first_year
+    # Busca o ano da primeira venda ou despesa registrada
+    first_sale = Sale.order(:sale_date).first
+    first_expense = Expense.order(:expense_date).first
+
+    years = []
+    years << first_sale.sale_date.year if first_sale
+    years << first_expense.expense_date.year if first_expense
+
+    # Se não houver registros, retorna o ano atual
+    years.empty? ? Date.today.year : years.min
   end
 end

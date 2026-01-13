@@ -1,169 +1,129 @@
-<div class="mb-8">
-  <div class="mb-8 flex justify-between items-center">
+<div class="mb-6">
+  <div class="mb-4 flex justify-between items-center">
     <div>
-      <h2 class="text-3xl font-bold text-gray-900">Relatório Mensal</h2>
-      <p class="text-gray-600 mt-1">Estatísticas financeiras de <%= @current_month.strftime('%B de %Y') %></p>
+      <h2 class="text-2xl font-bold text-gray-900">Relatório Mensal</h2>
+      <p class="text-gray-600 text-sm mt-0.5">Estatísticas de <%= I18n.localize(@current_month, format: '%B de %Y') %></p>
     </div>
 
-    <!-- Seletor de mês -->
-    <div class="flex items-center gap-4">
-      <%= link_to monthly_reports_path(month: @current_month.prev_month), class: "p-2 rounded-lg hover:bg-gray-100 transition-colors" do %>
-        <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-        </svg>
-      <% end %>
+    <!-- Seletor de mês e ano -->
+    <%= form_with url: monthly_reports_path, method: :get, id: "month_selector_form", class: "flex items-center gap-3" do |f| %>
+      <div class="flex items-center gap-2">
+        <label for="month_select" class="text-sm font-medium text-gray-700">Mês:</label>
+        <%= f.select :month,
+            (1..12).map { |m| [I18n.t('date.month_names')[m], m] },
+            { selected: @current_month.month },
+            { id: "month_select", class: "px-2 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 cursor-pointer" }
+        %>
+      </div>
 
-      <span class="text-lg font-semibold text-gray-900"><%= @current_month.strftime('%B %Y') %></span>
-
-      <%= link_to monthly_reports_path(month: @current_month.next_month), class: "p-2 rounded-lg hover:bg-gray-100 transition-colors" do %>
-        <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-        </svg>
-      <% end %>
-    </div>
+      <div class="flex items-center gap-2">
+        <label for="year_select" class="text-sm font-medium text-gray-700">Ano:</label>
+        <%= f.select :year,
+            @available_years.reverse,
+            { selected: @current_month.year },
+            { id: "year_select", class: "px-2 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 cursor-pointer max-h-60 overflow-y-auto" }
+        %>
+      </div>
+    <% end %>
   </div>
 
-  <!-- KPI Cards - Linha 1 -->
-  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+  <!-- KPI Cards - Todos em uma linha -->
+  <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-7 gap-3 mb-4">
     <!-- Lucro Líquido -->
-    <div class="bg-white rounded-lg shadow p-6 border-l-4 <%= @net_profit >= 0 ? 'border-green-500' : 'border-red-500' %>">
-      <div class="flex items-center justify-between mb-4">
-        <h3 class="text-gray-600 text-sm font-medium">Lucro Líquido</h3>
-        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
-        </svg>
-      </div>
-      <p class="text-2xl font-bold <%= @net_profit >= 0 ? 'text-green-600' : 'text-red-600' %> mb-2">
+    <div class="bg-white rounded-lg shadow p-3 border-l-4 <%= @net_profit >= 0 ? 'border-green-500' : 'border-red-500' %>">
+      <h3 class="text-gray-600 text-xs font-medium mb-1">Lucro Líquido</h3>
+      <p class="text-lg font-bold <%= @net_profit >= 0 ? 'text-green-600' : 'text-red-600' %>">
         R$ <%= number_to_currency(@net_profit, unit: '', delimiter: '.', separator: ',', precision: 2) %>
       </p>
-      <p class="text-xs text-gray-500">Receita - custos do mês</p>
     </div>
 
     <!-- Receitas Totais -->
-    <div class="bg-white rounded-lg shadow p-6 border-l-4 border-blue-500">
-      <div class="flex items-center justify-between mb-4">
-        <h3 class="text-gray-600 text-sm font-medium">Receitas Totais</h3>
-        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-        </svg>
-      </div>
-      <p class="text-2xl font-bold text-blue-600 mb-2">
+    <div class="bg-white rounded-lg shadow p-3 border-l-4 border-blue-500">
+      <h3 class="text-gray-600 text-xs font-medium mb-1">Receitas Totais</h3>
+      <p class="text-lg font-bold text-blue-600">
         R$ <%= number_to_currency(@total_revenue, unit: '', delimiter: '.', separator: ',', precision: 2) %>
       </p>
-      <p class="text-xs text-gray-500">Total de vendas não canceladas</p>
     </div>
 
     <!-- Despesas Totais -->
-    <div class="bg-white rounded-lg shadow p-6 border-l-4 border-orange-500">
-      <div class="flex items-center justify-between mb-4">
-        <h3 class="text-gray-600 text-sm font-medium">Despesas Totais</h3>
-        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/>
-        </svg>
-      </div>
-      <p class="text-2xl font-bold text-orange-600 mb-2">
+    <div class="bg-white rounded-lg shadow p-3 border-l-4 border-orange-500">
+      <h3 class="text-gray-600 text-xs font-medium mb-1">Despesas Totais</h3>
+      <p class="text-lg font-bold text-orange-600">
         R$ <%= number_to_currency(@total_expenses, unit: '', delimiter: '.', separator: ',', precision: 2) %>
       </p>
-      <p class="text-xs text-gray-500">Total gasto no mês</p>
     </div>
 
     <!-- Recebido -->
-    <div class="bg-white rounded-lg shadow p-6 border-l-4 border-green-500">
-      <div class="flex items-center justify-between mb-4">
-        <h3 class="text-gray-600 text-sm font-medium">Recebido</h3>
-        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-        </svg>
-      </div>
-      <p class="text-2xl font-bold text-green-600 mb-2">
+    <div class="bg-white rounded-lg shadow p-3 border-l-4 border-green-500">
+      <h3 class="text-gray-600 text-xs font-medium mb-1">Recebido</h3>
+      <p class="text-lg font-bold text-green-600">
         R$ <%= number_to_currency(@received, unit: '', delimiter: '.', separator: ',', precision: 2) %>
       </p>
-      <p class="text-xs text-gray-500">Vendas já pagas</p>
     </div>
-  </div>
 
-  <!-- KPI Cards - Linha 2 -->
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
     <!-- Atrasados -->
-    <div class="bg-white rounded-lg shadow p-6 border-l-4 border-red-500">
-      <div class="flex items-center justify-between mb-4">
-        <h3 class="text-gray-600 text-sm font-medium">Atrasados</h3>
-        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-        </svg>
-      </div>
-      <p class="text-2xl font-bold text-red-600 mb-2">
+    <div class="bg-white rounded-lg shadow p-3 border-l-4 border-red-500">
+      <h3 class="text-gray-600 text-xs font-medium mb-1">Atrasados</h3>
+      <p class="text-lg font-bold text-red-600">
         R$ <%= number_to_currency(@overdue_amount, unit: '', delimiter: '.', separator: ',', precision: 2) %>
       </p>
-      <p class="text-xs text-gray-500">
-        <%= @overdue_count %> <%= @overdue_count == 1 ? 'venda atrasada' : 'vendas atrasadas' %>
-      </p>
+      <p class="text-xs text-gray-500"><%= @overdue_count %> vendas</p>
     </div>
 
     <!-- A Receber -->
-    <div class="bg-white rounded-lg shadow p-6 border-l-4 border-yellow-500">
-      <div class="flex items-center justify-between mb-4">
-        <h3 class="text-gray-600 text-sm font-medium">A Receber</h3>
-        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-        </svg>
-      </div>
-      <p class="text-2xl font-bold text-yellow-600 mb-2">
+    <div class="bg-white rounded-lg shadow p-3 border-l-4 border-yellow-500">
+      <h3 class="text-gray-600 text-xs font-medium mb-1">A Receber</h3>
+      <p class="text-lg font-bold text-yellow-600">
         R$ <%= number_to_currency(@pending_amount, unit: '', delimiter: '.', separator: ',', precision: 2) %>
       </p>
-      <p class="text-xs text-gray-500">Vendas pendentes futuras</p>
     </div>
 
     <!-- Projeção de Gastos -->
-    <div class="bg-white rounded-lg shadow p-6 border-l-4 border-purple-500">
-      <div class="flex items-center justify-between mb-4">
-        <h3 class="text-gray-600 text-sm font-medium">Projeção de Gastos</h3>
-        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
-        </svg>
-      </div>
-      <p class="text-2xl font-bold text-purple-600 mb-2">
+    <div class="bg-white rounded-lg shadow p-3 border-l-4 border-purple-500">
+      <h3 class="text-gray-600 text-xs font-medium mb-1">Projeção</h3>
+      <p class="text-lg font-bold text-purple-600">
         R$ <%= number_to_currency(@projected_expenses, unit: '', delimiter: '.', separator: ',', precision: 2) %>
       </p>
-      <div class="flex items-center justify-between text-xs text-gray-500">
-        <span>Gasto: R$ <%= number_to_currency(@spent_so_far, unit: '', delimiter: '.', separator: ',', precision: 2) %></span>
-        <span class="<%= @remaining_budget >= 0 ? 'text-green-600' : 'text-red-600' %> font-semibold">
-          Restante: R$ <%= number_to_currency(@remaining_budget.abs, unit: '', delimiter: '.', separator: ',', precision: 2) %>
-        </span>
-      </div>
+      <p class="text-xs <%= @remaining_budget >= 0 ? 'text-green-600' : 'text-red-600' %> font-semibold">
+        Resta: R$ <%= number_to_currency(@remaining_budget.abs, unit: '', delimiter: '.', separator: ',', precision: 2) %>
+      </p>
     </div>
   </div>
 
   <!-- Gráficos -->
-  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 mb-3">
     <!-- Fluxo de Caixa Diário -->
-    <div class="bg-white rounded-lg shadow p-6">
-      <h3 class="text-lg font-semibold text-gray-900 mb-4">Fluxo de Caixa Diário</h3>
-      <canvas id="cashFlowChart" height="300"></canvas>
+    <div class="bg-white rounded-lg shadow p-4">
+      <h3 class="text-sm font-semibold text-gray-900 mb-2">Fluxo de Caixa Diário</h3>
+      <div style="height: 250px; position: relative;">
+        <canvas id="cashFlowChart"></canvas>
+      </div>
     </div>
 
     <!-- Receitas vs Despesas -->
-    <div class="bg-white rounded-lg shadow p-6">
-      <h3 class="text-lg font-semibold text-gray-900 mb-4">Receitas vs Despesas</h3>
-      <canvas id="revenueExpensesChart" height="300"></canvas>
+    <div class="bg-white rounded-lg shadow p-4">
+      <h3 class="text-sm font-semibold text-gray-900 mb-2">Receitas vs Despesas</h3>
+      <div style="height: 250px; position: relative;">
+        <canvas id="revenueExpensesChart"></canvas>
+      </div>
     </div>
   </div>
 
   <!-- Detalhamento de Despesas Projetadas -->
-  <div class="bg-white rounded-lg shadow p-6">
-    <h3 class="text-lg font-semibold text-gray-900 mb-4">Detalhamento da Projeção de Gastos</h3>
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-      <div class="p-4 bg-gray-50 rounded-lg">
-        <p class="text-sm text-gray-600 mb-1">Despesas Fixas Mensais</p>
-        <p class="text-xl font-bold text-gray-900">R$ <%= number_to_currency(@fixed_monthly, unit: '', delimiter: '.', separator: ',', precision: 2) %></p>
+  <div class="bg-white rounded-lg shadow p-4">
+    <h3 class="text-sm font-semibold text-gray-900 mb-2">Detalhamento da Projeção de Gastos</h3>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+      <div class="p-3 bg-gray-50 rounded-lg">
+        <p class="text-xs text-gray-600 mb-1">Despesas Fixas Mensais</p>
+        <p class="text-lg font-bold text-gray-900">R$ <%= number_to_currency(@fixed_monthly, unit: '', delimiter: '.', separator: ',', precision: 2) %></p>
       </div>
-      <div class="p-4 bg-gray-50 rounded-lg">
-        <p class="text-sm text-gray-600 mb-1">Média Esporádicas (3 meses)</p>
-        <p class="text-xl font-bold text-gray-900">R$ <%= number_to_currency(@sporadic_average, unit: '', delimiter: '.', separator: ',', precision: 2) %></p>
+      <div class="p-3 bg-gray-50 rounded-lg">
+        <p class="text-xs text-gray-600 mb-1">Média Esporádicas (3 meses)</p>
+        <p class="text-lg font-bold text-gray-900">R$ <%= number_to_currency(@sporadic_average, unit: '', delimiter: '.', separator: ',', precision: 2) %></p>
       </div>
-      <div class="p-4 bg-blue-50 rounded-lg">
-        <p class="text-sm text-blue-600 mb-1">Total Projetado</p>
-        <p class="text-xl font-bold text-blue-900">R$ <%= number_to_currency(@projected_expenses, unit: '', delimiter: '.', separator: ',', precision: 2) %></p>
+      <div class="p-3 bg-blue-50 rounded-lg">
+        <p class="text-xs text-blue-600 mb-1">Total Projetado</p>
+        <p class="text-lg font-bold text-blue-900">R$ <%= number_to_currency(@projected_expenses, unit: '', delimiter: '.', separator: ',', precision: 2) %></p>
       </div>
     </div>
   </div>
@@ -171,6 +131,21 @@
 
 <script>
   document.addEventListener('DOMContentLoaded', function() {
+    // Submissão automática ao mudar mês ou ano
+    const monthSelect = document.getElementById('month_select');
+    const yearSelect = document.getElementById('year_select');
+    const form = document.getElementById('month_selector_form');
+
+    if (monthSelect && yearSelect && form) {
+      monthSelect.addEventListener('change', function() {
+        form.submit();
+      });
+
+      yearSelect.addEventListener('change', function() {
+        form.submit();
+      });
+    }
+
     // Gráfico de Fluxo de Caixa
     const cashFlowCtx = document.getElementById('cashFlowChart');
     if (cashFlowCtx) {
@@ -215,7 +190,14 @@
           plugins: {
             legend: {
               display: true,
-              position: 'top'
+              position: 'top',
+              labels: {
+                boxWidth: 12,
+                padding: 10,
+                font: {
+                  size: 11
+                }
+              }
             },
             tooltip: {
               mode: 'index',
@@ -239,6 +221,9 @@
                 color: 'rgba(0, 0, 0, 0.08)'
               },
               ticks: {
+                font: {
+                  size: 10
+                },
                 callback: function(value) {
                   return 'R$ ' + value.toFixed(0);
                 }
@@ -247,6 +232,11 @@
             x: {
               grid: {
                 color: 'rgba(0, 0, 0, 0.08)'
+              },
+              ticks: {
+                font: {
+                  size: 10
+                }
               }
             }
           }
@@ -284,7 +274,14 @@
           plugins: {
             legend: {
               display: true,
-              position: 'top'
+              position: 'top',
+              labels: {
+                boxWidth: 12,
+                padding: 10,
+                font: {
+                  size: 11
+                }
+              }
             },
             tooltip: {
               mode: 'index',
@@ -308,6 +305,9 @@
                 color: 'rgba(0, 0, 0, 0.08)'
               },
               ticks: {
+                font: {
+                  size: 10
+                },
                 callback: function(value) {
                   return 'R$ ' + value.toFixed(0);
                 }
@@ -316,6 +316,11 @@
             x: {
               grid: {
                 display: false
+              },
+              ticks: {
+                font: {
+                  size: 10
+                }
               }
             }
           }
