@@ -27,66 +27,145 @@
     <% end %>
   </div>
 
-  <!-- KPI Cards - Todos em uma linha -->
-  <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-7 gap-3 mb-4">
+  <!-- KPI Cards - 2 por linha -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
     <!-- Lucro Líquido -->
-    <div class="bg-white rounded-lg shadow p-3 border-l-4 <%= @net_profit >= 0 ? 'border-green-500' : 'border-red-500' %>">
-      <h3 class="text-gray-600 text-xs font-medium mb-1">Lucro Líquido</h3>
-      <p class="text-lg font-bold <%= @net_profit >= 0 ? 'text-green-600' : 'text-red-600' %>">
-        R$ <%= number_to_currency(@net_profit, unit: '', delimiter: '.', separator: ',', precision: 2) %>
-      </p>
+    <div class="bg-white rounded-lg shadow p-5 border-l-4 <%= @net_profit >= 0 ? 'border-green-500' : 'border-red-500' %> relative">
+      <div class="flex items-start justify-between">
+        <div class="flex items-center gap-3 flex-1">
+          <div class="p-3 rounded-full <%= @net_profit >= 0 ? 'bg-green-100' : 'bg-red-100' %>">
+            <svg class="w-6 h-6 <%= @net_profit >= 0 ? 'text-green-600' : 'text-red-600' %>" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+            </svg>
+          </div>
+          <div class="flex-1">
+            <h3 class="text-gray-600 text-sm font-medium mb-1">Lucro Líquido</h3>
+            <p class="text-2xl font-bold <%= @net_profit >= 0 ? 'text-green-600' : 'text-red-600' %>">
+              R$ <%= number_to_currency(@net_profit, unit: '', delimiter: '.', separator: ',', precision: 2) %>
+            </p>
+          </div>
+        </div>
+        <div class="info-tooltip">
+          <div class="w-5 h-5 rounded-full bg-gray-200 flex items-center justify-center cursor-help text-gray-600 text-xs font-bold">i</div>
+          <div class="tooltip-text">O 'Lucro Líquido' é o ganho real do negócio, ele é calculado pegando o valor das receitas totais e deduzindo deste os custos dos produtos vendidos e das despesas do mês. Para produtos: (preço de venda - custo unitário) × quantidade. Para serviços: valor integral.</div>
+        </div>
+      </div>
     </div>
 
     <!-- Receitas Totais -->
-    <div class="bg-white rounded-lg shadow p-3 border-l-4 border-blue-500">
-      <h3 class="text-gray-600 text-xs font-medium mb-1">Receitas Totais</h3>
-      <p class="text-lg font-bold text-blue-600">
-        R$ <%= number_to_currency(@total_revenue, unit: '', delimiter: '.', separator: ',', precision: 2) %>
-      </p>
+    <div class="bg-white rounded-lg shadow p-5 border-l-4 border-blue-500 relative">
+      <div class="flex items-start justify-between">
+        <div class="flex items-center gap-3 flex-1">
+          <div class="p-3 rounded-full bg-blue-100">
+            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+          </div>
+          <div class="flex-1">
+            <h3 class="text-gray-600 text-sm font-medium mb-1">Receitas Totais</h3>
+            <p class="text-2xl font-bold text-blue-600">
+              R$ <%= number_to_currency(@total_revenue, unit: '', delimiter: '.', separator: ',', precision: 2) %>
+            </p>
+          </div>
+        </div>
+        <div class="info-tooltip">
+          <div class="w-5 h-5 rounded-full bg-gray-200 flex items-center justify-center cursor-help text-gray-600 text-xs font-bold">i</div>
+          <div class="tooltip-text">As 'Receitas Totais' representam a soma total de todas as vendas do mês (tanto pagas quanto pendentes), excluindo as vendas canceladas.</div>
+        </div>
+      </div>
     </div>
 
     <!-- Despesas Totais -->
-    <div class="bg-white rounded-lg shadow p-3 border-l-4 border-orange-500">
-      <h3 class="text-gray-600 text-xs font-medium mb-1">Despesas Totais</h3>
-      <p class="text-lg font-bold text-orange-600">
-        R$ <%= number_to_currency(@total_expenses, unit: '', delimiter: '.', separator: ',', precision: 2) %>
-      </p>
+    <div class="bg-white rounded-lg shadow p-5 border-l-4 border-orange-500 relative">
+      <div class="flex items-start justify-between">
+        <div class="flex items-center gap-3 flex-1">
+          <div class="p-3 rounded-full bg-orange-100">
+            <svg class="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/>
+            </svg>
+          </div>
+          <div class="flex-1">
+            <h3 class="text-gray-600 text-sm font-medium mb-1">Despesas Totais</h3>
+            <p class="text-2xl font-bold text-orange-600">
+              R$ <%= number_to_currency(@total_expenses, unit: '', delimiter: '.', separator: ',', precision: 2) %>
+            </p>
+          </div>
+        </div>
+        <div class="info-tooltip">
+          <div class="w-5 h-5 rounded-full bg-gray-200 flex items-center justify-center cursor-help text-gray-600 text-xs font-bold">i</div>
+          <div class="tooltip-text">As 'Despesas Totais' nada mais são do que a soma de todas as despesas ativas registradas no mês, incluindo fixas mensais, esporádicas e raras.</div>
+        </div>
+      </div>
     </div>
 
     <!-- Recebido -->
-    <div class="bg-white rounded-lg shadow p-3 border-l-4 border-green-500">
-      <h3 class="text-gray-600 text-xs font-medium mb-1">Recebido</h3>
-      <p class="text-lg font-bold text-green-600">
-        R$ <%= number_to_currency(@received, unit: '', delimiter: '.', separator: ',', precision: 2) %>
-      </p>
+    <div class="bg-white rounded-lg shadow p-5 border-l-4 border-green-500 relative">
+      <div class="flex items-start justify-between">
+        <div class="flex items-center gap-3 flex-1">
+          <div class="p-3 rounded-full bg-green-100">
+            <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+          </div>
+          <div class="flex-1">
+            <h3 class="text-gray-600 text-sm font-medium mb-1">Recebido</h3>
+            <p class="text-2xl font-bold text-green-600">
+              R$ <%= number_to_currency(@received, unit: '', delimiter: '.', separator: ',', precision: 2) %>
+            </p>
+          </div>
+        </div>
+        <div class="info-tooltip">
+          <div class="w-5 h-5 rounded-full bg-gray-200 flex items-center justify-center cursor-help text-gray-600 text-xs font-bold">i</div>
+          <div class="tooltip-text">O 'Recebido' representa o dinheiro que já entrou no caixa, ele é calculado a partir da soma das vendas com status "pago" no mês em questão.</div>
+        </div>
+      </div>
     </div>
 
     <!-- Atrasados -->
-    <div class="bg-white rounded-lg shadow p-3 border-l-4 border-red-500">
-      <h3 class="text-gray-600 text-xs font-medium mb-1">Atrasados</h3>
-      <p class="text-lg font-bold text-red-600">
-        R$ <%= number_to_currency(@overdue_amount, unit: '', delimiter: '.', separator: ',', precision: 2) %>
-      </p>
-      <p class="text-xs text-gray-500"><%= @overdue_count %> vendas</p>
+    <div class="bg-white rounded-lg shadow p-5 border-l-4 border-red-500 relative">
+      <div class="flex items-start justify-between">
+        <div class="flex items-center gap-3 flex-1">
+          <div class="p-3 rounded-full bg-red-100">
+            <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+          </div>
+          <div class="flex-1">
+            <h3 class="text-gray-600 text-sm font-medium mb-1">Atrasados</h3>
+            <p class="text-2xl font-bold text-red-600">
+              R$ <%= number_to_currency(@overdue_amount, unit: '', delimiter: '.', separator: ',', precision: 2) %>
+            </p>
+            <p class="text-sm text-gray-500 mt-1"><%= @overdue_count %> <%= @overdue_count == 1 ? 'venda' : 'vendas' %></p>
+          </div>
+        </div>
+        <div class="info-tooltip">
+          <div class="w-5 h-5 rounded-full bg-gray-200 flex items-center justify-center cursor-help text-gray-600 text-xs font-bold">i</div>
+          <div class="tooltip-text">Os 'Atrasados' representam as vendas pendentes com data de vencimento anterior à data de hoje. Valores que deveriam ter sido recebidos mas que ainda não foram pagos.</div>
+        </div>
+      </div>
     </div>
 
     <!-- A Receber -->
-    <div class="bg-white rounded-lg shadow p-3 border-l-4 border-yellow-500">
-      <h3 class="text-gray-600 text-xs font-medium mb-1">A Receber</h3>
-      <p class="text-lg font-bold text-yellow-600">
-        R$ <%= number_to_currency(@pending_amount, unit: '', delimiter: '.', separator: ',', precision: 2) %>
-      </p>
-    </div>
-
-    <!-- Projeção de Gastos -->
-    <div class="bg-white rounded-lg shadow p-3 border-l-4 border-purple-500">
-      <h3 class="text-gray-600 text-xs font-medium mb-1">Projeção</h3>
-      <p class="text-lg font-bold text-purple-600">
-        R$ <%= number_to_currency(@projected_expenses, unit: '', delimiter: '.', separator: ',', precision: 2) %>
-      </p>
-      <p class="text-xs <%= @remaining_budget >= 0 ? 'text-green-600' : 'text-red-600' %> font-semibold">
-        Resta: R$ <%= number_to_currency(@remaining_budget.abs, unit: '', delimiter: '.', separator: ',', precision: 2) %>
-      </p>
+    <div class="bg-white rounded-lg shadow p-5 border-l-4 border-yellow-500 relative">
+      <div class="flex items-start justify-between">
+        <div class="flex items-center gap-3 flex-1">
+          <div class="p-3 rounded-full bg-yellow-100">
+            <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+          </div>
+          <div class="flex-1">
+            <h3 class="text-gray-600 text-sm font-medium mb-1">A Receber</h3>
+            <p class="text-2xl font-bold text-yellow-600">
+              R$ <%= number_to_currency(@pending_amount, unit: '', delimiter: '.', separator: ',', precision: 2) %>
+            </p>
+          </div>
+        </div>
+        <div class="info-tooltip">
+          <div class="w-5 h-5 rounded-full bg-gray-200 flex items-center justify-center cursor-help text-gray-600 text-xs font-bold">i</div>
+          <div class="tooltip-text">O 'A Receber' simboliza as vendas pendentes com vencimento futuro ou sem data definida. São valores que ainda serão recebidos dentro do prazo normal.</div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -111,7 +190,7 @@
 
   <!-- Detalhamento de Despesas Projetadas -->
   <div class="bg-white rounded-lg shadow p-4">
-    <h3 class="text-sm font-semibold text-gray-900 mb-2">Detalhamento da Projeção de Gastos</h3>
+    <h3 class="text-sm font-semibold text-gray-900 mb-2">Projeção de Gastos</h3>
     <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
       <div class="p-3 bg-gray-50 rounded-lg">
         <p class="text-xs text-gray-600 mb-1">Despesas Fixas Mensais</p>
@@ -128,6 +207,48 @@
     </div>
   </div>
 </div>
+
+<style>
+  .info-tooltip {
+    position: relative;
+    display: inline-block;
+  }
+
+  .info-tooltip .tooltip-text {
+    visibility: hidden;
+    width: 280px;
+    background-color: #1f2937;
+    color: #fff;
+    text-align: left;
+    border-radius: 8px;
+    padding: 12px;
+    position: absolute;
+    z-index: 1000;
+    top: -10px;
+    right: 30px;
+    opacity: 0;
+    transition: opacity 0.3s;
+    font-size: 0.813rem;
+    line-height: 1.4;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  }
+
+  .info-tooltip .tooltip-text::after {
+    content: "";
+    position: absolute;
+    top: 10px;
+    left: 100%;
+    margin-left: 0;
+    border-width: 8px;
+    border-style: solid;
+    border-color: transparent transparent transparent #1f2937;
+  }
+
+  .info-tooltip:hover .tooltip-text {
+    visibility: visible;
+    opacity: 1;
+  }
+</style>
 
 <script>
   document.addEventListener('DOMContentLoaded', function() {
