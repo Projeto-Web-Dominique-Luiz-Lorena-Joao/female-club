@@ -13,10 +13,10 @@ export default class extends Controller {
   }
 
   formatCode(e) {
-    let value = e.target.value.toUpperCase()
+    let value = e.target.value
 
     // Remove tudo exceto letras e números
-    value = value.replace(/[^A-Z0-9]/g, '')
+    value = value.replace(/[^A-Za-z0-9]/g, '')
 
     if (value === '') {
       e.target.value = ''
@@ -45,10 +45,10 @@ export default class extends Controller {
   }
 
   formatOnBlur(e) {
-    let value = e.target.value.toUpperCase()
+    let value = e.target.value
 
     // Remove tudo exceto letras e números
-    value = value.replace(/[^A-Z0-9]/g, '')
+    value = value.replace(/[^A-Za-z0-9]/g, '')
 
     if (value === '') {
       e.target.value = ''

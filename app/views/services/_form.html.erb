@@ -92,10 +92,6 @@
 <% end %>
 
 <script>
-  function toUpperCaseText(text) {
-    return text ? text.toUpperCase() : text;
-  }
-
   function initializePriceMasks() {
     const priceFields = document.querySelectorAll('input[type="number"][step="0.01"]');
 
@@ -126,21 +122,8 @@
     });
   }
 
-  function initializeUpperCaseFields() {
-    const fieldIds = ['service_name'];
-    fieldIds.forEach(id => {
-      const field = document.getElementById(id);
-      if (field) {
-        field.addEventListener('input', function() {
-          this.value = toUpperCaseText(this.value);
-        });
-      }
-    });
-  }
-
   function initializeAllMasks() {
     initializePriceMasks();
-    initializeUpperCaseFields();
   }
 
   if (document.readyState === 'loading') {
