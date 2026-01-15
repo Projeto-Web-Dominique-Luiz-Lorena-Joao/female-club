@@ -21,6 +21,7 @@ class MonthlyReportsController < ApplicationController
     calculate_monthly_stats
     calculate_daily_cash_flow
     calculate_projections
+    calculate_top_products_and_services
   end
 
   private
@@ -156,5 +157,39 @@ class MonthlyReportsController < ApplicationController
 
     # Se não houver registros, retorna o ano atual
     years.empty? ? Date.today.year : years.min
+  end
+
+  def calculate_top_products_and_services
+    # TOP 10 PRODUTOS DO MÊS
+    product_sales = {}
+
+    @sales_this_month.each do |sale|
+      sale.sale_products.each do |sp|
+        next unless sp.product
+
+        product_name = sp.product.name
+        product_sales[product_name] ||= { quantity: 0, revenue: 0 }
+        product_sales[product_name][:quantity] += sp.quantity
+        product_sales[product_name][:revenue] += sp.unit_price * sp.quantity
+      end
+    end
+
+    @top_products = product_sales.sort_by { |_, data| -data[:revenue] }.first(10)
+
+    # TOP 10 SERVIÇOS DO MÊS
+    service_sales = {}
+
+    @sales_this_month.each do |sale|
+      sale.sale_services.each do |ss|
+        next unless ss.service
+
+        service_name = ss.service.name
+        service_sales[service_name] ||= { quantity: 0, revenue: 0 }
+        service_sales[service_name][:quantity] += ss.quantity
+        service_sales[service_name][:revenue] += ss.total_price
+      end
+    end
+
+    @top_services = service_sales.sort_by { |_, data| -data[:revenue] }.first(10)
   end
 end
