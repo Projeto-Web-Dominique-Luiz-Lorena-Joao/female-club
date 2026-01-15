@@ -8,6 +8,7 @@ class ProductInputsController < ApplicationController
     @product_inputs = @product_inputs.by_product(params[:product_id]) if params[:product_id].present?
     @product_inputs = @product_inputs.by_supplier(params[:supplier_id]) if params[:supplier_id].present?
     @product_inputs = @product_inputs.by_date_range(params[:start_date].to_date, params[:end_date].to_date) if params[:start_date].present? && params[:end_date].present?
+    @product_inputs = @product_inputs.page(params[:page]).per(per_page)
   end
 
   def show

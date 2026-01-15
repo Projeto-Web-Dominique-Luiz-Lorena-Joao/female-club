@@ -146,11 +146,11 @@
       <span class="ml-3 whitespace-nowrap transition-all duration-500 ease-in-out" data-sidebar-target="text">Agendamentos</span>
     <% end %>
 
-    <%= link_to expenses_path, class: "flex items-center justify-start px-4 py-3 min-h-[48px] rounded-lg transition-all duration-300 mb-2 #{active_class(expenses_path)}", title: "Financeiro", data: { sidebarTarget: "link" } do %>
+    <%= link_to expenses_path, class: "flex items-center justify-start px-4 py-3 min-h-[48px] rounded-lg transition-all duration-300 mb-2 #{active_class(expenses_path)}", title: "Despesas", data: { sidebarTarget: "link" } do %>
       <svg class="w-5 h-5 flex-shrink-0 min-w-[1.25rem]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
       </svg>
-      <span class="ml-3 whitespace-nowrap transition-all duration-500 ease-in-out" data-sidebar-target="text">Financeiro</span>
+      <span class="ml-3 whitespace-nowrap transition-all duration-500 ease-in-out" data-sidebar-target="text">Despesas</span>
     <% end %>
 
     <%= link_to suppliers_path, class: "flex items-center justify-start px-4 py-3 min-h-[48px] rounded-lg transition-all duration-300 mb-2 #{active_class(suppliers_path)}", title: "Fornecedores", data: { sidebarTarget: "link" } do %>
@@ -171,7 +171,7 @@
 
   <div class="border-t border-gray-700 py-4 px-3 space-y-2">
 
-    <%= link_to "#", class: "flex items-center justify-start px-4 py-3 min-h-[48px] text-gray-300 hover:bg-white/10 hover:text-white rounded-lg transition-all duration-300 mb-2", title: "Configurações", data: { sidebarTarget: "link" } do %>
+    <%= link_to edit_user_registration_path, class: "flex items-center justify-start px-4 py-3 min-h-[48px] text-gray-300 hover:bg-white/10 hover:text-white rounded-lg transition-all duration-300 mb-2", title: "Configurações", data: { sidebarTarget: "link" } do %>
       <svg class="w-5 h-5 flex-shrink-0 min-w-[1.25rem]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>

@@ -31,6 +31,7 @@ class CustomersController < ApplicationController
     end
 
     @total_customers = @customers.count
+    @customers = @customers.page(params[:page]).per(per_page)
   end
 
   def show

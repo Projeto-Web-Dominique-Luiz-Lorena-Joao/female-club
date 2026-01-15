@@ -122,6 +122,11 @@
     <% end %>
   </div>
 
+  <!-- Paginação Topo -->
+  <% if @expenses.any? %>
+    <%= render "shared/pagination_top", collection: @expenses %>
+  <% end %>
+
   <div class="bg-white rounded-lg shadow overflow-hidden">
     <% if @expenses.any? %>
       <div class="overflow-x-auto">
@@ -185,4 +190,6 @@
       </div>
     <% end %>
   </div>
+
+  <%= render "shared/pagination_top", collection: @expenses %>
 </div>

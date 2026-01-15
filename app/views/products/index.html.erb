@@ -143,6 +143,11 @@
     <% end %>
   </div>
 
+  <!-- Paginação Topo -->
+  <% if @products.any? %>
+    <%= render "shared/pagination_top", collection: @products %>
+  <% end %>
+
   <div class="bg-white rounded-lg shadow overflow-hidden">
     <% if @products.any? %>
       <table class="min-w-full divide-y divide-gray-200">
@@ -249,4 +254,6 @@
 
     <% end %>
   </div>
+
+  <%= render "shared/pagination_top", collection: @products %>
 </div>

@@ -68,3 +68,6 @@ end
 # Autenticação
 gem "devise"
 gem "devise-i18n"
+
+# Paginação
+gem "kaminari"

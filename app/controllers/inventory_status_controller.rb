@@ -17,11 +17,14 @@ class InventoryStatusController < ApplicationController
       @products = @products.where("name ILIKE ? OR code ILIKE ?", search_term, search_term)
     end
 
+    # Paginação
+    @products = @products.page(params[:page]).per(per_page)
+
     # Estatísticas
     @total_products = Product.where(active: true).count
-    @critical_stock = Product.where(active: true, stock_status: 'critico').count
-    @low_stock = Product.where(active: true, stock_status: 'baixo').count
-    @out_of_stock = Product.where(active: true, stock_status: 'fora_de_estoque').count
-    @in_stock = Product.where(active: true, stock_status: 'em_estoque').count
+    @critical_stock = Product.where(active: true, stock_status: "critico").count
+    @low_stock = Product.where(active: true, stock_status: "baixo").count
+    @out_of_stock = Product.where(active: true, stock_status: "fora_de_estoque").count
+    @in_stock = Product.where(active: true, stock_status: "em_estoque").count
   end
 end

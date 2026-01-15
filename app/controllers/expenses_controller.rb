@@ -10,6 +10,7 @@ class ExpensesController < ApplicationController
     @expenses = @expenses.by_payment_method(params[:payment_method]) if params[:payment_method].present?
     @expenses = @expenses.by_date_range(params[:start_date].to_date, params[:end_date].to_date) if params[:start_date].present? && params[:end_date].present?
     @expenses = @expenses.where(status: params[:status]) if params[:status].present?
+    @expenses = @expenses.page(params[:page]).per(per_page)
   end
 
   def show

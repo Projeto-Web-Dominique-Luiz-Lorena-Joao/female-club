@@ -86,6 +86,11 @@
     <% end %>
   </div>
 
+  <!-- Paginação Topo -->
+  <% if @services.any? %>
+    <%= render "shared/pagination_top", collection: @services %>
+  <% end %>
+
   <div class="bg-white rounded-lg shadow overflow-hidden">
     <% if @services.any? %>
       <table class="min-w-full divide-y divide-gray-200">
@@ -158,4 +163,6 @@
 
     <% end %>
   </div>
+
+  <%= render "shared/pagination_top", collection: @services %>
 </div>

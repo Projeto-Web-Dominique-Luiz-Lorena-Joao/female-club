@@ -116,6 +116,11 @@
 </div>
 
 
+  <!-- Paginação Topo -->
+  <% if @employees.any? %>
+    <%= render "shared/pagination_top", collection: @employees %>
+  <% end %>
+
   <div class="bg-white rounded-lg shadow overflow-hidden">
     <% if @employees.any? %>
       <table class="min-w-full divide-y divide-gray-200">
@@ -177,4 +182,6 @@
       </div>
     <% end %>
   </div>
+
+  <%= render "shared/pagination_top", collection: @employees %>
 </div>

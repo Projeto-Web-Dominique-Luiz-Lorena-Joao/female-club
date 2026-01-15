@@ -15,6 +15,7 @@ class ProductsController < ApplicationController
     @products = @products.search(params[:search]) if params[:search].present?
 
     @products = @products.order(created_at: :desc)
+    @products = @products.page(params[:page]).per(per_page)
   end
 
   def show

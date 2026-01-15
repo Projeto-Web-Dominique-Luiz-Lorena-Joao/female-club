@@ -80,7 +80,12 @@ Rails.application.routes.draw do
     end
   end
 
-  devise_for :users
+  devise_for :users, controllers: {
+    registrations: "users/registrations"
+  }
+
+  # Rota para atualizar preferência de paginação
+  patch "update_pagination_preference", to: "application#update_pagination_preference", as: :update_pagination_preference
 
   authenticated :user do
     root to: "home#dashboard", as: :authenticated_root

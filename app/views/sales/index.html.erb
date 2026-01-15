@@ -137,6 +137,11 @@
     <% end %>
   </div>
 
+  <!-- Paginação Topo -->
+  <% if @sales.any? %>
+    <%= render "shared/pagination_top", collection: @sales %>
+  <% end %>
+
   <div class="bg-white rounded-lg shadow overflow-hidden">
     <% if @sales.any? %>
       <div class="overflow-x-auto">
@@ -208,5 +213,7 @@
 
     <% end %>
   </div>
+
+  <%= render "shared/pagination_top", collection: @sales %>
 
 </div>

@@ -1,0 +1,111 @@
+<div class="flex items-center justify-between py-4 px-6 bg-white border-t border-gray-200">
+  <!-- Seletores de registros por página e padrão -->
+  <div class="flex items-center gap-4">
+    <!-- Registros por página -->
+    <div class="flex items-center gap-2">
+      <label for="per_page" class="text-sm text-gray-700">Registros por página:</label>
+      <%= form_with url: request.path, method: :get, id: "per_page_form", class: "inline" do |f| %>
+        <%= f.select :per_page,
+            options_for_select([ 10, 15, 20, 25, 50 ], params[:per_page] || per_page),
+            {},
+            {
+              id: "per_page",
+              class: "px-3 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 cursor-pointer",
+              onchange: "this.form.submit()"
+            }
+        %>
+        <% params.except(:per_page, :page, :controller, :action, :set_default).each do |key, value| %>
+          <%= f.hidden_field key, value: value %>
+        <% end %>
+      <% end %>
+    </div>
+
+    <!-- Padrão -->
+    <% if user_signed_in? %>
+      <div class="flex items-center gap-2">
+        <label for="set_default" class="text-sm text-gray-700">Padrão:</label>
+        <%= form_with url: update_pagination_preference_path, method: :patch, id: "default_form", class: "inline" do |f| %>
+          <%= f.select :items_per_page,
+              options_for_select(
+                [
+                  ["Sistema (15)", nil],
+                  ["10 registros", 10],
+                  ["15 registros", 15],
+                  ["20 registros", 20],
+                  ["25 registros", 25],
+                  ["50 registros", 50]
+                ],
+                current_user.items_per_page
+              ),
+              {},
+              {
+                id: "set_default",
+                class: "px-3 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-white text-gray-900 cursor-pointer",
+                onchange: "this.form.submit()"
+              }
+          %>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Navegação de páginas com Tailwind CSS -->
+  <nav class="flex items-center gap-1">
+    <%= paginate collection, window: 2, outer_window: 1 %>
+  </nav>
+</div>
+
+<style>
+  .pagination {
+    display: flex;
+    list-style: none;
+    gap: 0.25rem;
+    margin: 0;
+    padding: 0;
+  }
+
+  .pagination .page,
+  .pagination .first,
+  .pagination .prev,
+  .pagination .next,
+  .pagination .last,
+  .pagination .gap {
+    display: inline-block;
+  }
+
+  .pagination a,
+  .pagination span {
+    padding: 0.5rem 0.75rem;
+    text-decoration: none;
+    border: 1px solid #000000;
+    border-radius: 0.375rem;
+    color: white;
+    background-color: #000000;
+    font-size: 0.875rem;
+    transition: all 0.2s;
+  }
+
+  .pagination a:hover {
+    background-color: #333333;
+    border-color: #333333;
+  }
+
+  .pagination .current {
+    background-color: #4b5563;
+    color: white;
+    border-color: #4b5563;
+  }
+
+  .pagination .disabled {
+    color: #6b7280;
+    background-color: #1f2937;
+    border-color: #1f2937;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  .pagination .gap {
+    border: none;
+    background: none;
+  }
+</style>

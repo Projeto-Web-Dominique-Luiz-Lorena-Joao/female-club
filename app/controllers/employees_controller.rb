@@ -49,6 +49,7 @@ class EmployeesController < ApplicationController
     @total_employees = @employees.count
     @active_employees = Employee.where(status: ['ativo', 'ferias']).count
     @total_salary = Employee.where(status: ['ativo', 'ferias']).sum(:salary)
+    @employees = @employees.page(params[:page]).per(per_page)
   end
 
   def show

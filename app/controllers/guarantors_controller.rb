@@ -33,6 +33,7 @@ class GuarantorsController < ApplicationController
 
       @total_guarantors = Guarantor.count
       @active_guarantors = Guarantor.where(status: 'ativo').count
+      @guarantors = @guarantors.page(params[:page]).per(per_page)
   end
 
   def show

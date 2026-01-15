@@ -66,6 +66,11 @@
     </form>
   </div>
 
+  <!-- Paginação Topo -->
+  <% if @product_outputs.any? %>
+    <%= render "shared/pagination_top", collection: @product_outputs %>
+  <% end %>
+
   <!-- Tabela -->
   <div class="bg-white rounded-lg shadow overflow-hidden">
     <% if @product_outputs.any? %>
@@ -120,4 +125,6 @@
       </div>
     <% end %>
   </div>
+
+  <%= render "shared/pagination_top", collection: @product_outputs %>
 </div>

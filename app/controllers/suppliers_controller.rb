@@ -42,6 +42,7 @@ class SuppliersController < ApplicationController
     # @active_suppliers = Supplier.active.count
     # @total_items = StockItem.count
     # @total_stock_value = StockItem.sum('quantity * sale_price')
+    @suppliers = @suppliers.page(params[:page]).per(per_page)
   end
 
   def show

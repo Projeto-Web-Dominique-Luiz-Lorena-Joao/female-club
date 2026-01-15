@@ -29,6 +29,7 @@ class SalesController < ApplicationController
       @sales = @sales.recent
     end
 
+    @sales = @sales.page(params[:page]).per(per_page)
   end
 
   def show

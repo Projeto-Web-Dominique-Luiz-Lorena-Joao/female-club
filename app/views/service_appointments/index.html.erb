@@ -119,6 +119,11 @@
     <% end %>
   </div>
 
+  <!-- Paginação Topo -->
+  <% if @service_appointments.any? %>
+    <%= render "shared/pagination_top", collection: @service_appointments %>
+  <% end %>
+
   <!-- Tabela de Agendamentos -->
   <div class="bg-white rounded-lg shadow-lg overflow-hidden">
     <div class="overflow-x-auto">
@@ -206,5 +211,7 @@
       </table>
     </div>
   </div>
+
+  <%= render "shared/pagination_top", collection: @service_appointments %>
 
 </div>
