@@ -322,11 +322,11 @@
       new Chart(cashFlowCtx.getContext('2d'), {
         type: 'line',
         data: {
-          labels: <%= raw @chart_labels.to_json %>,
+          labels: <%= raw @cashflow_chart_labels.to_json %>,
           datasets: [
             {
               label: 'Receitas',
-              data: <%= raw @chart_revenue_data.to_json %>,
+              data: <%= raw @cashflow_chart_revenue.to_json %>,
               borderColor: 'rgb(34, 197, 94)',
               backgroundColor: 'rgba(34, 197, 94, 0.1)',
               tension: 0.4,
@@ -335,7 +335,7 @@
             },
             {
               label: 'Despesas',
-              data: <%= raw @chart_expenses_data.to_json %>,
+              data: <%= raw @cashflow_chart_expenses.to_json %>,
               borderColor: 'rgb(249, 115, 22)',
               backgroundColor: 'rgba(249, 115, 22, 0.1)',
               tension: 0.4,
@@ -344,7 +344,7 @@
             },
             {
               label: 'Saldo Diário',
-              data: <%= raw @chart_balance_data.to_json %>,
+              data: <%= raw @cashflow_chart_balance.to_json %>,
               borderColor: 'rgb(59, 130, 246)',
               backgroundColor: 'rgba(59, 130, 246, 0.1)',
               tension: 0.4,
@@ -420,20 +420,19 @@
       new Chart(revenueExpensesCtx.getContext('2d'), {
         type: 'bar',
         data: {
-          labels: <%= raw @chart_labels.to_json %>,
+          labels: <%= raw @comparison_chart_labels.to_json %>,
           datasets: [
             {
-              label: 'Receitas',
-              data: <%= raw @chart_revenue_data.to_json %>,
-              backgroundColor: 'rgba(34, 197, 94, 0.8)',
-              borderColor: 'rgb(34, 197, 94)',
-              borderWidth: 1
-            },
-            {
-              label: 'Despesas',
-              data: <%= raw @chart_expenses_data.to_json %>,
-              backgroundColor: 'rgba(249, 115, 22, 0.8)',
-              borderColor: 'rgb(249, 115, 22)',
+              label: 'Valor Total do Mês',
+              data: <%= raw @comparison_chart_data.to_json %>,
+              backgroundColor: [
+                'rgba(34, 197, 94, 0.8)',
+                'rgba(249, 115, 22, 0.8)'
+              ],
+              borderColor: [
+                'rgb(34, 197, 94)',
+                'rgb(249, 115, 22)'
+              ],
               borderWidth: 1
             }
           ]

@@ -125,6 +125,31 @@ class Product < ApplicationRecord
     end
   end
 
+  def category_badge_class
+    case category
+    when "beleza_cosmeticos"
+      'bg-pink-100 text-pink-800'
+    when "moda_acessorios"
+      'bg-purple-100 text-purple-800'
+    when "bem_estar_autocuidado"
+      'bg-green-100 text-green-800'
+    when "decoracao_casa"
+      'bg-yellow-100 text-yellow-800'
+    when "gastronomia_bebidas"
+      'bg-orange-100 text-orange-800'
+    when "livros_cultura"
+      'bg-indigo-100 text-indigo-800'
+    when "tecnologia_lifestyle"
+      'bg-cyan-100 text-cyan-800'
+    when "fitness_esportes"
+      'bg-blue-100 text-blue-800'
+    when "outros"
+      'bg-gray-100 text-gray-800'
+    else
+      'bg-gray-100 text-gray-800'
+    end
+  end
+
   private
 
   def normalize_strings

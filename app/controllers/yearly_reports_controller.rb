@@ -29,11 +29,13 @@ class YearlyReportsController < ApplicationController
     # RECEITAS TOTAIS DO ANO
     @total_revenue = @sales_this_year.sum(:total_amount)
 
-    # LUCRO LÍQUIDO DO ANO
-    @net_profit = calculate_net_profit
-
-    # DESPESAS TOTAIS DO ANO
+    # DESPESAS TOTAIS DO ANO (incluindo compra de produtos)
     @total_expenses = Expense.where(expense_date: @start_date..@end_date, status: 'ativa').sum(:amount)
+
+    # LUCRO LÍQUIDO DO ANO
+    # Fórmula simples: Receitas - Despesas
+    # (As despesas já incluem a compra de produtos/supplies)
+    @net_profit = @total_revenue - @total_expenses
 
     # RECEBIDO NO ANO
     @received = @sales_this_year.where(status: 'pago').sum(:total_amount)
@@ -66,42 +68,6 @@ class YearlyReportsController < ApplicationController
     @top_customers = calculate_top_customers
   end
 
-  def calculate_net_profit
-    profit = 0
-
-    @sales_this_year.each do |sale|
-      sale.sale_products.each do |sale_product|
-        next unless sale_product.product
-
-        cost_per_unit = calculate_product_cost(sale_product.product)
-        revenue = sale_product.unit_price * sale_product.quantity
-        cost = cost_per_unit * sale_product.quantity
-        profit += (revenue - cost)
-      end
-
-      sale.sale_services.each do |sale_service|
-        profit += sale_service.total_price
-      end
-    end
-
-    profit
-  end
-
-  def calculate_product_cost(product)
-    total_cost = 0
-    total_quantity = 0
-
-    product.product_inputs.each do |input|
-      if input.unit_price.present? && input.quantity.present?
-        total_cost += input.unit_price * input.quantity
-        total_quantity += input.quantity
-      end
-    end
-
-    return 0 if total_quantity.zero?
-    total_cost / total_quantity
-  end
-
   def calculate_monthly_breakdown
     @monthly_data = (1..12).map do |month|
       month_start = Date.new(@current_year, month, 1)
@@ -113,12 +79,16 @@ class YearlyReportsController < ApplicationController
       revenue = sales.sum(:total_amount)
       expenses = Expense.where(expense_date: month_start..month_end, status: 'ativa').sum(:amount)
 
+      # Calcular lucro líquido: Receitas - Despesas
+      # (As despesas já incluem a compra de produtos/supplies)
+      net_profit = revenue - expenses
+
       {
         month: month,
         month_name: I18n.t('date.month_names')[month],
         revenue: revenue,
         expenses: expenses,
-        profit: revenue - expenses,
+        profit: net_profit,
         sales_count: sales.count
       }
     end
@@ -143,11 +113,15 @@ class YearlyReportsController < ApplicationController
       revenue = sales.sum(:total_amount)
       expenses = Expense.where(expense_date: quarter_start..quarter_end, status: 'ativa').sum(:amount)
 
+      # Calcular lucro líquido: Receitas - Despesas
+      # (As despesas já incluem a compra de produtos/supplies)
+      net_profit = revenue - expenses
+
       {
         quarter: quarter,
         revenue: revenue,
         expenses: expenses,
-        profit: revenue - expenses
+        profit: net_profit
       }
     end
   end
@@ -219,7 +193,7 @@ class YearlyReportsController < ApplicationController
     @sales_this_year.each do |sale|
       next unless sale.customer
 
-      customer_name = sale.customer.name
+      customer_name = sale.customer.full_name
       customer_sales[customer_name] ||= { sales_count: 0, revenue: 0 }
       customer_sales[customer_name][:sales_count] += 1
       customer_sales[customer_name][:revenue] += sale.total_amount

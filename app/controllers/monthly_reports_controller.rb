@@ -31,72 +31,32 @@ class MonthlyReportsController < ApplicationController
     @sales_this_month = Sale.where(sale_date: @start_date..@end_date)
                              .where.not(status: 'cancelado')
 
-    # LUCRO LÍQUIDO
-    # Produtos: preço de venda - custo
-    # Serviços: valor integral
-    @net_profit = calculate_net_profit
-
     # RECEITAS TOTAIS (soma de todas as vendas não canceladas)
     @total_revenue = @sales_this_month.sum(:total_amount)
 
-    # DESPESAS TOTAIS (apenas despesas ativas)
+    # DESPESAS TOTAIS (todas as despesas ativas, incluindo compra de produtos)
     @total_expenses = Expense.where(expense_date: @start_date..@end_date)
                              .where(status: 'ativa')
                              .sum(:amount)
 
+    # LUCRO LÍQUIDO
+    # Fórmula simples: Receitas - Despesas
+    # (As despesas já incluem a compra de produtos/supplies)
+    @net_profit = @total_revenue - @total_expenses
+
     # RECEBIDO (vendas já pagas)
     @received = @sales_this_month.where(status: 'pago').sum(:total_amount)
 
-    # ATRASADOS (vendas pendentes com data de vencimento passada)
+    # ATRASADOS (vendas pendentes do mês com data de vencimento passada)
     @overdue_sales = @sales_this_month.where(status: 'pendente')
                                       .where('due_date < ?', Date.today)
     @overdue_amount = @overdue_sales.sum(:total_amount)
     @overdue_count = @overdue_sales.count
 
-    # Vendas pendentes (a receber no futuro)
+    # Vendas pendentes (a receber no futuro ou sem data definida)
     @pending_amount = @sales_this_month.where(status: 'pendente')
                                        .where('due_date >= ? OR due_date IS NULL', Date.today)
                                        .sum(:total_amount)
-  end
-
-  def calculate_net_profit
-    profit = 0
-
-    @sales_this_month.each do |sale|
-      # Lucro dos produtos: preço de venda - custo
-      sale.sale_products.each do |sale_product|
-        next unless sale_product.product
-
-        # Custo médio do produto (baseado nas entradas)
-        cost_per_unit = calculate_product_cost(sale_product.product)
-        revenue = sale_product.unit_price * sale_product.quantity
-        cost = cost_per_unit * sale_product.quantity
-        profit += (revenue - cost)
-      end
-
-      # Lucro dos serviços: valor integral
-      sale.sale_services.each do |sale_service|
-        profit += sale_service.total_price
-      end
-    end
-
-    profit
-  end
-
-  def calculate_product_cost(product)
-    # Calcula o custo médio ponderado do produto
-    total_cost = 0
-    total_quantity = 0
-
-    product.product_inputs.each do |input|
-      if input.unit_price.present? && input.quantity.present?
-        total_cost += input.unit_price * input.quantity
-        total_quantity += input.quantity
-      end
-    end
-
-    return 0 if total_quantity.zero?
-    total_cost / total_quantity
   end
 
   def calculate_daily_cash_flow
@@ -104,8 +64,13 @@ class MonthlyReportsController < ApplicationController
     @daily_cash_flow = {}
 
     (@start_date..@end_date).each do |date|
-      daily_revenue = Sale.where(sale_date: date, status: 'pago').sum(:total_amount)
-      daily_expenses = Expense.where(expense_date: date, status: 'ativa').sum(:amount)
+      # Receitas: todas as vendas do dia (não canceladas)
+      daily_revenue = Sale.where(sale_date: date)
+                          .where.not(status: 'cancelado')
+                          .sum(:total_amount)
+      # Despesas: todas as despesas ativas do dia
+      daily_expenses = Expense.where(expense_date: date, status: 'ativa')
+                              .sum(:amount)
 
       @daily_cash_flow[date] = {
         revenue: daily_revenue,
@@ -114,22 +79,29 @@ class MonthlyReportsController < ApplicationController
       }
     end
 
-    # Preparar dados para o gráfico
-    @chart_labels = @daily_cash_flow.keys.map { |d| d.strftime('%d/%m') }
-    @chart_revenue_data = @daily_cash_flow.values.map { |v| v[:revenue] }
-    @chart_expenses_data = @daily_cash_flow.values.map { |v| v[:expenses] }
-    @chart_balance_data = @daily_cash_flow.values.map { |v| v[:balance] }
+    # Preparar dados para o gráfico de Fluxo de Caixa Diário
+    @cashflow_chart_labels = @daily_cash_flow.keys.map { |d| d.strftime('%d/%m') }
+    @cashflow_chart_revenue = @daily_cash_flow.values.map { |v| v[:revenue] }
+    @cashflow_chart_expenses = @daily_cash_flow.values.map { |v| v[:expenses] }
+    @cashflow_chart_balance = @daily_cash_flow.values.map { |v| v[:balance] }
+
+    # Preparar dados para o gráfico de Receitas vs Despesas (visão geral do mês)
+    @comparison_chart_labels = ['Receitas', 'Despesas']
+    @comparison_chart_data = [@total_revenue, @total_expenses]
   end
 
   def calculate_projections
     # Projeção de gastos para o mês
     # Baseada em despesas fixas mensais + média de despesas esporádicas dos últimos 3 meses
 
-    # Despesas fixas mensais ativas
-    @fixed_monthly = Expense.where(category: 'fixa_mensal', status: 'ativa').sum(:amount)
+    # Média das despesas fixas mensais dos últimos 3 meses (para ter uma estimativa mais precisa)
+    three_months_ago = 3.months.ago.beginning_of_month
+    fixed_expenses_last_3_months = Expense.where(category: 'fixa_mensal', status: 'ativa')
+                                          .where(expense_date: three_months_ago..Date.today)
+                                          .sum(:amount)
+    @fixed_monthly = fixed_expenses_last_3_months / 3.0
 
     # Média de despesas esporádicas dos últimos 3 meses
-    three_months_ago = 3.months.ago.beginning_of_month
     sporadic_expenses = Expense.where(category: ['esporadica', 'rara'], status: 'ativa')
                                .where(expense_date: three_months_ago..Date.today)
                                .sum(:amount)

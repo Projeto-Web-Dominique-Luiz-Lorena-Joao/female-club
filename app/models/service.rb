@@ -23,7 +23,7 @@ class Service < ApplicationRecord
   before_validation :set_default_status, on: :create
 
   def formatted_price
-    "R$ #{price.to_f.round(2)}"
+    "R$ #{'%.2f' % price.to_f}"
   end
 
   def status_badge_class

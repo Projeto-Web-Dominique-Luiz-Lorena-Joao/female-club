@@ -25,14 +25,16 @@ class DailyReportsController < ApplicationController
     # PENDENTE HOJE
     @pending_today = @sales_today.where(status: 'pendente').sum(:total_amount)
 
-    # DESPESAS DO DIA
+    # DESPESAS DO DIA (incluindo compra de produtos)
     @total_expenses = Expense.where(expense_date: @current_date, status: 'ativa').sum(:amount)
 
     # SALDO DO DIA
     @daily_balance = @received_today - @total_expenses
 
     # LUCRO LÍQUIDO DO DIA
-    @net_profit = calculate_net_profit
+    # Fórmula simples: Receitas - Despesas
+    # (As despesas já incluem a compra de produtos/supplies)
+    @net_profit = @total_revenue - @total_expenses
 
     # QUANTIDADE DE VENDAS
     @sales_count = @sales_today.count
@@ -54,44 +56,6 @@ class DailyReportsController < ApplicationController
     @appointments_today = ServiceAppointment.where(
       "DATE(appointment_date) = ?", @current_date
     ).count
-  end
-
-  def calculate_net_profit
-    profit = 0
-
-    @sales_today.each do |sale|
-      # Lucro dos produtos: preço de venda - custo
-      sale.sale_products.each do |sale_product|
-        next unless sale_product.product
-
-        cost_per_unit = calculate_product_cost(sale_product.product)
-        revenue = sale_product.unit_price * sale_product.quantity
-        cost = cost_per_unit * sale_product.quantity
-        profit += (revenue - cost)
-      end
-
-      # Lucro dos serviços: valor integral
-      sale.sale_services.each do |sale_service|
-        profit += sale_service.total_price
-      end
-    end
-
-    profit
-  end
-
-  def calculate_product_cost(product)
-    total_cost = 0
-    total_quantity = 0
-
-    product.product_inputs.each do |input|
-      if input.unit_price.present? && input.quantity.present?
-        total_cost += input.unit_price * input.quantity
-        total_quantity += input.quantity
-      end
-    end
-
-    return 0 if total_quantity.zero?
-    total_cost / total_quantity
   end
 
   def calculate_top_products

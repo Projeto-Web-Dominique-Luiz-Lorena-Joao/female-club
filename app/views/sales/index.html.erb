@@ -11,9 +11,10 @@
     <% end %>
   </div>
 
-  <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
 
-    <div class="bg-white rounded-lg border border-gray-200 p-4">
+    <!-- Total de Vendas (excluindo canceladas) -->
+    <div class="bg-white rounded-lg border border-gray-200 p-4" title="Total de vendas registradas (não inclui vendas canceladas)">
       <div class="flex items-start">
         <div class="flex-shrink-0 bg-gray-100 rounded-lg p-3">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
@@ -22,12 +23,13 @@
         </div>
         <div class="ml-3 flex-1">
           <p class="text-xs text-gray-500 font-medium">Total de Vendas</p>
-          <p class="text-2xl font-bold text-gray-900 mt-1"><%= @sales.count %></p>
+          <p class="text-2xl font-bold text-gray-900 mt-1"><%= Sale.where.not(status: 'cancelado').count %></p>
         </div>
       </div>
     </div>
 
-    <div class="bg-white rounded-lg border border-gray-200 p-4">
+    <!-- Vendas Pagas -->
+    <div class="bg-white rounded-lg border border-gray-200 p-4" title="Vendas que foram completamente pagas">
       <div class="flex items-start">
         <div class="flex-shrink-0 bg-green-100 rounded-lg p-3">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
@@ -35,13 +37,14 @@
           </svg>
         </div>
         <div class="ml-3 flex-1">
-          <p class="text-xs text-gray-500 font-medium">Vendas Pagas</p>
+          <p class="text-xs text-gray-500 font-medium">Pagas</p>
           <p class="text-2xl font-bold text-green-600 mt-1"><%= Sale.by_status('pago').count %></p>
         </div>
       </div>
     </div>
 
-    <div class="bg-white rounded-lg border border-gray-200 p-4">
+    <!-- Vendas Pendentes -->
+    <div class="bg-white rounded-lg border border-gray-200 p-4" title="Vendas aguardando pagamento dentro do prazo">
       <div class="flex items-start">
         <div class="flex-shrink-0 bg-yellow-100 rounded-lg p-3">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-yellow-600" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
@@ -55,16 +58,32 @@
       </div>
     </div>
 
-    <div class="bg-white rounded-lg border border-gray-200 p-4">
+    <!-- Vendas Expiradas -->
+    <div class="bg-white rounded-lg border border-gray-200 p-4" title="Vendas que ultrapassaram o prazo de vencimento sem pagamento">
       <div class="flex items-start">
-        <div class="flex-shrink-0 bg-red-100 rounded-lg p-3">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+        <div class="flex-shrink-0 bg-orange-100 rounded-lg p-3">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-orange-600" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
           </svg>
         </div>
         <div class="ml-3 flex-1">
-          <p class="text-xs text-gray-500 font-medium">Vencidas</p>
-          <p class="text-2xl font-bold text-red-600 mt-1"><%= Sale.overdue.count %></p>
+          <p class="text-xs text-gray-500 font-medium">Expiradas</p>
+          <p class="text-2xl font-bold text-orange-600 mt-1"><%= Sale.by_status('expirado').count %></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Vendas Canceladas -->
+    <div class="bg-white rounded-lg border border-gray-200 p-4" title="Vendas que foram canceladas (não contam no total)">
+      <div class="flex items-start">
+        <div class="flex-shrink-0 bg-red-100 rounded-lg p-3">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+          </svg>
+        </div>
+        <div class="ml-3 flex-1">
+          <p class="text-xs text-gray-500 font-medium">Canceladas</p>
+          <p class="text-2xl font-bold text-red-600 mt-1"><%= Sale.by_status('cancelado').count %></p>
         </div>
       </div>
     </div>

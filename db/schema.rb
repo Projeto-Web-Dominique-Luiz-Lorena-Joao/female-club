@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_01_15_102740) do
+ActiveRecord::Schema[8.0].define(version: 2026_01_15_235118) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -92,9 +92,11 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_15_102740) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "status", default: "ativa", null: false
+    t.index ["category", "status"], name: "index_expenses_on_category_and_status"
     t.index ["category"], name: "index_expenses_on_category"
     t.index ["employee_id", "created_at"], name: "index_expenses_on_employee_id_and_created_at"
     t.index ["employee_id"], name: "index_expenses_on_employee_id"
+    t.index ["expense_date", "status"], name: "index_expenses_on_expense_date_and_status"
     t.index ["expense_date"], name: "index_expenses_on_expense_date"
     t.index ["expense_type"], name: "index_expenses_on_expense_type"
     t.index ["supplier_id"], name: "index_expenses_on_supplier_id"
@@ -213,11 +215,14 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_15_102740) do
     t.datetime "updated_at", null: false
     t.index ["customer_id", "sale_date"], name: "index_sales_on_customer_id_and_sale_date"
     t.index ["customer_id"], name: "index_sales_on_customer_id"
+    t.index ["due_date", "status"], name: "index_sales_on_due_date_and_status"
     t.index ["due_date"], name: "index_sales_on_due_date"
     t.index ["employee_id", "sale_date"], name: "index_sales_on_employee_id_and_sale_date"
     t.index ["employee_id"], name: "index_sales_on_employee_id"
     t.index ["paid_date"], name: "index_sales_on_paid_date"
     t.index ["payment_method"], name: "index_sales_on_payment_method"
+    t.index ["sale_date", "customer_id", "status"], name: "index_sales_on_sale_date_and_customer_id_and_status"
+    t.index ["sale_date", "status"], name: "index_sales_on_sale_date_and_status"
     t.index ["sale_date"], name: "index_sales_on_sale_date"
     t.index ["status", "due_date"], name: "index_sales_on_status_and_due_date"
     t.index ["status"], name: "index_sales_on_status"

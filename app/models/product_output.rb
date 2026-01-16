@@ -41,6 +41,27 @@ class ProductOutput < ApplicationRecord
     self.class.output_type_labels[output_type.to_sym] || output_type
   end
 
+  def output_badge_class
+    case output_type.to_sym
+    when :venda
+      'bg-green-100 text-green-800'
+    when :extravio
+      'bg-orange-100 text-orange-800'
+    when :perda
+      'bg-red-100 text-red-800'
+    when :dano
+      'bg-yellow-100 text-yellow-800'
+    when :tragedia_climatica
+      'bg-purple-100 text-purple-800'
+    when :devolucao
+      'bg-blue-100 text-blue-800'
+    when :outro
+      'bg-gray-100 text-gray-800'
+    else
+      'bg-gray-100 text-gray-800'
+    end
+  end
+
   private
 
   def ensure_sufficient_stock
