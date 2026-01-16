@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_01_15_235118) do
+ActiveRecord::Schema[8.0].define(version: 2026_01_16_120315) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -184,6 +184,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_15_235118) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["product_id"], name: "index_sale_products_on_product_id"
+    t.index ["sale_id", "product_id"], name: "index_sale_products_on_sale_and_product"
     t.index ["sale_id", "product_id"], name: "index_sale_products_on_sale_id_and_product_id", unique: true
     t.index ["sale_id"], name: "index_sale_products_on_sale_id"
   end
@@ -195,6 +196,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_15_235118) do
     t.decimal "unit_price", precision: 10, scale: 2, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["sale_id", "service_id"], name: "index_sale_services_on_sale_and_service"
     t.index ["sale_id", "service_id"], name: "index_sale_services_on_sale_id_and_service_id", unique: true
     t.index ["sale_id"], name: "index_sale_services_on_sale_id"
     t.index ["service_id"], name: "index_sale_services_on_service_id"
