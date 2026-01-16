@@ -1,6 +1,6 @@
 class Customer < ApplicationRecord
 
-  # has_many :sales, foreign_key: :custumer_id, dependent: :destroy
+  has_many :sales, foreign_key: :customer_id, dependent: :destroy
   belongs_to :guarantor, optional: true
   has_many :service_appointments, dependent: :destroy
   # has_many :receivables, dependent: :destroy
@@ -45,14 +45,14 @@ class Customer < ApplicationRecord
   end
 
   def total_purchases
-    #sales.sum(:total_amount)
+    sales.where.not(status: "cancelado").sum(:total_amount)
   end
 
- def last_purchase_date
-   # sales.maximum(:sale_date)
- end
+  def last_purchase_date
+    sales.where.not(status: "cancelado").maximum(:sale_date)
+  end
 
   def purchases_count
-   #sales.count
+    sales.where.not(status: "cancelado").count
   end
 end

@@ -3,13 +3,17 @@ class CustomersController < ApplicationController
   before_action :set_customer, only: [:show, :edit, :update, :destroy]
 
   def index
-    @customers = Customer.all.order(created_at: :desc)
+    # Otimizado: Calcular gasto total com SQL agregado para evitar N+1 queries
+    @customers = Customer.left_joins(:sales)
+                         .select("customers.*, COALESCE(SUM(CASE WHEN sales.status <> 'cancelado' THEN sales.total_amount ELSE 0 END), 0) as total_spent")
+                         .group("customers.id")
+                         .order("customers.created_at DESC")
 
     if params[:search].present?
       search_term  = params[:search].strip
       clean_search = search_term.gsub(/\D/, "")
 
-      conditions = ['full_name ILIKE ? OR email ILIKE ?']
+      conditions = ["full_name ILIKE ? OR email ILIKE ?"]
       values     = ["%#{search_term}%", "%#{search_term}%"]
 
       if clean_search.present?
@@ -20,17 +24,23 @@ class CustomersController < ApplicationController
         values     << "%#{clean_search}%"
       end
 
-      @customers = @customers.where(conditions.join(' OR '), *values)
+      @customers = @customers.where(conditions.join(" OR "), *values)
     end
 
     case params[:tier]
-    when 'vip'
+    when "vip"
       @customers = @customers.vip
-    when 'active'
+    when "active"
       @customers = @customers.active
     end
 
-    @total_customers = @customers.count
+    # Calcular totais antes da paginação
+    # Para queries com GROUP BY, count retorna um hash, então usamos size para obter o total
+    all_customers_for_totals = @customers.to_a
+    @total_customers = all_customers_for_totals.size
+    @total_revenue = all_customers_for_totals.sum { |c| c.total_spent.to_f }
+
+    # Aplicar paginação
     @customers = @customers.page(params[:page]).per(per_page)
   end
 
