@@ -1,80 +1,17 @@
-<div class="flex items-center justify-between py-4 px-6 bg-white border-t border-gray-200">
+<div class="flex items-center justify-between py-4 px-6 bg-white border-t border-gray-200"
+     data-controller="pagination">
   <!-- Seletor de registros por página -->
   <div class="flex items-center gap-2">
-    <label for="per_page" class="text-sm text-gray-700">Registros por página:</label>
-    <%= form_with url: request.path, method: :get, id: "per_page_form", class: "inline" do |f| %>
-      <%= f.select :per_page,
-          options_for_select([ 10, 15, 20, 25, 50 ], params[:per_page] || 15),
-          {},
-          {
-            id: "per_page",
-            class: "px-3 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 cursor-pointer",
-            onchange: "this.form.submit()"
-          }
-      %>
-      <% params.except(:per_page, :page, :controller, :action).each do |key, value| %>
-        <%= f.hidden_field key, value: value %>
+    <label for="per_page_select" class="text-sm text-gray-700 whitespace-nowrap">Itens/pág:</label>
+    <select id="per_page_select"
+            class="px-3 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 cursor-pointer"
+            data-action="change->pagination#changePerPage">
+      <% [10, 15, 20, 25, 50].each do |num| %>
+        <option value="<%= num %>" <%= 'selected' if (params[:per_page] || per_page).to_i == num %>><%= num %></option>
       <% end %>
-    <% end %>
+    </select>
   </div>
 
-  <!-- Navegação de páginas com Tailwind CSS -->
-  <nav class="flex items-center gap-1">
-    <%= paginate collection, window: 2, outer_window: 1 %>
-  </nav>
+  <!-- Navegação de páginas -->
+  <%= paginate collection, window: 2, outer_window: 1 %>
 </div>
-
-<style>
-  .pagination {
-    display: flex;
-    list-style: none;
-    gap: 0.25rem;
-    margin: 0;
-    padding: 0;
-  }
-
-  .pagination .page,
-  .pagination .first,
-  .pagination .prev,
-  .pagination .next,
-  .pagination .last,
-  .pagination .gap {
-    display: inline-block;
-  }
-
-  .pagination a,
-  .pagination span {
-    padding: 0.5rem 0.75rem;
-    text-decoration: none;
-    border: 1px solid #000000;
-    border-radius: 0.375rem;
-    color: white;
-    background-color: #000000;
-    font-size: 0.875rem;
-    transition: all 0.2s;
-  }
-
-  .pagination a:hover {
-    background-color: #333333;
-    border-color: #333333;
-  }
-
-  .pagination .current {
-    background-color: #4b5563;
-    color: white;
-    border-color: #4b5563;
-  }
-
-  .pagination .disabled {
-    color: #6b7280;
-    background-color: #1f2937;
-    border-color: #1f2937;
-    cursor: not-allowed;
-    pointer-events: none;
-  }
-
-  .pagination .gap {
-    border: none;
-    background: none;
-  }
-</style>

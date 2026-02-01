@@ -23,7 +23,7 @@ class Supplier < ApplicationRecord
   }, suffix: true
 
   validates :legal_name, presence: true, length: { minimum: 3 }
-  validates :email, format: { with: URI::MailTo::EMAIL_REGEXP }, allow_blank: true
+  validates :email, format: { with: URI::MailTo::EMAIL_REGEXP, message: "não é válido" }, uniqueness: { case_sensitive: false, message: "já está em uso" }, allow_blank: true
 
   # scope :active, -> { joins(:stock_items).distinct }
   scope :active, -> { where(status: 'ativo') }

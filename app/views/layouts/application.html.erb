@@ -1,20 +1,23 @@
 <!DOCTYPE html>
 <html>
-  
+
   <head>
     <title>Female Club</title>
-    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=5">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
-    
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    
+
     <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Cropper.js para recorte de imagens -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
     <style>
       body {
         font-family: 'Inter', sans-serif;
@@ -30,22 +33,34 @@
           transform: translateY(0);
         }
       }
+
+      /* Esconder scrollbar em mobile mas permitir scroll */
+      @media (max-width: 1024px) {
+        .hide-scrollbar {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+          display: none;
+        }
+      }
     </style>
   </head>
 
   <body class="bg-gray-50 h-screen overflow-hidden">
-    <div class="fixed top-8 left-1/2 transform -translate-x-1/2 z-50 flex flex-col items-center space-y-4 pointer-events-none">
+    <!-- Flash Messages - Responsivas -->
+    <div class="fixed top-4 left-1/2 transform -translate-x-1/2 z-[60] flex flex-col items-center space-y-4 pointer-events-none w-full px-4 sm:px-0">
       <% if notice.present? %>
         <div data-controller="flash"
-             class="pointer-events-auto bg-green-600 text-white px-8 py-4 rounded-lg shadow-2xl flex items-center space-x-3 min-w-[400px] max-w-2xl"
+             class="pointer-events-auto bg-green-600 text-white px-4 sm:px-8 py-3 sm:py-4 rounded-lg shadow-2xl flex items-center space-x-3 w-full sm:w-auto sm:min-w-[400px] max-w-[95vw] sm:max-w-2xl"
              style="animation: slideDown 0.3s ease-out;"
              role="alert">
-          <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg class="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
           </svg>
-          <span class="font-medium text-center flex-1"><%= notice %></span>
-          <button data-action="click->flash#close" class="ml-4 hover:bg-green-700 rounded p-1 transition">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <span class="font-medium text-sm sm:text-base flex-1"><%= notice %></span>
+          <button data-action="click->flash#close" class="ml-2 sm:ml-4 hover:bg-green-700 rounded p-1 transition flex-shrink-0">
+            <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
             </svg>
           </button>
@@ -54,15 +69,15 @@
 
       <% if alert.present? %>
         <div data-controller="flash"
-             class="pointer-events-auto bg-red-600 text-white px-8 py-4 rounded-lg shadow-2xl flex items-center space-x-3 min-w-[400px] max-w-2xl"
+             class="pointer-events-auto bg-red-600 text-white px-4 sm:px-8 py-3 sm:py-4 rounded-lg shadow-2xl flex items-center space-x-3 w-full sm:w-auto sm:min-w-[400px] max-w-[95vw] sm:max-w-2xl"
              style="animation: slideDown 0.3s ease-out;"
              role="alert">
-          <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg class="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
           </svg>
-          <span class="font-medium text-center flex-1"><%= alert %></span>
-          <button data-action="click->flash#close" class="ml-4 hover:bg-red-700 rounded p-1 transition">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <span class="font-medium text-sm sm:text-base flex-1"><%= alert %></span>
+          <button data-action="click->flash#close" class="ml-2 sm:ml-4 hover:bg-red-700 rounded p-1 transition flex-shrink-0">
+            <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
             </svg>
           </button>
@@ -71,8 +86,27 @@
     </div>
 
     <div class="flex h-screen bg-gray-50" data-controller="sidebar">
+      <!-- Overlay para mobile -->
+      <div class="fixed inset-0 bg-black/50 z-30 hidden lg:hidden transition-opacity duration-300"
+           data-sidebar-target="overlay"
+           data-action="click->sidebar#closeOverlay"></div>
+
+      <!-- Botao Hamburger Mobile -->
+      <button class="fixed top-4 left-4 z-50 lg:hidden bg-black text-white p-2 rounded-lg shadow-lg"
+              data-sidebar-target="mobileToggle"
+              data-action="click->sidebar#toggleMobile">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+        </svg>
+      </button>
+
       <%= render 'shared/menu' %>
-      <main class="flex-1 relative p-8 overflow-y-auto transition-all duration-300 ml-72" data-sidebar-target="content">
+
+      <main class="flex-1 relative p-4 sm:p-6 lg:p-8 2xl:p-10 overflow-y-auto transition-all duration-300 ml-0 lg:ml-72 hide-scrollbar"
+            data-sidebar-target="content">
+        <!-- Espacamento para o botao hamburger em mobile -->
+        <div class="h-14 lg:hidden"></div>
+
         <%= yield %>
         <%= render "shared/delete_modal" %>
       </main>

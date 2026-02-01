@@ -1,7 +1,18 @@
 default: &default
   adapter: postgresql
   encoding: unicode
-  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  # PERFORMANCE: Pool size = (workers * threads) + headroom para jobs
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 }.to_i + 5 %>
+  # Timeout para obter conexão do pool (em segundos)
+  checkout_timeout: 5
+  # Tempo máximo de conexão inativa antes de revalidar
+  reaping_frequency: 10
+  # Conexões idle são removidas após este tempo
+  idle_timeout: 300
+  # Prepared statements para queries frequentes
+  prepared_statements: true
+  # Advisory locks para migrações concorrentes
+  advisory_locks: true
 
 
 development:

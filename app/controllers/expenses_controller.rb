@@ -2,7 +2,8 @@ class ExpensesController < ApplicationController
   before_action :set_expense, only: [:show, :edit, :update, :destroy, :cancel, :reactivate]
 
   def index
-    @expenses = Expense.recent
+    # PERFORMANCE: Eager loading de associações e ordenação otimizada
+    @expenses = Expense.includes(:employee, :supplier).recent
     @expenses = @expenses.by_employee(params[:employee_id]) if params[:employee_id].present?
     @expenses = @expenses.by_supplier(params[:supplier_id]) if params[:supplier_id].present?
     @expenses = @expenses.by_expense_type(params[:expense_type]) if params[:expense_type].present?
@@ -60,7 +61,8 @@ end
   private
 
   def set_expense
-    @expense = Expense.find(params[:id])
+    # PERFORMANCE: Eager loading para show/edit
+    @expense = Expense.includes(:employee, :supplier).find(params[:id])
   end
 
   def expense_params

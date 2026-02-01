@@ -1,0 +1,158 @@
+<div class="space-y-6" data-controller="calendar-modal">
+
+  <!-- Cabeçalho com título e seletores -->
+  <div class="flex justify-between items-center">
+    <div>
+      <h1 class="text-3xl font-bold text-gray-900">Calendário de Agendamentos</h1>
+      <p class="mt-2 text-gray-600"><%= I18n.l(@current_date, format: "%B de %Y").capitalize %></p>
+    </div>
+
+    <div class="flex gap-4">
+      <%= form_with url: appointments_calendar_path, method: :get, class: "flex gap-4" do |f| %>
+        <div>
+          <%= f.select :month,
+                       (1..12).map { |m| [I18n.t("date.month_names")[m], m] },
+                       { selected: @current_month },
+                       class: "px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent" %>
+        </div>
+
+        <div>
+          <%= f.select :year,
+                       @available_years.reverse,
+                       { selected: @current_year },
+                       class: "px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent" %>
+        </div>
+
+        <%= f.submit "Atualizar", class: "bg-black hover:bg-gray-700 text-white px-6 py-2 rounded-lg font-medium transition duration-200" %>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Calendário -->
+  <div class="bg-white rounded-lg shadow overflow-hidden">
+
+    <!-- Cabeçalho dos dias da semana -->
+    <div class="grid grid-cols-7 bg-black text-white">
+      <% %w[Domingo Segunda Terça Quarta Quinta Sexta Sábado].each do |day| %>
+        <div class="px-2 py-3 text-center text-sm font-medium">
+          <%= day %>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- Grid do calendário -->
+    <div class="grid grid-cols-7 border-t border-gray-200">
+      <%
+        # Calcular início do calendário (primeiro domingo antes ou no dia 1)
+        first_day = @start_date
+        start_calendar = first_day - first_day.wday.days
+
+        # Calcular fim do calendário (último sábado depois ou no último dia)
+        last_day = @end_date
+        end_calendar = last_day + (6 - last_day.wday).days
+
+        # Iterar por cada dia do calendário
+        (start_calendar..end_calendar).each do |date|
+          is_current_month = date.month == @current_month
+          is_today = date == Date.today
+          is_weekend = date.wday == 0 || date.wday == 6
+          has_appointments = @appointments_by_day[date.day].present? && is_current_month
+          is_holiday = @brazilian_holidays[date].present?
+      %>
+        <div class="min-h-[120px] border-r border-b border-gray-200 p-2 <%= 'bg-gray-50' unless is_current_month %> <%= 'bg-blue-50' if is_today %> <%= 'bg-red-50' if is_holiday && is_current_month %>">
+
+          <!-- Número do dia -->
+          <div class="flex justify-between items-start mb-2">
+            <span class="text-sm font-semibold <%= is_current_month ? 'text-gray-900' : 'text-gray-400' %> <%= 'text-red-600' if is_holiday && is_current_month %>">
+              <%= date.day %>
+            </span>
+
+            <% if is_today %>
+              <span class="text-xs bg-blue-600 text-white px-2 py-0.5 rounded-full">Hoje</span>
+            <% end %>
+          </div>
+
+          <!-- Feriado -->
+          <% if is_holiday && is_current_month %>
+            <div class="text-xs text-red-600 font-medium mb-1">
+              <%= @brazilian_holidays[date] %>
+            </div>
+          <% end %>
+
+          <!-- Agendamentos do dia -->
+          <% if has_appointments %>
+            <div class="space-y-1">
+              <% @appointments_by_day[date.day].first(3).each do |appointment| %>
+                <div
+                  data-day="<%= date.day %>"
+                  data-month="<%= date.month %>"
+                  data-year="<%= date.year %>"
+                  data-action="click->calendar-modal#open"
+                  class="w-full text-left text-xs bg-green-100 hover:bg-green-200 text-green-800 px-2 py-1 rounded transition duration-150 cursor-pointer">
+                  <div class="font-medium truncate"><%= appointment.appointment_date.strftime('%H:%M') %> - <%= appointment.end_time&.strftime('%H:%M') %> | <%= appointment.customer.full_name %></div>
+                </div>
+              <% end %>
+
+              <% if @appointments_by_day[date.day].count > 3 %>
+                <div
+                  data-day="<%= date.day %>"
+                  data-month="<%= date.month %>"
+                  data-year="<%= date.year %>"
+                  data-action="click->calendar-modal#open"
+                  class="w-full text-left text-xs text-green-700 hover:text-green-900 font-medium cursor-pointer">
+                  + <%= @appointments_by_day[date.day].count - 3 %> mais
+                </div>
+              <% end %>
+            </div>
+          <% end %>
+
+        </div>
+      <% end %>
+    </div>
+
+  </div>
+
+  <!-- Armazena os dados dos agendamentos -->
+  <script id="appointments-data" type="application/json">
+  <%= raw @appointments_by_day.transform_values { |appointments|
+    appointments.map { |a|
+      {
+        id: a.id,
+        appointment_time: a.appointment_date&.strftime('%H:%M'),
+        end_time: a.end_time&.strftime('%H:%M'),
+        duration: a.formatted_duration,
+        duration_minutes: a.duration_minutes,
+        status: a.status,
+        customer: { full_name: a.customer&.full_name },
+        service: { name: a.service&.name, price: a.service&.price },
+        employee: { full_name: a.employee&.full_name }
+      }
+    }
+  }.to_json %>
+  </script>
+
+  <!-- Modal de Agendamentos do Dia -->
+  <div data-calendar-modal-target="modal"
+       data-action="click->calendar-modal#closeIfOutside"
+       class="hidden fixed inset-0 bg-black/60 z-[99999] overflow-y-auto">
+    <div class="relative my-20 mx-auto p-5 max-w-xl w-11/12 bg-white rounded-xl shadow-2xl">
+
+      <!-- Cabeçalho do Modal -->
+      <div class="flex justify-between items-center pb-4 border-b border-gray-200">
+        <h3 data-calendar-modal-target="title" class="text-xl font-bold text-gray-900">Agendamentos do Dia</h3>
+        <button type="button" data-action="click->calendar-modal#close" class="text-gray-400 hover:text-gray-600 cursor-pointer p-1">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Conteúdo do Modal -->
+      <div data-calendar-modal-target="content" class="mt-4">
+        <!-- Conteúdo será preenchido via JavaScript -->
+      </div>
+
+    </div>
+  </div>
+
+</div>

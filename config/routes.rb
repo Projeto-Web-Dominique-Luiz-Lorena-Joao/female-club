@@ -16,6 +16,7 @@ Rails.application.routes.draw do
       get :search_services
       get :search_employees
       get :search_customers
+      get :check_conflicts
     end
   end
 
@@ -39,7 +40,11 @@ Rails.application.routes.draw do
 
   resources :customers
   resources :products
-  resources :services
+  resources :services do
+    member do
+      patch :change_status
+    end
+  end
 
   resources :product_inputs do
     collection do
@@ -68,6 +73,9 @@ Rails.application.routes.draw do
   get "monthly_reports", to: "monthly_reports#index", as: :monthly_reports
   get "yearly_reports", to: "yearly_reports#index", as: :yearly_reports
 
+  # --- CALENDÁRIO DE AGENDAMENTOS ---
+  get "appointments_calendar", to: "appointments_calendar#index", as: :appointments_calendar
+
   resources :sales do
     collection do
       get :search_employees
@@ -81,7 +89,8 @@ Rails.application.routes.draw do
   end
 
   devise_for :users, controllers: {
-    registrations: "users/registrations"
+    registrations: "users/registrations",
+    passwords: "users/passwords"
   }
 
   # Rota para atualizar preferência de paginação

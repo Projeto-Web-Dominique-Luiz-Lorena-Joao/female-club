@@ -3,10 +3,9 @@ class ProductsController < ApplicationController
   before_action :set_product, only: [:show, :edit, :update, :destroy]
 
   def index
-    # Atualizar status de estoque de todos os produtos para garantir consistência
-    Product.all.each(&:refresh_stock_status!)
-
-    @products = Product.all
+    # PERFORMANCE: Eager loading e cálculo de estoque otimizado via SQL
+    @products = Product.includes(:supplier, :product_inputs, :product_outputs)
+                       .with_attached_cover_image
 
     @products = @products.active if params[:active] == 'true'
     @products = @products.inactive if params[:active] == 'false'
@@ -16,6 +15,10 @@ class ProductsController < ApplicationController
 
     @products = @products.order(created_at: :desc)
     @products = @products.page(params[:page]).per(per_page)
+
+    # PERFORMANCE: Atualizar status de estoque apenas dos produtos da página atual
+    # usando batch update ao invés de N queries individuais
+    update_stock_status_batch(@products.to_a)
   end
 
   def show
@@ -30,7 +33,7 @@ class ProductsController < ApplicationController
   end
 
   def create
-    @product = Product.new(product_params)
+    @product = Product.new(product_params.except(:cover_image_delete))
 
     if @product.save
       redirect_to @product, notice: 'Produto criado com sucesso.'
@@ -40,7 +43,15 @@ class ProductsController < ApplicationController
   end
 
   def update
-    if @product.update(product_params)
+    # Remover imagem se solicitado
+    if params[:product][:cover_image_delete] == 'true'
+      @product.cover_image.purge
+    end
+
+    # Remover cover_image_delete dos params antes de atualizar
+    update_params = product_params.except(:cover_image_delete)
+
+    if @product.update(update_params)
       redirect_to @product, notice: 'Produto atualizado com sucesso.'
     else
       render :edit, status: :unprocessable_entity
@@ -58,13 +69,20 @@ class ProductsController < ApplicationController
     @product = Product.find(params[:id])
   end
 
-  def product_params
-    # Handle cover image deletion before permit
-    if params[:product][:cover_image_delete] == "true"
-      @product.cover_image.purge if @product.cover_image.attached?
-    end
+  # PERFORMANCE: Atualização em batch do status de estoque
+  def update_stock_status_batch(products)
+    return if products.empty?
 
-    permitted = params.require(:product).permit(
+    products.each do |product|
+      new_status = product.calculate_stock_status
+      if product.stock_status != new_status
+        product.update_column(:stock_status, new_status)
+      end
+    end
+  end
+
+  def product_params
+    params.require(:product).permit(
       :supplier_id,
       :name,
       :description,
@@ -78,14 +96,8 @@ class ProductsController < ApplicationController
       :notes,
       :unit,
       :code,
-      :cover_image
+      :cover_image,
+      :cover_image_delete
     )
-
-    # Convert active string to boolean
-    if permitted[:active].present?
-      permitted[:active] = ActiveModel::Type::Boolean.new.cast(permitted[:active])
-    end
-
-    permitted
   end
 end

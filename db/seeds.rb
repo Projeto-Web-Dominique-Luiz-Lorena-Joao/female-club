@@ -1,26 +1,60 @@
 # frozen_string_literal: true
 
+# Gerador de CPF válido
+def generate_valid_cpf
+  # Gera os 9 primeiros dígitos aleatórios
+  cpf = Array.new(9) { rand(0..9) }
+
+  # Calcula o primeiro dígito verificador
+  sum = 0
+  cpf.each_with_index { |digit, index| sum += digit * (10 - index) }
+  remainder = sum % 11
+  cpf << (remainder < 2 ? 0 : 11 - remainder)
+
+  # Calcula o segundo dígito verificador
+  sum = 0
+  cpf.each_with_index { |digit, index| sum += digit * (11 - index) }
+  remainder = sum % 11
+  cpf << (remainder < 2 ? 0 : 11 - remainder)
+
+  cpf.join
+end
+
 # Limpar dados existentes (cuidado ao executar em produção!)
 puts "🧹 Limpando dados existentes..."
-[
-  StockMovement,
-  SaleService,
-  SaleProduct,
-  Sale,
-  ServiceAppointment,
-  ProductOutput,
-  ProductInput,
-  Product,
-  Service,
-  Expense,
-  Customer,
-  Guarantor,
-  Employee,
-  Supplier,
-  User
-].each do |model|
-  model.destroy_all
+
+# Desabilitar foreign key checks temporariamente para limpeza rápida
+ActiveRecord::Base.connection.execute("SET session_replication_role = 'replica';")
+
+# Ordem de truncate respeitando dependências (tabelas dependentes primeiro)
+tables_to_truncate = %w[
+  stock_movements
+  sale_services
+  sale_products
+  sales
+  service_appointments
+  product_outputs
+  product_inputs
+  products
+  services
+  expenses
+  customers
+  guarantors
+  employees
+  suppliers
+  users
+]
+
+tables_to_truncate.each do |table|
+  ActiveRecord::Base.connection.execute("TRUNCATE TABLE #{table} CASCADE;")
 end
+
+# Reabilitar foreign key checks
+ActiveRecord::Base.connection.execute("SET session_replication_role = 'origin';")
+
+# Limpar anexos do Active Storage (fotos de funcionários e produtos)
+ActiveStorage::Attachment.delete_all
+ActiveStorage::Blob.delete_all
 
 puts "✅ Dados limpos com sucesso!\n\n"
 
@@ -30,9 +64,9 @@ puts "✅ Dados limpos com sucesso!\n\n"
 puts "👤 Criando usuários..."
 
 users = [
-  { name: "Administrador", email: "admin@femaleclub.com", phone: "11987654321", password: "123456", items_per_page: 15 },
-  { name: "Gerente", email: "gerente@femaleclub.com", phone: "11987654322", password: "123456", items_per_page: 20 },
-  { name: "Vendedor", email: "vendedor@femaleclub.com", phone: "11987654323", password: "123456", items_per_page: 15 }
+  { name: "Administrador", email: "admin@femaleclub.com", phone: "11987654321", password: "Admin123", items_per_page: 15 },
+  { name: "Gerente", email: "gerente@femaleclub.com", phone: "11987654322", password: "Gerente123", items_per_page: 20 },
+  { name: "Vendedor", email: "vendedor@femaleclub.com", phone: "11987654323", password: "Vendedor123", items_per_page: 15 }
 ]
 
 created_users = users.map do |user_data|
@@ -264,7 +298,7 @@ puts "👥 Criando funcionários..."
 employees_data = [
   {
     full_name: "Ana Paula Silva",
-    cpf: "12345678901",
+    cpf: "52998224725",
     position: "cabeleireira",
     phone: "11987654321",
     email: "ana.silva@femaleclub.com",
@@ -277,7 +311,7 @@ employees_data = [
   },
   {
     full_name: "Beatriz Costa",
-    cpf: "98765432109",
+    cpf: "71428793860",
     position: "manicure",
     phone: "11987654322",
     email: "beatriz.costa@femaleclub.com",
@@ -301,7 +335,7 @@ puts "🤝 Criando fiadores..."
 guarantors_data = 15.times.map do |i|
   {
     full_name: ["João Silva", "Maria Santos", "José Oliveira", "Ana Costa", "Pedro Souza"].sample + " #{i}",
-    cpf: format("%011d", rand(10000000000..99999999999)),
+    cpf: generate_valid_cpf,
     phone: format("119%08d", rand(10000000..99999999)),
     address: "Rua #{['A', 'B', 'C'].sample}, #{rand(100..999)} - São Paulo/SP",
     relationship: ["pai", "mae", "irmao", "esposo", "amigo", "tio", "primo"].sample,
@@ -335,7 +369,7 @@ customers_data = 100.times.map do |i|
 
   {
     full_name: "#{customer_names.sample} #{i}",
-    cpf: format("%011d", rand(10000000000..99999999999)),
+    cpf: generate_valid_cpf,
     birth_date: Date.new(rand(1960..2005), rand(1..12), rand(1..28)),
     phone_number: format("119%08d", rand(10000000..99999999)),
     email: "cliente#{i}@email.com",
@@ -605,25 +639,84 @@ puts "✅ #{product_outputs.count} saídas de estoque criadas\n\n"
 # =============================================================================
 puts "📅 Criando agendamentos de serviços futuros..."
 
-service_appointments_data = []
+# Durações disponíveis (em minutos)
+available_durations = [15, 30, 45, 60, 90, 120, 150, 180, 240]
 
-# Criar apenas agendamentos futuros (próximos 30 dias)
-30.times do
-  days_ahead = rand(1..30)
+# Horários de início disponíveis (8h às 18h)
+available_hours = (8..18).to_a
+available_minutes = [0, 15, 30, 45]
+
+# Estrutura para rastrear agendamentos por funcionário e data
+# Para evitar conflitos de horários
+employee_schedules = {}
+
+service_appointments_created = []
+
+# Criar agendamentos para os próximos 30 dias
+(1..30).each do |days_ahead|
   appointment_date = Date.today + days_ahead
-  appointment_datetime = appointment_date.to_time + rand(8..18).hours + [0, 30].sample.minutes
 
-  service_appointments_data << {
-    service: services.sample,
-    employee: employees.select { |e| ["cabeleireira", "manicure", "esteticista", "maquiador"].include?(e.position) }.sample,
-    customer: customers.sample,
-    appointment_date: appointment_datetime,
-    status: "agendado"
-  }
+  # Cada dia terá entre 2 e 6 agendamentos
+  num_appointments_today = rand(2..6)
+
+  num_appointments_today.times do
+    employee = employees.sample
+    employee_id = employee.id
+
+    # Inicializar schedule do funcionário para este dia se não existir
+    employee_schedules[employee_id] ||= {}
+    employee_schedules[employee_id][appointment_date] ||= []
+
+    # Escolher duração aleatória
+    duration = available_durations.sample
+
+    # Tentar encontrar um horário disponível (máximo 10 tentativas)
+    slot_found = false
+    attempts = 0
+
+    while !slot_found && attempts < 10
+      attempts += 1
+
+      # Gerar horário aleatório
+      hour = available_hours.sample
+      minute = available_minutes.sample
+      start_time = appointment_date.to_time.change(hour: hour, min: minute)
+      end_time = start_time + duration.minutes
+
+      # Verificar se não ultrapassa o horário de funcionamento (até 20h)
+      next if end_time.hour > 20 || (end_time.hour == 20 && end_time.min > 0)
+
+      # Verificar se há conflito com outros agendamentos do funcionário neste dia
+      has_conflict = employee_schedules[employee_id][appointment_date].any? do |existing|
+        existing_start = existing[:start]
+        existing_end = existing[:end]
+
+        # Verifica sobreposição de horários
+        (start_time < existing_end && end_time > existing_start)
+      end
+
+      unless has_conflict
+        slot_found = true
+
+        # Registrar o slot ocupado
+        employee_schedules[employee_id][appointment_date] << { start: start_time, end: end_time }
+
+        # Criar o agendamento
+        appointment = ServiceAppointment.create!(
+          service: services.sample,
+          employee: employee,
+          customer: customers.sample,
+          appointment_date: start_time,
+          duration_minutes: duration,
+          status: "agendado"
+        )
+        service_appointments_created << appointment
+      end
+    end
+  end
 end
 
-service_appointments = service_appointments_data.map { |data| ServiceAppointment.create!(data) }
-puts "✅ #{service_appointments.count} agendamentos futuros criados\n\n"
+puts "✅ #{service_appointments_created.count} agendamentos futuros criados (com horários e durações variadas)\n\n"
 
 # =============================================================================
 # VENDAS (4 a 15 vendas por dia)
@@ -924,5 +1017,5 @@ puts "💸 Despesas: #{Expense.count}"
 puts "\n" + "="*60
 puts "\n💡 Credenciais de acesso:"
 puts "   Email: admin@femaleclub.com"
-puts "   Senha: 123456"
+puts "   Senha: Admin123"
 puts "\n" + "="*60

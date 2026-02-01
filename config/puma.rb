@@ -1,41 +1,75 @@
-# This configuration file will be evaluated by Puma. The top-level methods that
-# are invoked here are part of Puma's configuration DSL. For more information
-# about methods provided by the DSL, see https://puma.io/puma/Puma/DSL.html.
-#
-# Puma starts a configurable number of processes (workers) and each process
-# serves each request in a thread from an internal thread pool.
-#
-# You can control the number of workers using ENV["WEB_CONCURRENCY"]. You
-# should only set this value when you want to run 2 or more workers. The
-# default is already 1.
-#
-# The ideal number of threads per worker depends both on how much time the
-# application spends waiting for IO operations and on how much you wish to
-# prioritize throughput over latency.
-#
-# As a rule of thumb, increasing the number of threads will increase how much
-# traffic a given process can handle (throughput), but due to CRuby's
-# Global VM Lock (GVL) it has diminishing returns and will degrade the
-# response time (latency) of the application.
-#
-# The default is set to 3 threads as it's deemed a decent compromise between
-# throughput and latency for the average Rails application.
-#
-# Any libraries that use a connection pool or another resource pool should
-# be configured to provide at least as many connections as the number of
-# threads. This includes Active Record's `pool` parameter in `database.yml`.
-threads_count = ENV.fetch("RAILS_MAX_THREADS", 3)
-threads threads_count, threads_count
+# =============================================================================
+# CONFIGURAÇÃO OTIMIZADA DO PUMA
+# Balanceamento entre throughput, latência e uso de recursos
+# =============================================================================
 
-# Specifies the `port` that Puma will listen on to receive requests; default is 3000.
+# THREADS
+# - Mínimo de threads para resposta rápida em baixa carga
+# - Máximo de threads para throughput em alta carga
+# - Rails é I/O bound, então mais threads ajudam
+max_threads_count = ENV.fetch("RAILS_MAX_THREADS", 5)
+min_threads_count = ENV.fetch("RAILS_MIN_THREADS") { max_threads_count }
+threads min_threads_count, max_threads_count
+
+# WORKERS (processos)
+# - Cada worker é um processo separado com seu próprio GVL
+# - Recomendado: número de CPUs disponíveis (ou CPUs - 1 para deixar CPU para SO)
+# - Em produção, use WEB_CONCURRENCY para definir
+workers ENV.fetch("WEB_CONCURRENCY") { 2 }
+
+# PRELOAD
+# - Carrega a aplicação antes de fazer fork dos workers
+# - Reduz uso de memória (copy-on-write)
+# - Melhora tempo de boot dos workers
+preload_app!
+
+# WORKER TIMEOUT
+# - Tempo máximo para um worker responder antes de ser reiniciado
+worker_timeout ENV.fetch("PUMA_WORKER_TIMEOUT", 60).to_i
+
+# PERSISTENT TIMEOUT
+# - Tempo para manter conexões keep-alive abertas
+persistent_timeout 20
+
+# FIRST DATA TIMEOUT
+# - Tempo máximo para receber o primeiro byte de dados
+first_data_timeout 30
+
+# PORT
 port ENV.fetch("PORT", 3000)
 
-# Allow puma to be restarted by `bin/rails restart` command.
+# PLUGINS
 plugin :tmp_restart
-
-# Run the Solid Queue supervisor inside of Puma for single-server deployments
 plugin :solid_queue if ENV["SOLID_QUEUE_IN_PUMA"]
 
-# Specify the PID file. Defaults to tmp/pids/server.pid in development.
-# In other environments, only set the PID file if requested.
+# PID FILE
 pidfile ENV["PIDFILE"] if ENV["PIDFILE"]
+
+# HOOKS
+# Antes de fazer fork, fecha conexões do processo mestre
+before_fork do
+  ActiveRecord::Base.connection_pool.disconnect! if defined?(ActiveRecord)
+end
+
+# Depois de fazer fork, reconecta cada worker
+on_worker_boot do
+  ActiveRecord::Base.establish_connection if defined?(ActiveRecord)
+end
+
+# Garbage Collection otimizado antes de fork (reduz memória copiada)
+on_worker_fork do
+  GC.start
+end
+
+# Log quando worker é iniciado
+on_worker_boot do |worker_index|
+  puts "=> Puma worker #{worker_index} booted"
+end
+
+# LOWLEVEL ERROR HANDLER
+# Evita que erros de baixo nível travem o servidor
+lowlevel_error_handler do |e, env, status|
+  message = "Puma caught error: #{e.class} - #{e.message}"
+  Rails.logger.error(message) if defined?(Rails)
+  [500, {}, ["Internal Server Error"]]
+end

@@ -30,6 +30,47 @@ class ServiceAppointmentsController < ApplicationController
     render json: @customers.map { |c| { id: c.id, name: c.full_name } }
   end
 
+  # Endpoint para verificar conflitos de horário via AJAX
+  def check_conflicts
+    employee_id = params[:employee_id]
+    start_time = params[:start_time].present? ? Time.zone.parse(params[:start_time]) : nil
+    duration_minutes = params[:duration_minutes].to_i
+    exclude_id = params[:exclude_id]
+
+    if employee_id.blank? || start_time.blank? || duration_minutes <= 0
+      render json: { available: true, conflicts: [] }
+      return
+    end
+
+    conflicts = ServiceAppointment.find_conflicts(
+      employee_id: employee_id,
+      start_time: start_time,
+      duration_minutes: duration_minutes,
+      exclude_id: exclude_id
+    )
+
+    if conflicts.any?
+      conflict_data = conflicts.map do |apt|
+        {
+          id: apt.id,
+          customer: apt.customer.full_name,
+          service: apt.service.name,
+          start_time: apt.appointment_date.strftime('%H:%M'),
+          end_time: apt.end_time&.strftime('%H:%M'),
+          duration: apt.formatted_duration
+        }
+      end
+
+      render json: {
+        available: false,
+        conflicts: conflict_data,
+        message: "Horário indisponível: #{conflicts.first.employee.full_name} já tem agendamento das #{conflicts.first.formatted_time} às #{conflicts.first.end_time&.strftime('%H:%M')}"
+      }
+    else
+      render json: { available: true, conflicts: [] }
+    end
+  end
+
   def index
     @service_appointments = ServiceAppointment.includes(:service, :employee, :customer).order(appointment_date: :desc)
 
@@ -91,10 +132,11 @@ class ServiceAppointmentsController < ApplicationController
   private
 
   def set_service_appointment
-    @service_appointment = ServiceAppointment.find(params[:id])
+    # PERFORMANCE: Eager loading para show/edit
+    @service_appointment = ServiceAppointment.includes(:service, :employee, :customer).find(params[:id])
   end
 
   def service_appointment_params
-    params.require(:service_appointment).permit(:service_id, :employee_id, :customer_id, :appointment_date, :status)
+    params.require(:service_appointment).permit(:service_id, :employee_id, :customer_id, :appointment_date, :status, :duration_minutes)
   end
 end

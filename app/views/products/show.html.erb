@@ -1,16 +1,15 @@
 <div class="max-w-6xl mx-auto space-y-6">
 
   <!-- Header com Nome, Código e Botões -->
-  <div class="flex justify-between items-start">
+  <div class="flex flex-col sm:flex-row justify-between items-start gap-4">
     <div>
-      <h1 class="text-2xl font-bold text-gray-900"><%= @product.name %></h1>
+      <h1 class="text-xl sm:text-2xl font-bold text-gray-900 break-words"><%= @product.name %></h1>
     </div>
-    <div class="flex space-x-3">
-      <%= link_to edit_product_path(@product), class: "bg-black hover:bg-gray-700 text-white px-8 py-2 rounded-lg font-medium" do %>
+    <div class="flex flex-wrap gap-2 sm:gap-3 w-full sm:w-auto">
+      <%= link_to edit_product_path(@product), class: "bg-black hover:bg-gray-700 text-white px-6 sm:px-8 py-2 rounded-lg font-medium text-center flex-1 sm:flex-none" do %>
         Editar
       <% end %>
-      <%= link_to "javascript:history.back()",
-          class: "bg-gray-300 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg font-medium flex items-center gap-2" do %>
+      <%= link_to products_path, class: "bg-gray-300 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg font-medium flex items-center justify-center gap-2 flex-1 sm:flex-none" do %>
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
             stroke="currentColor" stroke-width="2" fill="none"
             class="w-5 h-5">
@@ -68,19 +67,19 @@
     <div class="lg:col-span-2 space-y-4">
       
       <!-- Cards de Métricas (3 colunas) -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+
         <!-- Card Preço de Venda -->
         <div class="bg-white rounded-lg border border-gray-200 p-4">
-          <div class="flex items-start">
+          <div class="flex items-center gap-3">
             <div class="flex-shrink-0 bg-green-100 rounded-lg p-3">
               <svg class="h-6 w-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
               </svg>
             </div>
-            <div class="ml-3 flex-1">
+            <div class="min-w-0 flex-1">
               <p class="text-xs text-gray-500 font-medium">Preço de Venda</p>
-              <p class="text-xl font-bold text-green-600 mt-1">
+              <p class="text-lg sm:text-xl font-bold text-green-600 mt-1 break-words">
                 <% if @product.sale_price.present? %>
                   R$ <%= number_with_precision(@product.sale_price, precision: 2, delimiter: ".", separator: ",") %>
                 <% else %>
@@ -93,39 +92,39 @@
 
         <!-- Card Estoque Atual -->
         <div class="bg-white rounded-lg border border-gray-200 p-4">
-          <div class="flex items-start">
+          <div class="flex items-center gap-3">
             <div class="flex-shrink-0 <%= @product.stock_status == 'fora_de_estoque' ? 'bg-red-100' : @product.stock_status == 'critico' ? 'bg-orange-100' : @product.stock_status == 'baixo' ? 'bg-yellow-100' : 'bg-blue-100' %> rounded-lg p-3">
               <svg class="h-6 w-6 <%= @product.stock_status == 'fora_de_estoque' ? 'text-red-600' : @product.stock_status == 'critico' ? 'text-orange-600' : @product.stock_status == 'baixo' ? 'text-yellow-600' : 'text-blue-600' %>" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
               </svg>
             </div>
-            <div class="ml-3 flex-1">
+            <div class="min-w-0 flex-1">
               <p class="text-xs text-gray-500 font-medium">Estoque Atual</p>
-              <p class="text-xl font-bold <%= @product.stock_status == 'fora_de_estoque' ? 'text-red-600' : @product.stock_status == 'critico' ? 'text-orange-600' : @product.stock_status == 'baixo' ? 'text-yellow-600' : 'text-blue-600' %> mt-1">
+              <p class="text-lg sm:text-xl font-bold <%= @product.stock_status == 'fora_de_estoque' ? 'text-red-600' : @product.stock_status == 'critico' ? 'text-orange-600' : @product.stock_status == 'baixo' ? 'text-yellow-600' : 'text-blue-600' %> mt-1">
                 <%= [@product.quantity, 0].max %>
               </p>
               <% if @product.stock_status == "fora_de_estoque" %>
-                <p class="text-xs text-red-600 mt-1">❌ Fora de estoque</p>
+                <p class="text-xs text-red-600 mt-1">Fora de estoque</p>
               <% elsif @product.stock_status == "critico" %>
-                <p class="text-xs text-orange-600 mt-1">⚠️ Estoque crítico</p>
+                <p class="text-xs text-orange-600 mt-1">Estoque crítico</p>
               <% elsif @product.stock_status == "baixo" %>
-                <p class="text-xs text-yellow-600 mt-1">⚠️ Estoque baixo</p>
+                <p class="text-xs text-yellow-600 mt-1">Estoque baixo</p>
               <% end %>
             </div>
           </div>
         </div>
 
         <!-- Card Valor Total em Estoque -->
-        <div class="bg-white rounded-lg border border-gray-200 p-4">
-          <div class="flex items-start">
+        <div class="bg-white rounded-lg border border-gray-200 p-4 sm:col-span-2 lg:col-span-1">
+          <div class="flex items-center gap-3">
             <div class="flex-shrink-0 bg-purple-100 rounded-lg p-3">
               <svg class="h-6 w-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
               </svg>
             </div>
-            <div class="ml-3 flex-1">
+            <div class="min-w-0 flex-1">
               <p class="text-xs text-gray-500 font-medium">Valor Total em Estoque</p>
-              <p class="text-xl font-bold text-purple-600 mt-1">
+              <p class="text-lg sm:text-xl font-bold text-purple-600 mt-1 break-words">
                 R$ <%= number_with_precision(@product.stock_value, precision: 2, delimiter: ".", separator: ",") %>
               </p>
             </div>
@@ -234,11 +233,11 @@
           <h2 class="text-base font-semibold">Preços e Estoque</h2>
         </div>
         <div class="p-4">
-          <div class="grid grid-cols-3 gap-4 text-sm">
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-sm">
 
             <div>
               <p class="text-xs text-gray-500 mb-1">Preço de Venda</p>
-              <p class="text-base font-semibold text-green-600">
+              <p class="text-sm sm:text-base font-semibold text-green-600 break-words">
                 <% if @product.sale_price.present? %>
                   R$ <%= number_with_precision(@product.sale_price, precision: 2, delimiter: ".", separator: ",") %>
                 <% else %>
@@ -248,22 +247,22 @@
             </div>
 
             <div>
-              <p class="text-xs text-gray-500 mb-1">Valor Total em Estoque</p>
-              <p class="text-base font-semibold text-blue-600">
+              <p class="text-xs text-gray-500 mb-1">Valor em Estoque</p>
+              <p class="text-sm sm:text-base font-semibold text-blue-600 break-words">
                 R$ <%= number_with_precision(@product.stock_value, precision: 2, delimiter: ".", separator: ",") %>
               </p>
             </div>
 
             <div>
-              <p class="text-xs text-gray-500 mb-1">Quantidade em Estoque</p>
-              <p class="text-base font-semibold <%= @product.stock_status == 'fora_de_estoque' ? 'text-red-600' : @product.stock_status == 'critico' ? 'text-orange-600' : @product.stock_status == 'baixo' ? 'text-yellow-600' : 'text-blue-600' %>">
+              <p class="text-xs text-gray-500 mb-1">Qtd. em Estoque</p>
+              <p class="text-sm sm:text-base font-semibold <%= @product.stock_status == 'fora_de_estoque' ? 'text-red-600' : @product.stock_status == 'critico' ? 'text-orange-600' : @product.stock_status == 'baixo' ? 'text-yellow-600' : 'text-blue-600' %>">
                 <%= [@product.quantity, 0].max %>
               </p>
             </div>
 
             <div>
               <p class="text-xs text-gray-500 mb-1">Estoque Mínimo</p>
-              <p class="text-base font-semibold text-gray-900">
+              <p class="text-sm sm:text-base font-semibold text-gray-900">
                 <%= @product.min_stock || '-' %>
               </p>
             </div>

@@ -46,9 +46,14 @@ class EmployeesController < ApplicationController
       @employees = @employees.order(created_at: :desc)
     end
 
+    # PERFORMANCE: Calcular totais em uma única query com subqueries
     @total_employees = @employees.count
-    @active_employees = Employee.where(status: ['ativo', 'ferias']).count
-    @total_salary = Employee.where(status: ['ativo', 'ferias']).sum(:salary)
+    active_stats = Employee.where(status: ['ativo', 'ferias'])
+                           .select('COUNT(*) as count, COALESCE(SUM(salary), 0) as total_salary')
+                           .take
+    @active_employees = active_stats&.count || 0
+    @total_salary = active_stats&.total_salary || 0
+
     @employees = @employees.page(params[:page]).per(per_page)
   end
 
@@ -63,7 +68,7 @@ class EmployeesController < ApplicationController
   end
 
   def create
-    @employee = Employee.new(employee_params)
+    @employee = Employee.new(employee_params.except(:photo_delete))
 
     if @employee.save
       redirect_to employees_path, notice: 'Funcionário cadastrado com sucesso!'
@@ -73,7 +78,15 @@ class EmployeesController < ApplicationController
   end
 
   def update
-    if @employee.update(employee_params)
+    # Remover foto se solicitado
+    if params[:employee][:photo_delete] == 'true'
+      @employee.photo.purge
+    end
+
+    # Remover photo_delete dos params antes de atualizar
+    update_params = employee_params.except(:photo_delete)
+
+    if @employee.update(update_params)
       redirect_to employees_path, notice: 'Funcionário atualizado com sucesso!'
     else
       render :edit, status: :unprocessable_entity
@@ -106,7 +119,7 @@ class EmployeesController < ApplicationController
     params.require(:employee).permit(
       :full_name, :cpf, :position, :phone, :email,
       :address, :admission_date, :salary, :work_days,
-      :notes, :status
+      :notes, :status, :photo, :photo_delete
     )
   end
 end

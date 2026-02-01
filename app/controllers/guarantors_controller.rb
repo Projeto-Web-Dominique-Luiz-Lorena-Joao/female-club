@@ -3,10 +3,11 @@ class GuarantorsController < ApplicationController
   before_action :set_guarantor, only: [:show, :edit, :update, :destroy]
 
   def index
-    @guarantors = Guarantor.left_joins(:customer).order(created_at: :desc)
+    # PERFORMANCE: Eager loading de customer para evitar N+1
+    @guarantors = Guarantor.includes(:customer).order(created_at: :desc)
 
     if params[:search].present?
-      
+
       search_term = params[:search].strip
       clean_search = search_term.gsub(/\D/, "")
 
@@ -24,7 +25,8 @@ class GuarantorsController < ApplicationController
         values << "%#{clean_search}%"
       end
 
-      @guarantors = @guarantors.where(conditions.join(' OR '), *values)
+      # FIX: Usar left_joins para permitir busca por nome do cliente
+      @guarantors = @guarantors.left_joins(:customer).where(conditions.join(' OR '), *values)
     end
 
     if params[:status].present?
@@ -108,7 +110,8 @@ class GuarantorsController < ApplicationController
   private
 
   def set_guarantor
-    @guarantor = Guarantor.find(params[:id])
+    # PERFORMANCE: Eager loading para show/edit
+    @guarantor = Guarantor.includes(:customer).find(params[:id])
   end
 
   def guarantor_params

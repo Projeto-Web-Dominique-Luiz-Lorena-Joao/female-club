@@ -52,17 +52,41 @@ group :development, :test do
 
   # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
   gem "rubocop-rails-omakase", require: false
+
+  # Carregar variáveis de ambiente do arquivo .env
+  gem "dotenv-rails"
+
+  # RSpec para testes
+  gem "rspec-rails", "~> 7.0"
+
+  # Factory Bot para criação de dados de teste
+  gem "factory_bot_rails"
+
+  # Faker para geração de dados realistas
+  gem "faker"
 end
 
 group :development do
   # Use console on exceptions pages [https://github.com/rails/web-console]
   gem "web-console"
+
+  # Visualizar emails no navegador em vez de enviá-los
+  gem "letter_opener"
 end
 
 group :test do
   # Use system testing [https://guides.rubyonrails.org/testing.html#system-testing]
   gem "capybara"
   gem "selenium-webdriver"
+
+  # Cobertura de código
+  gem "simplecov", require: false
+
+  # Shoulda Matchers para testes de validação mais expressivos
+  gem "shoulda-matchers"
+
+  # Database Cleaner para garantir estado limpo entre testes
+  gem "database_cleaner-active_record"
 end
 
 # Autenticação
@@ -71,3 +95,9 @@ gem "devise-i18n"
 
 # Paginação
 gem "kaminari"
+
+# Validação de CPF e CNPJ
+gem "cpf_cnpj"
+
+# Rate Limiting para proteção contra DDoS e brute force
+gem "rack-attack"

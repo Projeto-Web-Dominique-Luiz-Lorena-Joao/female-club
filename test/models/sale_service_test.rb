@@ -1,13 +1,13 @@
+# frozen_string_literal: true
+
 require "test_helper"
 
 class SaleServiceTest < ActiveSupport::TestCase
-  self.use_transactional_tests = true
-
-  def setup
-    # Disable fixture loading for this test
-    @employee = Employee.find_or_create_by!(full_name: 'Test Employee', cpf: '55555555555', position: 'gerente', salary: 2000, phone: '11999999999')
-    @sale = Sale.create!(sale_date: Date.today, total_amount: 100, payment_method: 'pix', status: 'pago', employee: @employee)
-    @service = Service.create!(name: 'Corte de Cabelo', price: 50, active: 'ativo')
+  setup do
+    @employee = create(:employee)
+    @customer = create(:customer)
+    @service = create(:service)
+    @sale = create(:sale, employee: @employee, customer: @customer)
   end
 
   test "should create sale_service with valid attributes" do
@@ -35,7 +35,7 @@ class SaleServiceTest < ActiveSupport::TestCase
   end
 
   test "should require quantity" do
-    sale_service = SaleService.build(
+    sale_service = SaleService.new(
       sale: @sale,
       service: @service,
       quantity: nil,
@@ -47,7 +47,7 @@ class SaleServiceTest < ActiveSupport::TestCase
   end
 
   test "should require unit_price" do
-    sale_service = SaleService.build(
+    sale_service = SaleService.new(
       sale: @sale,
       service: @service,
       quantity: 1,

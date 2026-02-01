@@ -1,16 +1,117 @@
-<h2>Forgot your password?</h2>
+<div class="min-h-screen flex">
+  <!-- Lado Esquerdo - Formulário -->
+  <div class="w-full lg:w-1/2 bg-white flex items-center justify-center p-8">
+    <div class="max-w-md w-full">
+      <div class="mb-8">
+        <h1 class="text-3xl font-bold text-gray-900 mb-2">Female Club</h1>
+        <div class="w-16 h-1 bg-gray-900 mb-8"></div>
 
-<%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :post }) do |f| %>
-  <%= render "devise/shared/error_messages", resource: resource %>
+        <h2 class="text-2xl font-semibold text-gray-900 mb-2">Esqueceu sua senha?</h2>
+        <p class="text-gray-600">Não se preocupe! Digite seu email abaixo e enviaremos instruções para redefinir sua senha.</p>
+      </div>
 
-  <div class="field">
-    <%= f.label :email %><br />
-    <%= f.email_field :email, autofocus: true, autocomplete: "email" %>
+      <!-- Mensagem de sucesso -->
+      <% if flash[:notice] %>
+        <div class="mb-6 bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg flex items-center">
+          <svg class="w-5 h-5 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+          </svg>
+          <span><%= flash[:notice] %></span>
+        </div>
+      <% end %>
+
+      <!-- Mensagem de erro -->
+      <% if flash[:alert] %>
+        <div class="mb-6 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg flex items-center">
+          <svg class="w-5 h-5 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+          </svg>
+          <span><%= flash[:alert] %></span>
+        </div>
+      <% end %>
+
+      <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :post, class: "space-y-6" }) do |f| %>
+        <%= render "devise/shared/error_messages", resource: resource %>
+
+        <div>
+          <%= f.label :email, "Email", class: "block text-sm font-medium text-gray-700 mb-2" %>
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <svg class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" />
+              </svg>
+            </div>
+            <%= f.email_field :email,
+                autofocus: true,
+                autocomplete: "email",
+                placeholder: "seu@email.com",
+                class: "w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent" %>
+          </div>
+        </div>
+
+        <div>
+          <%= f.submit "Enviar instruções", class: "w-full bg-black hover:bg-gray-800 text-white font-medium py-3 px-4 rounded-lg transition duration-200 cursor-pointer" %>
+        </div>
+
+        <div class="text-center text-sm text-gray-600">
+          Lembrou sua senha?
+          <%= link_to "Fazer login", new_session_path(resource_name), class: "text-gray-900 font-medium hover:underline" %>
+        </div>
+      <% end %>
+    </div>
   </div>
 
-  <div class="actions">
-    <%= f.submit "Send me reset password instructions" %>
-  </div>
-<% end %>
+  <!-- Lado Direito -->
+  <div class="hidden lg:flex lg:w-1/2 bg-black items-center justify-center p-12">
+    <div class="max-w-lg text-center">
+      <div class="mb-7 flex justify-center">
+        <%= image_tag "logo.png", alt: "Female Club Logo", class: "w-32 h-32 object-contain" %>
+      </div>
 
-<%= render "devise/shared/links" %>
+      <h2 class="text-white text-3xl font-bold mb-4">Recuperação de Senha</h2>
+
+      <p class="text-gray-300 text-[14px] mb-6 max-w-md mx-auto leading-relaxed">
+        Sua segurança é importante para nós.<br>
+        Enviaremos um link seguro para você criar uma nova senha.
+      </p>
+
+      <div class="grid grid-cols-1 gap-6 max-w-sm mx-auto">
+        <div class="bg-gray-900 p-6 rounded-lg flex items-center">
+          <div class="bg-gray-800 p-3 rounded-lg mr-4">
+            <svg class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+            </svg>
+          </div>
+          <div class="text-left">
+            <h3 class="text-white font-semibold text-lg">Verifique seu Email</h3>
+            <p class="text-gray-400 text-[13px]">Enviaremos as instruções</p>
+          </div>
+        </div>
+
+        <div class="bg-gray-900 p-6 rounded-lg flex items-center">
+          <div class="bg-gray-800 p-3 rounded-lg mr-4">
+            <svg class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+            </svg>
+          </div>
+          <div class="text-left">
+            <h3 class="text-white font-semibold text-lg">Link Seguro</h3>
+            <p class="text-gray-400 text-[13px]">Válido por 6 horas</p>
+          </div>
+        </div>
+
+        <div class="bg-gray-900 p-6 rounded-lg flex items-center">
+          <div class="bg-gray-800 p-3 rounded-lg mr-4">
+            <svg class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+            </svg>
+          </div>
+          <div class="text-left">
+            <h3 class="text-white font-semibold text-lg">Nova Senha</h3>
+            <p class="text-gray-400 text-[13px]">Crie uma senha segura</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -19,7 +19,8 @@ class SalesController < ApplicationController
     # Ordenação por valor descontado em reais (desconto em reais)
     elsif params[:sort_discounted_amount].present?
       # Ordenar por valor do desconto em reais (total_amount * discount_percentage / 100)
-      order_direction = params[:sort_discounted_amount] == 'desc' ? 'DESC' : 'ASC'
+      # SEGURANÇA: Validar direção para prevenir SQL Injection
+      order_direction = %w[asc desc].include?(params[:sort_discounted_amount].to_s.downcase) ? params[:sort_discounted_amount].upcase : "ASC"
       @sales = @sales.order(Arel.sql("total_amount * COALESCE(discount_percentage, 0)::float / 100 #{order_direction}"))
     # Ordenação por desconto aplicado (percentual)
     elsif params[:sort_discount].present?

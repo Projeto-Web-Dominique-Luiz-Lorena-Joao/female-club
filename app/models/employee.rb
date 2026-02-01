@@ -5,6 +5,11 @@ class Employee < ApplicationRecord
   has_many :expenses, dependent: :nullify
   # has_many :incomes, dependent: :nullify
 
+  has_one_attached :photo
+
+  # SEGURANÇA: Validação de upload de imagem
+  validate :acceptable_photo
+
 
   enum :position, {
     gerente: 'gerente',
@@ -27,8 +32,9 @@ class Employee < ApplicationRecord
   }, suffix: true, default: :ativo
 
   validates :full_name, presence: true, length: { minimum: 3 }
-  validates :cpf, presence: true, uniqueness: true, length: { is: 11 }
-  validates :email, format: { with: URI::MailTo::EMAIL_REGEXP }, allow_blank: true
+  validates :cpf, presence: true, uniqueness: true
+  validate :cpf_must_be_valid
+  validates :email, format: { with: URI::MailTo::EMAIL_REGEXP, message: "não é válido" }, uniqueness: { case_sensitive: false, message: "já está em uso" }, allow_blank: true
   validates :salary, numericality: { greater_than: 0 }, allow_nil: true
   validates :phone, presence: true
   validates :position, presence: true, inclusion: { in: positions.keys }
@@ -115,5 +121,31 @@ class Employee < ApplicationRecord
 
   def on_payroll?
     ['ativo', 'ferias'].include?(status)
+  end
+
+  private
+
+  def cpf_must_be_valid
+    return if cpf.blank?
+
+    unless CPF.valid?(cpf)
+      errors.add(:cpf, "não é válido")
+    end
+  end
+
+  # SEGURANÇA: Validação de arquivo de imagem
+  def acceptable_photo
+    return unless photo.attached?
+
+    # Validar tipo de arquivo (MIME type)
+    acceptable_types = ['image/jpeg', 'image/png', 'image/gif', 'image/webp']
+    unless acceptable_types.include?(photo.content_type)
+      errors.add(:photo, 'deve ser uma imagem (JPEG, PNG, GIF ou WebP)')
+    end
+
+    # Validar tamanho do arquivo (máximo 5MB)
+    if photo.byte_size > 5.megabytes
+      errors.add(:photo, 'é muito grande (máximo 5MB)')
+    end
   end
 end

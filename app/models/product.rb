@@ -3,6 +3,9 @@ class Product < ApplicationRecord
 
   has_one_attached :cover_image
 
+  # SEGURANÇA: Validação de upload de imagem
+  validate :acceptable_cover_image
+
   has_many :sale_products, dependent: :destroy
   has_many :sales, through: :sale_products
   has_many :stock_movements, dependent: :destroy
@@ -167,6 +170,22 @@ class Product < ApplicationRecord
   def update_stock_status_if_needed
     if saved_change_to_quantity_in? || saved_change_to_min_stock?
       update_stock_status!
+    end
+  end
+
+  # SEGURANÇA: Validação de arquivo de imagem
+  def acceptable_cover_image
+    return unless cover_image.attached?
+
+    # Validar tipo de arquivo (MIME type)
+    acceptable_types = ['image/jpeg', 'image/png', 'image/gif', 'image/webp']
+    unless acceptable_types.include?(cover_image.content_type)
+      errors.add(:cover_image, 'deve ser uma imagem (JPEG, PNG, GIF ou WebP)')
+    end
+
+    # Validar tamanho do arquivo (máximo 5MB)
+    if cover_image.byte_size > 5.megabytes
+      errors.add(:cover_image, 'é muito grande (máximo 5MB)')
     end
   end
 end

@@ -15,11 +15,15 @@ Rails.application.configure do
   # Turn on fragment caching in view templates.
   config.action_controller.perform_caching = true
 
-  # Cache assets for far-future expiry since they are all digest stamped.
-  config.public_file_server.headers = { "cache-control" => "public, max-age=#{1.year.to_i}" }
+  # PERFORMANCE: Cache agressivo para assets com digest
+  config.public_file_server.headers = {
+    "cache-control" => "public, max-age=#{1.year.to_i}, immutable",
+    "vary" => "Accept-Encoding"
+  }
 
-  # Enable serving of images, stylesheets, and JavaScripts from an asset server.
-  # config.asset_host = "http://assets.example.com"
+  # PERFORMANCE: Configurar CDN para assets (habilitar quando tiver CDN)
+  # config.asset_host = ENV.fetch("CDN_HOST", nil)
+  # config.action_controller.asset_host = ENV.fetch("CDN_HOST", nil)
 
   # Store uploaded files on the local file system (see config/storage.yml for options).
   config.active_storage.service = :local

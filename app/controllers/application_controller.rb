@@ -2,6 +2,9 @@ class ApplicationController < ActionController::Base
   # Only allow modern browsers supporting webp images, web push, badges, import maps, CSS nesting, and CSS :has.
   allow_browser versions: :modern
 
+  # SEGURANÇA: Exigir autenticação em todas as rotas por padrão
+  before_action :authenticate_user!
+
   layout :set_layout
 
   # Action pública para atualizar preferência de paginação

@@ -119,27 +119,16 @@ class CustomersController < ApplicationController
 
 
   def create_or_update_guarantor(customer)
-    guarantor_params = params[:guarantor]
+    # SEGURANÇA: Usar strong parameters para filtrar dados do fiador
+    permitted_guarantor = params.require(:guarantor).permit(
+      :id, :full_name, :cpf, :phone, :relationship, :address
+    )
 
-    if guarantor_params[:id].present?
-     
-      guarantor = Guarantor.find(guarantor_params[:id])
-      guarantor.update(
-        full_name:     guarantor_params[:full_name],
-        cpf:           guarantor_params[:cpf],
-        phone:         guarantor_params[:phone],
-        relationship:  guarantor_params[:relationship],
-        address:       guarantor_params[:address]
-      )
+    if permitted_guarantor[:id].present?
+      guarantor = Guarantor.find(permitted_guarantor[:id])
+      guarantor.update(permitted_guarantor.except(:id))
     else
-      
-      guarantor = Guarantor.create(
-        full_name:     guarantor_params[:full_name],
-        cpf:           guarantor_params[:cpf],
-        phone:         guarantor_params[:phone],
-        relationship:  guarantor_params[:relationship],
-        address:       guarantor_params[:address]
-      )
+      guarantor = Guarantor.create(permitted_guarantor.except(:id))
     end
 
     customer.update(guarantor: guarantor)
