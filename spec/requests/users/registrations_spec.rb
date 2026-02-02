@@ -3,76 +3,27 @@
 require 'rails_helper'
 
 RSpec.describe 'Users::Registrations', type: :request do
-  describe 'GET /users/sign_up' do
-    it 'returns success' do
+  describe 'GET /users/sign_up (bloqueado)' do
+    it 'redirects to access request form' do
       get new_user_registration_path
-      expect(response).to have_http_status(:success)
-    end
-
-    it 'displays the registration form' do
-      get new_user_registration_path
-      expect(response.body).to include('email')
-      expect(response.body).to include('password')
+      expect(response).to redirect_to(new_access_request_path)
     end
   end
 
-  describe 'POST /users' do
-    context 'with valid attributes' do
-      let(:valid_attributes) do
-        {
-          email: 'newuser@example.com',
-          password: 'password123',
-          password_confirmation: 'password123',
-          items_per_page: 25
-        }
-      end
-
-      it 'creates a new user' do
-        expect {
-          post user_registration_path, params: { user: valid_attributes }
-        }.to change(User, :count).by(1)
-      end
-
-      it 'redirects to dashboard' do
-        post user_registration_path, params: { user: valid_attributes }
-        expect(response).to redirect_to(authenticated_root_path)
-      end
-
-      it 'sets items_per_page' do
-        post user_registration_path, params: { user: valid_attributes }
-        expect(User.last.items_per_page).to eq(25)
-      end
+  describe 'POST /users (bloqueado)' do
+    it 'redirects to access request form' do
+      post user_registration_path, params: {
+        user: { email: 'test@example.com', password: 'Password123!', password_confirmation: 'Password123!' }
+      }
+      expect(response).to redirect_to(new_access_request_path)
     end
 
-    context 'with invalid attributes' do
-      it 'returns unprocessable entity with missing email' do
+    it 'does not create a user' do
+      expect {
         post user_registration_path, params: {
-          user: { email: '', password: 'password123', password_confirmation: 'password123' }
+          user: { email: 'test@example.com', password: 'Password123!', password_confirmation: 'Password123!' }
         }
-        expect(response).to have_http_status(:unprocessable_content)
-      end
-
-      it 'returns unprocessable entity with short password' do
-        post user_registration_path, params: {
-          user: { email: 'test@example.com', password: '123', password_confirmation: '123' }
-        }
-        expect(response).to have_http_status(:unprocessable_content)
-      end
-
-      it 'returns unprocessable entity with mismatched passwords' do
-        post user_registration_path, params: {
-          user: { email: 'test@example.com', password: 'password123', password_confirmation: 'different' }
-        }
-        expect(response).to have_http_status(:unprocessable_content)
-      end
-
-      it 'returns unprocessable entity with duplicate email' do
-        create(:user, email: 'existing@example.com')
-        post user_registration_path, params: {
-          user: { email: 'existing@example.com', password: 'password123', password_confirmation: 'password123' }
-        }
-        expect(response).to have_http_status(:unprocessable_content)
-      end
+      }.not_to change(User, :count)
     end
   end
 
@@ -102,7 +53,7 @@ RSpec.describe 'Users::Registrations', type: :request do
   end
 
   describe 'PATCH /users' do
-    let(:user) { create(:user) }  # Uses default password "Password123"
+    let(:user) { create(:user) }
 
     before { login_as(user, scope: :user) }
 
@@ -111,7 +62,7 @@ RSpec.describe 'Users::Registrations', type: :request do
         patch user_registration_path, params: {
           user: {
             items_per_page: 50,
-            current_password: 'Password123'
+            current_password: 'Password123!'
           }
         }
 
@@ -123,15 +74,15 @@ RSpec.describe 'Users::Registrations', type: :request do
       it 'updates password' do
         patch user_registration_path, params: {
           user: {
-            password: 'newpassword123',
-            password_confirmation: 'newpassword123',
-            current_password: 'Password123'
+            password: 'NewPassword123!',
+            password_confirmation: 'NewPassword123!',
+            current_password: 'Password123!'
           }
         }
 
         expect(response).to redirect_to(root_path)
         user.reload
-        expect(user.valid_password?('newpassword123')).to be true
+        expect(user.valid_password?('NewPassword123!')).to be true
       end
     end
 
@@ -162,17 +113,6 @@ RSpec.describe 'Users::Registrations', type: :request do
 
     it 'redirects to root' do
       delete user_registration_path
-      expect(response).to redirect_to(root_path)
-    end
-  end
-
-  describe 'GET /users/cancel' do
-    let(:user) { create(:user) }
-
-    before { login_as(user, scope: :user) }
-
-    it 'redirects back or to root' do
-      get cancel_user_registration_path
       expect(response).to redirect_to(root_path)
     end
   end

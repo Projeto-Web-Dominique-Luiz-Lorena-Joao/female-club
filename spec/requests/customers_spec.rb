@@ -230,7 +230,7 @@ RSpec.describe 'Customers', type: :request do
         post customers_path, params: { customer: valid_attributes, guarantor: guarantor_params }, as: :json
         expect(response).to have_http_status(:unprocessable_entity)
         json = JSON.parse(response.body)
-        expect(json['errors']).to include('Unexpected error')
+        expect(json['errors']).to include('Erro interno ao processar a requisição.')
       end
     end
   end

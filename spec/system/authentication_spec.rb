@@ -20,7 +20,7 @@ RSpec.describe 'Authentication', type: :system do
       visit new_user_session_path
 
       fill_in 'Email', with: user.email
-      fill_in 'password-field', with: 'Password123'
+      fill_in 'password-field', with: 'Password123!'
       click_button 'Entrar'
 
       expect(page).to have_content('Dashboard')
@@ -40,7 +40,7 @@ RSpec.describe 'Authentication', type: :system do
       visit new_user_session_path
 
       fill_in 'Email', with: 'nonexistent@example.com'
-      fill_in 'password-field', with: 'Password123'
+      fill_in 'password-field', with: 'Password123!'
       click_button 'Entrar'
 
       expect(page).to have_content('E-mail ou senha inválidos')

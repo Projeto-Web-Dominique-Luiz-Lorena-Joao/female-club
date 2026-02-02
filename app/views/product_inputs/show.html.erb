@@ -20,6 +20,7 @@
       <!-- Botão Excluir -->
       <%= button_to product_input_path(@product_input),
           method: :delete,
+          form: { data: { controller: "submit-once" } },
           data: { confirm: "Tem certeza que deseja cancelar/excluir esta entrada de estoque?" },
           class: "bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-medium flex items-center gap-2 h-full" do %>
           Excluir

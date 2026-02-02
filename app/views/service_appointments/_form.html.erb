@@ -1,5 +1,5 @@
 <div class="space-y-6" data-controller="appointment-conflict" data-appointment-conflict-exclude-id-value="<%= service_appointment.persisted? ? service_appointment.id : '' %>">
-  <%= form_with(model: service_appointment, local: true, class: "space-y-8 max-w-4xl mx-auto") do |form| %>
+  <%= form_with(model: service_appointment, local: true, class: "space-y-8 max-w-4xl mx-auto", data: { controller: "submit-once" }) do |form| %>
     
     <div class="bg-white rounded-lg shadow-lg overflow-hidden">
       <div class="px-6 py-4 bg-black border-b border-gray-200">
@@ -137,7 +137,7 @@
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                 </svg>
                 <div class="ml-3">
-                  <h3 class="text-sm font-medium text-red-800">Conflito de Horário</h3>
+                  <h3 class="text-sm font-medium text-red-800" id="conflict_title">Conflito de Horário</h3>
                   <p class="mt-1 text-sm text-red-700" id="conflict_message"></p>
                 </div>
               </div>

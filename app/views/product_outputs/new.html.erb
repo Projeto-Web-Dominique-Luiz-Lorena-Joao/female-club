@@ -35,7 +35,7 @@
     </div>
 
     <div class="p-6">
-      <%= form_with(model: @product_output, local: true) do |form| %>
+      <%= form_with(model: @product_output, local: true, data: { controller: "submit-once" }) do |form| %>
         <% if @product_output.errors.any? %>
           <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded-md mb-6">
             <div class="flex">

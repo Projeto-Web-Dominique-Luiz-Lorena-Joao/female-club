@@ -7,7 +7,7 @@
         <div class="w-16 h-1 bg-gray-900 mb-8"></div>
 
         <h2 class="text-2xl font-semibold text-gray-900 mb-2">Criar nova senha</h2>
-        <p class="text-gray-600">Digite sua nova senha abaixo. Ela deve ter no mínimo <%= @minimum_password_length %> caracteres.</p>
+        <p class="text-gray-600">Digite sua nova senha abaixo. Ela deve ter no mínimo <%= @minimum_password_length %> caracteres, com maiúsculas, minúsculas, números e caractere especial.</p>
       </div>
 
       <!-- Mensagem de erro -->
@@ -35,7 +35,7 @@
             <%= f.password_field :password,
                 autofocus: true,
                 autocomplete: "new-password",
-                placeholder: "Mínimo #{@minimum_password_length} caracteres",
+                placeholder: "Mín. 8 chars, maiúsc., minúsc., número e especial",
                 id: "password-field",
                 class: "w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent" %>
             <button type="button"

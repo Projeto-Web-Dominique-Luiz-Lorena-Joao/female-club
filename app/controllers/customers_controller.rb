@@ -10,7 +10,7 @@ class CustomersController < ApplicationController
                          .order("customers.created_at DESC")
 
     if params[:search].present?
-      search_term  = params[:search].strip
+      search_term  = sanitize_search(params[:search])
       clean_search = search_term.gsub(/\D/, "")
 
       conditions = ["full_name ILIKE ? OR email ILIKE ?"]
@@ -72,9 +72,9 @@ class CustomersController < ApplicationController
       end
     end
   rescue => e
-    Rails.logger.error("Erro ao criar cliente: #{e.message}\n#{e.backtrace.join("\n")}")
+    Rails.logger.error("Erro ao criar cliente: #{e.message}\n#{e.backtrace.first(5).join("\n")}")
     respond_to do |format|
-      format.json { render json: { errors: [e.message] }, status: :unprocessable_entity }
+      format.json { render json: { errors: ["Erro interno ao processar a requisição."] }, status: :unprocessable_entity }
       format.html { render :new, status: :unprocessable_entity }
     end
   end

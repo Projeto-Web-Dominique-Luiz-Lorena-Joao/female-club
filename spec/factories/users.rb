@@ -5,13 +5,14 @@ FactoryBot.define do
     name { Faker::Name.name }
     sequence(:email) { |n| "user#{n}@example.com" }
     phone { "11#{Faker::Number.number(digits: 9)}" }
-    password { "Password123" }
-    password_confirmation { "Password123" }
+    password { "Password123!" }
+    password_confirmation { "Password123!" }
     items_per_page { 15 }
 
     trait :admin do
       name { "Administrador" }
       email { "admin@femaleclub.com" }
+      admin { true }
     end
 
     trait :with_many_items_per_page do

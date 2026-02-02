@@ -59,6 +59,22 @@ class Rack::Attack
     end
   end
 
+  # Limitar solicitações de acesso (3/hora por IP)
+  # Proteção contra spam de solicitações
+  throttle('access_requests/ip', limit: 3, period: 1.hour) do |req|
+    if req.path == '/access_requests' && req.post?
+      req.ip
+    end
+  end
+
+  # Limitar buscas na API (30/min por IP)
+  # Proteção contra enumeração de dados
+  throttle('api_search/ip', limit: 30, period: 1.minute) do |req|
+    if req.path.start_with?('/api/')
+      req.ip
+    end
+  end
+
   # =============================================================================
   # BLOCKLIST (IPs bloqueados)
   # =============================================================================

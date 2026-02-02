@@ -1,5 +1,5 @@
 <div class="space-y-6">
-  <%= form_with(model: sale, id: "sale_form", local: true, method: sale.new_record? ? :post : :patch, class: "space-y-8 max-w-4xl mx-auto") do |form| %>
+  <%= form_with(model: sale, id: "sale_form", local: true, method: sale.new_record? ? :post : :patch, class: "space-y-8 max-w-4xl mx-auto", data: { controller: "submit-once" }) do |form| %>
 
     <div class="bg-white rounded-lg shadow-lg overflow-hidden">
 

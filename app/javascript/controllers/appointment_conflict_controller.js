@@ -39,6 +39,16 @@ export default class extends Controller {
       return
     }
 
+    // Validação de horário comercial (08:00 - 23:59)
+    const date = new Date(appointmentDate)
+    const hour = date.getHours()
+    const minutes = date.getMinutes()
+    const timeFormatted = `${String(hour).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`
+    if (hour < 8) {
+      this.showConflictAlert(`O horário comercial é das 08:00 às 23:59. O horário selecionado (${timeFormatted}) é antes da abertura.`, "Fora do Horário Comercial")
+      return
+    }
+
     try {
       const params = new URLSearchParams({
         employee_id: employeeId,
@@ -65,12 +75,14 @@ export default class extends Controller {
     }
   }
 
-  showConflictAlert(message) {
+  showConflictAlert(message, title = "Conflito de Horário") {
     const alert = document.getElementById('conflict_alert')
     const messageEl = document.getElementById('conflict_message')
+    const titleEl = document.getElementById('conflict_title')
 
     if (alert && messageEl) {
       messageEl.textContent = message
+      if (titleEl) titleEl.textContent = title
       alert.classList.remove('hidden')
     }
   }

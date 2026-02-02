@@ -13,7 +13,7 @@ class InventoryStatusController < ApplicationController
     end
 
     if params[:search].present?
-      search_term = "%#{params[:search]}%"
+      search_term = "%#{sanitize_search(params[:search])}%"
       @products = @products.where("name ILIKE ? OR code ILIKE ?", search_term, search_term)
     end
 

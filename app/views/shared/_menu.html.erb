@@ -104,6 +104,38 @@
       <% end %>
 
     </div>
+
+    <button data-action="click->sidebar#toggleSubmenu" data-submenu-id="agendamentos"
+            class="flex items-center justify-start w-full px-4 py-3 min-h-[48px] text-gray-300 hover:bg-white/10 hover:text-white rounded-lg transition-all duration-300 mb-2"
+            title="Agendamentos" data-sidebar-target="link">
+      <svg class="w-5 h-5 flex-shrink-0 min-w-[1.25rem]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+      </svg>
+      <span class="ml-3 whitespace-nowrap transition-all duration-500 ease-in-out" data-sidebar-target="text">Agendamentos</span>
+      <svg class="w-4 h-4 ml-auto flex-shrink-0 transition-transform duration-300 min-w-[1rem]"
+           data-sidebar-target="text" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
+      </svg>
+    </button>
+
+    <div id="agendamentos-submenu" class="hidden ml-8 space-y-1 mb-2">
+
+      <%= link_to service_appointments_path, class: "flex items-center justify-start px-4 py-2 min-h-[40px] text-sm text-gray-400 hover:bg-white/5 hover:text-white rounded-lg transition-all duration-300", title: "Listagem e Filtros", data: { sidebarTarget: "link" } do %>
+        <svg class="w-4 h-4 flex-shrink-0 min-w-[1rem]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/>
+        </svg>
+        <span class="ml-2 whitespace-nowrap transition-all duration-500 ease-in-out" data-sidebar-target="text">Listagem e Filtros</span>
+      <% end %>
+
+      <%= link_to appointments_calendar_path, class: "flex items-center justify-start px-4 py-2 min-h-[40px] text-sm text-gray-400 hover:bg-white/5 hover:text-white rounded-lg transition-all duration-300", title: "Calendário", data: { sidebarTarget: "link" } do %>
+        <svg class="w-4 h-4 flex-shrink-0 min-w-[1rem]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+        </svg>
+        <span class="ml-2 whitespace-nowrap transition-all duration-500 ease-in-out" data-sidebar-target="text">Calendário</span>
+      <% end %>
+
+    </div>
+
     <%= link_to sales_path, class: "flex items-center justify-start px-4 py-3 min-h-[48px] rounded-lg transition-all duration-300 mb-2 #{active_class(sales_path)}", title: "Vendas", data: { sidebarTarget: "link" } do %>
       <svg class="w-5 h-5 flex-shrink-0 min-w-[1.25rem]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
@@ -139,37 +171,6 @@
       <span class="ml-3 whitespace-nowrap transition-all duration-500 ease-in-out" data-sidebar-target="text">Funcionários</span>
     <% end %>
 
-    <button data-action="click->sidebar#toggleSubmenu" data-submenu-id="agendamentos"
-            class="flex items-center justify-start w-full px-4 py-3 min-h-[48px] text-gray-300 hover:bg-white/10 hover:text-white rounded-lg transition-all duration-300 mb-2"
-            title="Agendamentos" data-sidebar-target="link">
-      <svg class="w-5 h-5 flex-shrink-0 min-w-[1.25rem]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-      </svg>
-      <span class="ml-3 whitespace-nowrap transition-all duration-500 ease-in-out" data-sidebar-target="text">Agendamentos</span>
-      <svg class="w-4 h-4 ml-auto flex-shrink-0 transition-transform duration-300 min-w-[1rem]"
-           data-sidebar-target="text" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
-      </svg>
-    </button>
-
-    <div id="agendamentos-submenu" class="hidden ml-8 space-y-1 mb-2">
-
-      <%= link_to service_appointments_path, class: "flex items-center justify-start px-4 py-2 min-h-[40px] text-sm text-gray-400 hover:bg-white/5 hover:text-white rounded-lg transition-all duration-300", title: "Listagem e Filtros", data: { sidebarTarget: "link" } do %>
-        <svg class="w-4 h-4 flex-shrink-0 min-w-[1rem]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/>
-        </svg>
-        <span class="ml-2 whitespace-nowrap transition-all duration-500 ease-in-out" data-sidebar-target="text">Listagem e Filtros</span>
-      <% end %>
-
-      <%= link_to appointments_calendar_path, class: "flex items-center justify-start px-4 py-2 min-h-[40px] text-sm text-gray-400 hover:bg-white/5 hover:text-white rounded-lg transition-all duration-300", title: "Calendário", data: { sidebarTarget: "link" } do %>
-        <svg class="w-4 h-4 flex-shrink-0 min-w-[1rem]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-        </svg>
-        <span class="ml-2 whitespace-nowrap transition-all duration-500 ease-in-out" data-sidebar-target="text">Calendário</span>
-      <% end %>
-
-    </div>
-
     <%= link_to expenses_path, class: "flex items-center justify-start px-4 py-3 min-h-[48px] rounded-lg transition-all duration-300 mb-2 #{active_class(expenses_path)}", title: "Despesas", data: { sidebarTarget: "link" } do %>
       <svg class="w-5 h-5 flex-shrink-0 min-w-[1.25rem]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
@@ -189,6 +190,28 @@
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>
       </svg>
       <span class="ml-3 whitespace-nowrap transition-all duration-500 ease-in-out" data-sidebar-target="text">Fiadores</span>
+    <% end %>
+
+    <% if current_user.admin? %>
+      <%= link_to admin_users_path, class: "flex items-center justify-start px-4 py-3 min-h-[48px] rounded-lg transition-all duration-300 mb-2 #{active_class(admin_users_path)}", title: "Usuários", data: { sidebarTarget: "link" } do %>
+        <svg class="w-5 h-5 flex-shrink-0 min-w-[1.25rem]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+        </svg>
+        <span class="ml-3 whitespace-nowrap transition-all duration-500 ease-in-out" data-sidebar-target="text">Usuários</span>
+      <% end %>
+    <% end %>
+
+    <%= link_to admin_access_requests_path, class: "flex items-center justify-start px-4 py-3 min-h-[48px] rounded-lg transition-all duration-300 mb-2 #{active_class(admin_access_requests_path)}", title: "Solicitações", data: { sidebarTarget: "link" } do %>
+      <svg class="w-5 h-5 flex-shrink-0 min-w-[1.25rem]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+      </svg>
+      <span class="ml-3 whitespace-nowrap transition-all duration-500 ease-in-out" data-sidebar-target="text">
+        Solicitações
+        <% pending_count = AccessRequest.pending.count %>
+        <% if pending_count > 0 %>
+          <span class="ml-1 bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full"><%= pending_count %></span>
+        <% end %>
+      </span>
     <% end %>
 
   </nav>

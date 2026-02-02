@@ -76,7 +76,7 @@ class ServiceAppointmentsController < ApplicationController
 
     # Busca unificada
     if params[:search].present?
-      search_term = params[:search].strip
+      search_term = sanitize_search(params[:search])
       @service_appointments = @service_appointments.left_joins(:service, :employee, :customer)
                                                    .where("services.name ILIKE ? OR employees.full_name ILIKE ? OR customers.full_name ILIKE ?",
                                                           "%#{search_term}%", "%#{search_term}%", "%#{search_term}%")

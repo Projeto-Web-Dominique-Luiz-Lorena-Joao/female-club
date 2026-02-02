@@ -5,11 +5,17 @@ class HomeController < ApplicationController
     # PERFORMANCE: Atualização otimizada de status de estoque via SQL
     update_stock_status_batch
 
-    # Período do mês atual
+    # Período do mês atual (usado em seções específicas)
     @current_month_start = Date.current.beginning_of_month
     @current_month_end = Date.current.end_of_month
     @last_month_start = 1.month.ago.beginning_of_month
     @last_month_end = 1.month.ago.end_of_month
+
+    # Período anual (usado nos KPIs da visão geral)
+    @current_year_start = Date.current.beginning_of_year
+    @current_year_end = Date.current.end_of_year
+    @last_year_start = 1.year.ago.beginning_of_year
+    @last_year_end = 1.year.ago.end_of_year
 
     # KPIs com dados reais
     calculate_kpis
@@ -19,36 +25,45 @@ class HomeController < ApplicationController
 
     # Produtos mais vendidos do mês
     calculate_top_products
+
+    # Agendamentos
+    calculate_appointments
+
+    # Despesas do mês
+    calculate_expenses
+
+    # Vendas recentes
+    calculate_recent_sales
   end
 
   private
 
   def calculate_kpis
-    # Vendas do mês atual (não canceladas)
-    vendas_mes_atual = Sale.where(sale_date: @current_month_start..@current_month_end)
+    # Vendas do ano atual (não canceladas)
+    vendas_ano_atual = Sale.where(sale_date: @current_year_start..@current_year_end)
                            .where.not(status: 'cancelado')
-    @vendas_mes = vendas_mes_atual.sum(:total_amount)
-    @total_vendas = vendas_mes_atual.count
+    @vendas_ano = vendas_ano_atual.sum(:total_amount)
+    @total_vendas = vendas_ano_atual.count
 
-    # Vendas do mês anterior para comparação
-    vendas_mes_anterior = Sale.where(sale_date: @last_month_start..@last_month_end)
+    # Vendas do ano anterior para comparação
+    vendas_ano_anterior = Sale.where(sale_date: @last_year_start..@last_year_end)
                               .where.not(status: 'cancelado')
-    @vendas_mes_anterior = vendas_mes_anterior.sum(:total_amount)
-    @total_vendas_anterior = vendas_mes_anterior.count
+    @vendas_ano_anterior = vendas_ano_anterior.sum(:total_amount)
+    @total_vendas_anterior = vendas_ano_anterior.count
 
     # Calcular variação percentual
-    @variacao_vendas = calculate_variation(@vendas_mes, @vendas_mes_anterior)
+    @variacao_vendas = calculate_variation(@vendas_ano, @vendas_ano_anterior)
     @variacao_total = calculate_variation(@total_vendas, @total_vendas_anterior)
 
-    # Clientes ativos (com compra nos últimos 3 meses)
+    # Clientes ativos (com compra no ano atual)
     @clientes_ativos = Customer.joins(:sales)
-                               .where(sales: { sale_date: 3.months.ago..Date.current })
+                               .where(sales: { sale_date: @current_year_start..@current_year_end })
                                .where.not(sales: { status: 'cancelado' })
                                .distinct
                                .count
 
     clientes_ativos_anterior = Customer.joins(:sales)
-                                       .where(sales: { sale_date: 4.months.ago..1.month.ago })
+                                       .where(sales: { sale_date: @last_year_start..@last_year_end })
                                        .where.not(sales: { status: 'cancelado' })
                                        .distinct
                                        .count
@@ -56,12 +71,33 @@ class HomeController < ApplicationController
 
     # Estoque baixo
     @estoque_baixo = Product.where(stock_status: ['baixo', 'critico']).count
+
+    # Despesas do ano
+    @despesas_ano = Expense.where(expense_date: @current_year_start..@current_year_end)
+                           .where(status: 'ativa')
+                           .sum(:amount)
+    despesas_ano_anterior = Expense.where(expense_date: @last_year_start..@last_year_end)
+                                   .where(status: 'ativa')
+                                   .sum(:amount)
+    @variacao_despesas = calculate_variation(@despesas_ano, despesas_ano_anterior)
+
+    # Lucro estimado anual (vendas - despesas)
+    @lucro_ano = @vendas_ano - @despesas_ano
+
+    # Agendamentos de hoje
+    @agendamentos_hoje = ServiceAppointment.where(
+      appointment_date: Date.current.beginning_of_day..Date.current.end_of_day
+    ).where.not(status: 'cancelado').count
+
+    # Vendas pendentes (não pagas)
+    @vendas_pendentes = Sale.where(status: 'pendente').count
   end
 
   def calculate_sales_chart_data
     # Últimos 8 meses de vendas
     @chart_labels = []
     @vendas_data = []
+    @despesas_data = []
 
     8.downto(1) do |i|
       month_date = (i - 1).months.ago
@@ -70,18 +106,23 @@ class HomeController < ApplicationController
 
       @chart_labels << I18n.l(month_start, format: '%b')
 
-      total = Sale.where(sale_date: month_start..month_end)
-                  .where.not(status: 'cancelado')
-                  .sum(:total_amount)
-      @vendas_data << total.to_f
+      total_vendas = Sale.where(sale_date: month_start..month_end)
+                         .where.not(status: 'cancelado')
+                         .sum(:total_amount)
+      @vendas_data << total_vendas.to_f
+
+      total_despesas = Expense.where(expense_date: month_start..month_end)
+                              .where(status: 'ativa')
+                              .sum(:amount)
+      @despesas_data << total_despesas.to_f
     end
   end
 
   def calculate_top_products
-    # Top 5 produtos mais vendidos no mês atual
+    # Top 5 produtos mais vendidos no ano atual
     product_sales = {}
 
-    Sale.where(sale_date: @current_month_start..@current_month_end)
+    Sale.where(sale_date: @current_year_start..@current_year_end)
         .where.not(status: 'cancelado')
         .includes(sale_products: :product)
         .find_each do |sale|
@@ -105,6 +146,44 @@ class HomeController < ApplicationController
           valor: data[:valor]
         }
       end
+  end
+
+  def calculate_appointments
+    today = Date.current
+
+    # Próximos agendamentos (hoje e futuros, não cancelados)
+    @proximos_agendamentos = ServiceAppointment
+      .includes(:service, :employee, :customer)
+      .where('appointment_date >= ?', today.beginning_of_day)
+      .where.not(status: 'cancelado')
+      .order(appointment_date: :asc)
+      .limit(5)
+
+    # Resumo de agendamentos do ano
+    agendamentos_ano = ServiceAppointment.where(
+      appointment_date: @current_year_start.beginning_of_day..@current_year_end.end_of_day
+    )
+    @agendamentos_total_ano = agendamentos_ano.count
+    @agendamentos_concluidos = agendamentos_ano.where(status: 'concluido').count
+    @agendamentos_cancelados = agendamentos_ano.where(status: 'cancelado').count
+    @agendamentos_pendentes = agendamentos_ano.where(status: 'agendado').count
+  end
+
+  def calculate_expenses
+    # Top despesas por tipo no ano
+    @despesas_por_tipo = Expense.where(expense_date: @current_year_start..@current_year_end)
+                                .where(status: 'ativa')
+                                .group(:expense_type)
+                                .sum(:amount)
+                                .sort_by { |_, v| -v }
+                                .first(5)
+  end
+
+  def calculate_recent_sales
+    @vendas_recentes = Sale.includes(:customer, :employee)
+                           .where.not(status: 'cancelado')
+                           .order(sale_date: :desc, created_at: :desc)
+                           .limit(5)
   end
 
   def calculate_variation(current, previous)

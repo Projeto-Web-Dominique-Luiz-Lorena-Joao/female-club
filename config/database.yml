@@ -1,45 +1,34 @@
 default: &default
   adapter: postgresql
   encoding: unicode
-  # PERFORMANCE: Pool size = (workers * threads) + headroom para jobs
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 }.to_i + 5 %>
-  # Timeout para obter conexão do pool (em segundos)
   checkout_timeout: 5
-  # Tempo máximo de conexão inativa antes de revalidar
   reaping_frequency: 10
-  # Conexões idle são removidas após este tempo
   idle_timeout: 300
-  # Prepared statements para queries frequentes
   prepared_statements: true
-  # Advisory locks para migrações concorrentes
   advisory_locks: true
-
 
 development:
   <<: *default
   database: female_club_development
 
-
 test:
   <<: *default
   database: female_club_test
 
-
 production:
-  primary: &primary_production
+  primary:
     <<: *default
-    database: female_club_production
-    username: female_club
-    password: <%= ENV["FEMALE_CLUB_DATABASE_PASSWORD"] %>
+    url: <%= ENV["DATABASE_URL"] %>
   cache:
-    <<: *primary_production
-    database: female_club_production_cache
+    <<: *default
+    url: <%= ENV["DATABASE_URL"] %>
     migrations_paths: db/cache_migrate
   queue:
-    <<: *primary_production
-    database: female_club_production_queue
+    <<: *default
+    url: <%= ENV["DATABASE_URL"] %>
     migrations_paths: db/queue_migrate
   cable:
-    <<: *primary_production
-    database: female_club_production_cable
+    <<: *default
+    url: <%= ENV["DATABASE_URL"] %>
     migrations_paths: db/cable_migrate

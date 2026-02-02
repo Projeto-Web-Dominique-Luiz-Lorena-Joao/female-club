@@ -5,11 +5,13 @@
         <%= button_to "Reativar Despesa",
               reactivate_expense_path(@expense),
               method: :patch,
+              form: { data: { controller: "submit-once" } },
               class: "bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg" %>
       <% else %>
         <%= button_to "Cancelar Despesa",
               cancel_expense_path(@expense),
               method: :patch,
+              form: { data: { controller: "submit-once" } },
               data: { confirm: "Tem certeza que deseja cancelar esta despesa?" },
               class: "bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg" %>
       <% end %>

@@ -41,7 +41,7 @@ module SystemTestHelpers
   def login_user(user)
     visit new_user_session_path
     fill_in 'Email', with: user.email
-    fill_in 'Senha', with: 'Password123'
+    fill_in 'Senha', with: 'Password123!'
     click_button 'Entrar'
   end
 

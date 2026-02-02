@@ -3,7 +3,7 @@ import { Controller } from "@hotwired/stimulus"
 // Controller para upload e recorte de imagens
 // Usa Cropper.js carregado via CDN
 export default class extends Controller {
-  static targets = ["input", "preview", "previewContainer", "cropModal", "cropImage", "croppedData", "removeFlag"]
+  static targets = ["input", "preview", "previewContainer", "cropModal", "cropImage", "croppedData", "removeFlag", "placeholder"]
   static values = {
     aspectRatio: { type: Number, default: 1 },
     minWidth: { type: Number, default: 150 },
@@ -13,6 +13,7 @@ export default class extends Controller {
   connect() {
     this.cropper = null
     this.originalFile = null
+    this.cropApplied = false
   }
 
   disconnect() {
@@ -102,24 +103,32 @@ export default class extends Controller {
     document.body.style.overflow = ''
     this.destroyCropper()
 
-    // Limpar input se cancelou
-    if (this.inputTarget.value && !this.hasCroppedDataTarget) {
+    // Limpar input se o usuário cancelou (não aplicou o recorte)
+    if (!this.cropApplied) {
       this.inputTarget.value = ''
     }
+    this.cropApplied = false
   }
 
   // Aplicar o recorte
   applyCrop() {
     if (!this.cropper) return
 
+    // Calcular dimensões baseadas no aspect ratio
+    const ratio = this.aspectRatioValue
+    const cropWidth = ratio <= 1 ? Math.round(400 * ratio) : 400
+    const cropHeight = ratio <= 1 ? 400 : Math.round(400 / ratio)
+    const maxW = ratio <= 1 ? Math.round(800 * ratio) : 800
+    const maxH = ratio <= 1 ? 800 : Math.round(800 / ratio)
+
     // Obter canvas do recorte
     const canvas = this.cropper.getCroppedCanvas({
-      width: 400,
-      height: 400,
+      width: cropWidth,
+      height: cropHeight,
       minWidth: this.minWidthValue,
       minHeight: this.minHeightValue,
-      maxWidth: 800,
-      maxHeight: 800,
+      maxWidth: maxW,
+      maxHeight: maxH,
       fillColor: '#fff',
       imageSmoothingEnabled: true,
       imageSmoothingQuality: 'high'
@@ -151,6 +160,9 @@ export default class extends Controller {
       // Mostrar preview
       this.showPreview(canvas.toDataURL('image/jpeg', 0.9))
 
+      // Marcar que o recorte foi aplicado antes de fechar
+      this.cropApplied = true
+
       // Fechar modal
       this.closeCropModal()
 
@@ -167,6 +179,9 @@ export default class extends Controller {
     }
     if (this.hasPreviewContainerTarget) {
       this.previewContainerTarget.classList.remove('hidden')
+    }
+    if (this.hasPlaceholderTarget) {
+      this.placeholderTarget.classList.add('hidden')
     }
   }
 
@@ -213,6 +228,9 @@ export default class extends Controller {
     }
     if (this.hasPreviewTarget) {
       this.previewTarget.src = ''
+    }
+    if (this.hasPlaceholderTarget) {
+      this.placeholderTarget.classList.remove('hidden')
     }
     this.inputTarget.value = ''
   }

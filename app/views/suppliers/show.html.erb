@@ -19,12 +19,14 @@
         <%= button_to "Inativar Fornecedor",
                       supplier_path(@supplier),
                       method: :delete,
+                      form: { data: { controller: "submit-once" } },
                       data: { confirm: "Tem certeza que deseja inativar este fornecedor?" },
                       class: "bg-red-500 hover:bg-red-400 text-white px-4 py-2 rounded-lg font-medium" %>
       <% else %>
         <%= button_to "Reativar Fornecedor",
                       reactivate_supplier_path(@supplier),
                       method: :patch,
+                      form: { data: { controller: "submit-once" } },
                       data: { confirm: "Deseja reativar este fornecedor?" },
                       class: "bg-green-500 hover:bg-green-400 text-white px-4 py-2 rounded-lg font-medium" %>
       <% end %>

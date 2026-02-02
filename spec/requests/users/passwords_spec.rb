@@ -69,8 +69,8 @@ RSpec.describe 'Users::Passwords', type: :request do
         patch user_password_path, params: {
           user: {
             reset_password_token: raw_token,
-            password: 'newpassword123',
-            password_confirmation: 'newpassword123'
+            password: 'NewPassword123!',
+            password_confirmation: 'NewPassword123!'
           }
         }
 
@@ -83,13 +83,13 @@ RSpec.describe 'Users::Passwords', type: :request do
         patch user_password_path, params: {
           user: {
             reset_password_token: raw_token,
-            password: 'newpassword123',
-            password_confirmation: 'newpassword123'
+            password: 'NewPassword123!',
+            password_confirmation: 'NewPassword123!'
           }
         }
 
         user.reload
-        expect(user.valid_password?('newpassword123')).to be true
+        expect(user.valid_password?('NewPassword123!')).to be true
       end
     end
 
@@ -98,8 +98,8 @@ RSpec.describe 'Users::Passwords', type: :request do
         patch user_password_path, params: {
           user: {
             reset_password_token: 'invalid_token',
-            password: 'newpassword123',
-            password_confirmation: 'newpassword123'
+            password: 'NewPassword123!',
+            password_confirmation: 'NewPassword123!'
           }
         }
 
@@ -114,7 +114,7 @@ RSpec.describe 'Users::Passwords', type: :request do
         patch user_password_path, params: {
           user: {
             reset_password_token: raw_token,
-            password: 'newpassword123',
+            password: 'NewPassword123!',
             password_confirmation: 'different_password'
           }
         }

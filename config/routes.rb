@@ -88,6 +88,25 @@ Rails.application.routes.draw do
     end
   end
 
+  # --- SOLICITAÇÕES DE ACESSO ---
+  resources :access_requests, only: [:new, :create]
+
+  namespace :admin do
+    resources :access_requests, only: [:index] do
+      member do
+        patch :approve
+        patch :reject
+      end
+    end
+
+    resources :users, only: [:index] do
+      member do
+        patch :deactivate
+        patch :reactivate
+      end
+    end
+  end
+
   devise_for :users, controllers: {
     registrations: "users/registrations",
     passwords: "users/passwords"

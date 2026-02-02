@@ -34,6 +34,13 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  # SEGURANÇA: Sanitizar e limitar tamanho de parâmetros de busca
+  def sanitize_search(term, max_length: 100)
+    return nil if term.blank?
+
+    term.to_s.gsub("\x00", "").strip.truncate(max_length, omission: "")
+  end
+
   # Torna per_page disponível como helper para as views
   helper_method :per_page
 

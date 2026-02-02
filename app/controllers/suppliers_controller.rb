@@ -22,7 +22,7 @@ class SuppliersController < ApplicationController
     end
 
     if params[:search].present?
-      search_term = params[:search].strip
+      search_term = sanitize_search(params[:search])
     clean_search = search_term.gsub(/\D/, "")
 
     conditions = [ "legal_name ILIKE ? OR trade_name ILIKE ? OR email ILIKE ?" ]

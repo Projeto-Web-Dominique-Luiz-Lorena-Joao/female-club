@@ -7,7 +7,7 @@
 
     <div class="flex space-x-3">
       <% if @sale.pendente? %>
-        <%= button_to "Marcar como paga", mark_as_paid_sale_path(@sale), method: :patch, class: "bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg font-medium flex items-center gap-2" %>
+        <%= button_to "Marcar como paga", mark_as_paid_sale_path(@sale), method: :patch, class: "bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg font-medium flex items-center gap-2", form: { data: { controller: "submit-once" } } %>
       <% end %>
 
       <%= link_to edit_sale_path(@sale), class: "bg-black hover:bg-gray-700 text-white px-8 py-2 rounded-lg font-medium" do %>
@@ -256,7 +256,7 @@
 
   <div class="mt-6 text-center">
     <% if @sale.status != 'cancelado' %>
-      <%= button_to "Cancelar Venda", sale_path(@sale), method: :patch, params: { sale: { status: 'cancelado' } }, class: "bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-lg font-medium", data: { confirm: "Tem certeza que deseja cancelar esta venda? O estoque será devolvido automaticamente." } %>
+      <%= button_to "Cancelar Venda", sale_path(@sale), method: :patch, params: { sale: { status: 'cancelado' } }, class: "bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-lg font-medium", form: { data: { controller: "submit-once" } }, data: { confirm: "Tem certeza que deseja cancelar esta venda? O estoque será devolvido automaticamente." } %>
     <% else %>
       <p class="text-gray-600 font-medium">Venda cancelada em <%= @sale.updated_at.strftime('%d/%m/%Y às %H:%M') %></p>
     <% end %>
