@@ -40,8 +40,8 @@ class AppointmentsCalendarController < ApplicationController
   def fetch_brazilian_holidays(year)
     # Usando a API gratuita do Brasil API para pegar feriados nacionais
     # https://brasilapi.com.br/api/feriados/v1/{year}
-    require 'net/http'
-    require 'json'
+    require "net/http"
+    require "json"
 
     begin
       uri = URI("https://brasilapi.com.br/api/feriados/v1/#{year}")
@@ -51,8 +51,8 @@ class AppointmentsCalendarController < ApplicationController
         holidays = JSON.parse(response.body)
         # Retorna um hash com a data como chave e o nome do feriado como valor
         holidays.each_with_object({}) do |holiday, hash|
-          date = Date.parse(holiday['date'])
-          hash[date] = holiday['name'] if date.month == @current_month
+          date = Date.parse(holiday["date"])
+          hash[date] = holiday["name"] if date.month == @current_month
         end
       else
         {}

@@ -1,7 +1,7 @@
 class ProductInputsController < ApplicationController
-  before_action :set_product_input, only: [:show, :edit, :update, :destroy]
-  before_action :set_product, only: [:new, :create]
-  skip_before_action :set_product, only: [:search_products, :list_products, :search_suppliers, :list_suppliers, :new]
+  before_action :set_product_input, only: [ :show, :edit, :update, :destroy ]
+  before_action :set_product, only: [ :new, :create ]
+  skip_before_action :set_product, only: [ :search_products, :list_products, :search_suppliers, :list_suppliers, :new ]
 
   def index
     @product_inputs = ProductInput.recent
@@ -92,7 +92,7 @@ class ProductInputsController < ApplicationController
     if params_hash[:unit_cost].present?
       unit_cost_str = params_hash[:unit_cost].to_s
       # Remove ponto (separador de milhar) e substitui vírgula por ponto
-      unit_cost_str = unit_cost_str.gsub('.', '').gsub(',', '.')
+      unit_cost_str = unit_cost_str.gsub(".", "").gsub(",", ".")
       params_hash[:unit_cost] = unit_cost_str
     end
 

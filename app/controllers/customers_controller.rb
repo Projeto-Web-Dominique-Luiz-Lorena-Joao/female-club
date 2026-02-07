@@ -1,6 +1,6 @@
 class CustomersController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_customer, only: [:show, :edit, :update, :destroy]
+  before_action :set_customer, only: [ :show, :edit, :update, :destroy ]
 
   def index
     # Otimizado: Calcular gasto total com SQL agregado para evitar N+1 queries
@@ -13,8 +13,8 @@ class CustomersController < ApplicationController
       search_term  = sanitize_search(params[:search])
       clean_search = search_term.gsub(/\D/, "")
 
-      conditions = ["full_name ILIKE ? OR email ILIKE ?"]
-      values     = ["%#{search_term}%", "%#{search_term}%"]
+      conditions = [ "full_name ILIKE ? OR email ILIKE ?" ]
+      values     = [ "%#{search_term}%", "%#{search_term}%" ]
 
       if clean_search.present?
         conditions << "REGEXP_REPLACE(phone_number, '[^0-9]', '', 'g') LIKE ?"
@@ -74,7 +74,7 @@ class CustomersController < ApplicationController
   rescue => e
     Rails.logger.error("Erro ao criar cliente: #{e.message}\n#{e.backtrace.first(5).join("\n")}")
     respond_to do |format|
-      format.json { render json: { errors: ["Erro interno ao processar a requisição."] }, status: :unprocessable_entity }
+      format.json { render json: { errors: [ "Erro interno ao processar a requisição." ] }, status: :unprocessable_entity }
       format.html { render :new, status: :unprocessable_entity }
     end
   end
@@ -86,7 +86,7 @@ class CustomersController < ApplicationController
         create_or_update_guarantor(@customer)
       end
 
-      redirect_to customers_path, notice: 'Cliente atualizado com sucesso!'
+      redirect_to customers_path, notice: "Cliente atualizado com sucesso!"
     else
       render :edit, status: :unprocessable_entity
     end
@@ -94,7 +94,7 @@ class CustomersController < ApplicationController
 
   def destroy
     @customer.destroy
-    redirect_to customers_path, notice: 'Cliente excluído com sucesso!'
+    redirect_to customers_path, notice: "Cliente excluído com sucesso!"
   end
 
   private

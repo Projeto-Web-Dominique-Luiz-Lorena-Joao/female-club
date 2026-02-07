@@ -21,7 +21,7 @@ class Product < ApplicationRecord
   scope :active, -> { where(active: true) }
   scope :inactive, -> { where(active: false) }
   scope :by_category, ->(category) { where(category: category) }
-  scope :low_stock, -> { where(stock_status: ['critico', 'baixo']) }
+  scope :low_stock, -> { where(stock_status: [ "critico", "baixo" ]) }
   scope :search, ->(term) {
     where("name ILIKE ? OR code ILIKE ? OR brand ILIKE ?", "%#{term}%", "%#{term}%", "%#{term}%")
   }
@@ -52,7 +52,7 @@ class Product < ApplicationRecord
     total_outputs = product_outputs.sum(:quantity)
     calculated_quantity = total_inputs - total_outputs
     # Garantir que nunca retorne valor negativo
-    [calculated_quantity, 0].max
+    [ calculated_quantity, 0 ].max
   end
 
   def low_stock?
@@ -131,25 +131,25 @@ class Product < ApplicationRecord
   def category_badge_class
     case category
     when "beleza_cosmeticos"
-      'bg-pink-100 text-pink-800'
+      "bg-pink-100 text-pink-800"
     when "moda_acessorios"
-      'bg-purple-100 text-purple-800'
+      "bg-purple-100 text-purple-800"
     when "bem_estar_autocuidado"
-      'bg-green-100 text-green-800'
+      "bg-green-100 text-green-800"
     when "decoracao_casa"
-      'bg-yellow-100 text-yellow-800'
+      "bg-yellow-100 text-yellow-800"
     when "gastronomia_bebidas"
-      'bg-orange-100 text-orange-800'
+      "bg-orange-100 text-orange-800"
     when "livros_cultura"
-      'bg-indigo-100 text-indigo-800'
+      "bg-indigo-100 text-indigo-800"
     when "tecnologia_lifestyle"
-      'bg-cyan-100 text-cyan-800'
+      "bg-cyan-100 text-cyan-800"
     when "fitness_esportes"
-      'bg-blue-100 text-blue-800'
+      "bg-blue-100 text-blue-800"
     when "outros"
-      'bg-gray-100 text-gray-800'
+      "bg-gray-100 text-gray-800"
     else
-      'bg-gray-100 text-gray-800'
+      "bg-gray-100 text-gray-800"
     end
   end
 
@@ -178,14 +178,14 @@ class Product < ApplicationRecord
     return unless cover_image.attached?
 
     # Validar tipo de arquivo (MIME type)
-    acceptable_types = ['image/jpeg', 'image/png', 'image/gif', 'image/webp']
+    acceptable_types = [ "image/jpeg", "image/png", "image/gif", "image/webp" ]
     unless acceptable_types.include?(cover_image.content_type)
-      errors.add(:cover_image, 'deve ser uma imagem (JPEG, PNG, GIF ou WebP)')
+      errors.add(:cover_image, "deve ser uma imagem (JPEG, PNG, GIF ou WebP)")
     end
 
     # Validar tamanho do arquivo (máximo 5MB)
     if cover_image.byte_size > 5.megabytes
-      errors.add(:cover_image, 'é muito grande (máximo 5MB)')
+      errors.add(:cover_image, "é muito grande (máximo 5MB)")
     end
   end
 end

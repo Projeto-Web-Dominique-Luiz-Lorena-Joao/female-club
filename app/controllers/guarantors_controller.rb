@@ -1,6 +1,5 @@
 class GuarantorsController < ApplicationController
-
-  before_action :set_guarantor, only: [:show, :edit, :update, :destroy]
+  before_action :set_guarantor, only: [ :show, :edit, :update, :destroy ]
 
   def index
     # PERFORMANCE: Eager loading de customer para evitar N+1
@@ -12,10 +11,10 @@ class GuarantorsController < ApplicationController
       clean_search = search_term.gsub(/\D/, "")
 
       conditions = [
-        'guarantors.full_name ILIKE ?',
-        'customers.full_name ILIKE ?'
+        "guarantors.full_name ILIKE ?",
+        "customers.full_name ILIKE ?"
       ]
-      values = ["%#{search_term}%", "%#{search_term}%"]
+      values = [ "%#{search_term}%", "%#{search_term}%" ]
 
       if clean_search.present?
         conditions << "REGEXP_REPLACE(guarantors.cpf, '[^0-9]', '', 'g') LIKE ?"
@@ -26,15 +25,15 @@ class GuarantorsController < ApplicationController
       end
 
       # FIX: Usar left_joins para permitir busca por nome do cliente
-      @guarantors = @guarantors.left_joins(:customer).where(conditions.join(' OR '), *values)
+      @guarantors = @guarantors.left_joins(:customer).where(conditions.join(" OR "), *values)
     end
 
     if params[:status].present?
     @guarantors = @guarantors.where(status: params[:status])
-  end
+    end
 
       @total_guarantors = Guarantor.count
-      @active_guarantors = Guarantor.where(status: 'ativo').count
+      @active_guarantors = Guarantor.where(status: "ativo").count
       @guarantors = @guarantors.page(params[:page]).per(per_page)
   end
 
@@ -87,7 +86,7 @@ class GuarantorsController < ApplicationController
         remove_customer_association(@guarantor)
       end
 
-      redirect_to guarantors_path, notice: 'Fiador atualizado com sucesso!'
+      redirect_to guarantors_path, notice: "Fiador atualizado com sucesso!"
     else
       render :edit, status: :unprocessable_entity
     end
@@ -95,7 +94,7 @@ class GuarantorsController < ApplicationController
 
   def destroy
     @guarantor.destroy
-    redirect_to guarantors_path, notice: 'Fiador excluído com sucesso!'
+    redirect_to guarantors_path, notice: "Fiador excluído com sucesso!"
   end
 
   def search_customers

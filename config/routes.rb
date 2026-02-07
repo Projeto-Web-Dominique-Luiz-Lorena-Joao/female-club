@@ -89,17 +89,17 @@ Rails.application.routes.draw do
   end
 
   # --- SOLICITAÇÕES DE ACESSO ---
-  resources :access_requests, only: [:new, :create]
+  resources :access_requests, only: [ :new, :create ]
 
   namespace :admin do
-    resources :access_requests, only: [:index] do
+    resources :access_requests, only: [ :index ] do
       member do
         patch :approve
         patch :reject
       end
     end
 
-    resources :users, only: [:index] do
+    resources :users, only: [ :index ] do
       member do
         patch :deactivate
         patch :reactivate

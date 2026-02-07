@@ -9,6 +9,6 @@ class CreateSaleProducts < ActiveRecord::Migration[8.0]
       t.timestamps
     end
 
-    add_index :sale_products, [:sale_id, :product_id], unique: true
+    add_index :sale_products, [ :sale_id, :product_id ], unique: true
   end
 end

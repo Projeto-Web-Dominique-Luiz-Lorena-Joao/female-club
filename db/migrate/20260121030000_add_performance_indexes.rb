@@ -31,7 +31,7 @@ class AddPerformanceIndexes < ActiveRecord::Migration[8.0]
     # Busca por nome
     add_index :products, :name, using: :gin, opclass: :gin_trgm_ops, name: 'idx_products_name_trgm' unless index_exists?(:products, :name, name: 'idx_products_name_trgm')
     # Índice composto para listagem filtrada
-    add_index :products, [:active, :category, :stock_status], name: 'idx_products_listing' unless index_exists?(:products, [:active, :category, :stock_status], name: 'idx_products_listing')
+    add_index :products, [ :active, :category, :stock_status ], name: 'idx_products_listing' unless index_exists?(:products, [ :active, :category, :stock_status ], name: 'idx_products_listing')
 
     # --- SERVICES ---
     add_index :services, :active unless index_exists?(:services, :active)
@@ -41,7 +41,7 @@ class AddPerformanceIndexes < ActiveRecord::Migration[8.0]
     # Índice para calendário (busca por mês/ano)
     add_index :service_appointments, :appointment_date unless index_exists?(:service_appointments, :appointment_date)
     # Índice composto para listagem
-    add_index :service_appointments, [:appointment_date, :status], name: 'idx_appointments_date_status' unless index_exists?(:service_appointments, [:appointment_date, :status], name: 'idx_appointments_date_status')
+    add_index :service_appointments, [ :appointment_date, :status ], name: 'idx_appointments_date_status' unless index_exists?(:service_appointments, [ :appointment_date, :status ], name: 'idx_appointments_date_status')
 
     # --- SUPPLIERS ---
     add_index :suppliers, :status unless index_exists?(:suppliers, :status)

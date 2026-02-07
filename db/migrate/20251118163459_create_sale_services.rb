@@ -9,6 +9,6 @@ class CreateSaleServices < ActiveRecord::Migration[8.0]
       t.timestamps
     end
 
-    add_index :sale_services, [:sale_id, :service_id], unique: true
+    add_index :sale_services, [ :sale_id, :service_id ], unique: true
   end
 end

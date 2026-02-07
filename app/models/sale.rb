@@ -1,5 +1,4 @@
 class Sale < ApplicationRecord
-
   belongs_to :customer, optional: true
   belongs_to :employee
   has_many :sale_services, dependent: :destroy
@@ -41,7 +40,7 @@ class Sale < ApplicationRecord
 
   scope :recent, -> { order(sale_date: :desc) }
   scope :by_status, ->(status) { where(status: status) }
-  scope :overdue, -> { where('due_date < ? AND status = ?', Date.today, 'pendente') }
+  scope :overdue, -> { where("due_date < ? AND status = ?", Date.today, "pendente") }
   scope :by_period, ->(start_date, end_date) { where(sale_date: start_date..end_date) }
   scope :by_customer, ->(customer_id) { where(customer_id: customer_id) }
   scope :by_employee, ->(employee_id) { where(employee_id: employee_id) }
@@ -68,11 +67,11 @@ class Sale < ApplicationRecord
   end
 
   def mark_as_paid!
-    update(status: 'pago', paid_date: Date.today)
+    update(status: "pago", paid_date: Date.today)
   end
 
   def customer_name
-    customer&.full_name || 'Cliente Avulso'
+    customer&.full_name || "Cliente Avulso"
   end
 
   def employee_name
@@ -86,7 +85,7 @@ class Sale < ApplicationRecord
       ProductOutput.create(
         product_id: sale_product.product_id,
         quantity: sale_product.quantity,
-        output_type: 'venda',
+        output_type: "venda",
         date_output: sale_date,
         created_by_id: nil
       )
@@ -94,10 +93,9 @@ class Sale < ApplicationRecord
   end
 
   def sync_product_outputs
-
     current_product_ids = sale_products.where.not(id: nil).pluck(:product_id).compact
 
-    ProductOutput.where(output_type: 'venda', created_by_id: nil)
+    ProductOutput.where(output_type: "venda", created_by_id: nil)
                  .where("DATE(date_output) = ?", sale_date)
                  .where.not(product_id: current_product_ids)
                  .delete_all
@@ -107,7 +105,7 @@ class Sale < ApplicationRecord
 
       product_output = ProductOutput.where(
         product_id: sale_product.product_id,
-        output_type: 'venda',
+        output_type: "venda",
         created_by_id: nil
       ).where("DATE(date_output) = ?", sale_date).first
 
@@ -124,7 +122,7 @@ class Sale < ApplicationRecord
         ProductOutput.create(
           product_id: sale_product.product_id,
           quantity: sale_product.quantity,
-          output_type: 'venda',
+          output_type: "venda",
           date_output: sale_date,
           created_by_id: nil
         )
@@ -135,7 +133,7 @@ class Sale < ApplicationRecord
   end
 
   def return_stock_on_cancellation
-    return unless status == 'cancelado'
+    return unless status == "cancelado"
 
     @already_processed_cancellation = true
 
@@ -148,14 +146,14 @@ class Sale < ApplicationRecord
 
         ProductOutput.where(
           product_id: product.id,
-          output_type: 'venda',
+          output_type: "venda",
           created_by_id: nil
         ).where("DATE(date_output) = ?", sale_date).delete_all
 
         StockMovement.create!(
           product_id: product.id,
           employee_id: employee_id,
-          movement_type: 'cancellation_return',
+          movement_type: "cancellation_return",
           quantity: quantity_to_return,
           sale_id: id,
           description: "Devolução de estoque - Venda #{id} cancelada"
@@ -167,24 +165,24 @@ class Sale < ApplicationRecord
   end
 
   def set_default_payment_method
-    self.payment_method ||= 'pix'
+    self.payment_method ||= "pix"
   end
 
   def set_default_status
-    self.status ||= 'pago'
+    self.status ||= "pago"
   end
 
   def calculate_total_amount
   end
 
   def reject_product(attributes)
-    should_reject = attributes['product_id'].blank? && attributes['_destroy'].to_s != '1'
+    should_reject = attributes["product_id"].blank? && attributes["_destroy"].to_s != "1"
     Rails.logger.info "REJECT PRODUCT: product_id=#{attributes['product_id']&.inspect}, _destroy=#{attributes['_destroy']&.inspect}, should_reject=#{should_reject}"
     should_reject
   end
 
   def reject_service(attributes)
-    should_reject = attributes['service_id'].blank? && attributes['_destroy'].to_s != '1'
+    should_reject = attributes["service_id"].blank? && attributes["_destroy"].to_s != "1"
     Rails.logger.info "REJECT SERVICE: service_id=#{attributes['service_id']&.inspect}, _destroy=#{attributes['_destroy']&.inspect}, should_reject=#{should_reject}"
     should_reject
   end

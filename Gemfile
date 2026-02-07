@@ -87,6 +87,9 @@ group :test do
 
   # Database Cleaner para garantir estado limpo entre testes
   gem "database_cleaner-active_record"
+
+  # Mocha para mocking em testes Minitest
+  gem "mocha"
 end
 
 # Autenticação

@@ -1,5 +1,4 @@
 class Customer < ApplicationRecord
-
   has_many :sales, foreign_key: :customer_id, dependent: :destroy
   belongs_to :guarantor, optional: true
   has_many :service_appointments, dependent: :destroy
@@ -22,22 +21,22 @@ class Customer < ApplicationRecord
 
 
   def clean_cpf
-    self.cpf = cpf.gsub(/\D/, '') if cpf.present?
+    self.cpf = cpf.gsub(/\D/, "") if cpf.present?
   end
 
   def formatted_cpf
-    return '-' if cpf.blank?
+    return "-" if cpf.blank?
     cpf.gsub(/(\d{3})(\d{3})(\d{3})(\d{2})/, '\1.\2.\3-\4')
   end
 
   def formatted_phone
-    return '-' if phone_number.blank?
+    return "-" if phone_number.blank?
     phone_number.gsub(/(\d{2})(\d{5})(\d{4})/, '(\1) \2-\3')
   end
 
   def formatted_birth_date
-    return '-' if birth_date.nil?
-    I18n.l(birth_date, format: :short) rescue birth_date.strftime('%d/%m/%Y')
+    return "-" if birth_date.nil?
+    I18n.l(birth_date, format: :short) rescue birth_date.strftime("%d/%m/%Y")
   end
 
   def age

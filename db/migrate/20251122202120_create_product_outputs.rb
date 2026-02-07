@@ -13,7 +13,7 @@ class CreateProductOutputs < ActiveRecord::Migration[8.0]
 
     add_index :product_outputs, :output_type
     add_index :product_outputs, :date_output
-    add_index :product_outputs, [:product_id, :date_output]
-    add_index :product_outputs, [:output_type, :date_output]
+    add_index :product_outputs, [ :product_id, :date_output ]
+    add_index :product_outputs, [ :output_type, :date_output ]
   end
 end

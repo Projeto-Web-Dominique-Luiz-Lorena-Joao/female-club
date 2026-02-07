@@ -1,5 +1,5 @@
 class ExpensesController < ApplicationController
-  before_action :set_expense, only: [:show, :edit, :update, :destroy, :cancel, :reactivate]
+  before_action :set_expense, only: [ :show, :edit, :update, :destroy, :cancel, :reactivate ]
 
   def index
     # PERFORMANCE: Eager loading de associações e ordenação otimizada

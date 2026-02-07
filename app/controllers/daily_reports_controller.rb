@@ -14,19 +14,19 @@ class DailyReportsController < ApplicationController
   def calculate_daily_stats
     # Vendas do dia (apenas pagas ou pendentes, não canceladas)
     @sales_today = Sale.where(sale_date: @current_date)
-                       .where.not(status: 'cancelado')
+                       .where.not(status: "cancelado")
 
     # RECEITAS DO DIA
     @total_revenue = @sales_today.sum(:total_amount)
 
     # RECEBIDO HOJE (vendas já pagas)
-    @received_today = @sales_today.where(status: 'pago').sum(:total_amount)
+    @received_today = @sales_today.where(status: "pago").sum(:total_amount)
 
     # PENDENTE HOJE
-    @pending_today = @sales_today.where(status: 'pendente').sum(:total_amount)
+    @pending_today = @sales_today.where(status: "pendente").sum(:total_amount)
 
     # DESPESAS DO DIA (incluindo compra de produtos)
-    @total_expenses = Expense.where(expense_date: @current_date, status: 'ativa').sum(:amount)
+    @total_expenses = Expense.where(expense_date: @current_date, status: "ativa").sum(:amount)
 
     # SALDO DO DIA
     @daily_balance = @received_today - @total_expenses
@@ -49,8 +49,8 @@ class DailyReportsController < ApplicationController
     @top_services = calculate_top_services
 
     # ATRASADOS QUE VENCEM HOJE
-    @due_today = Sale.where(due_date: @current_date, status: 'pendente').sum(:total_amount)
-    @due_today_count = Sale.where(due_date: @current_date, status: 'pendente').count
+    @due_today = Sale.where(due_date: @current_date, status: "pendente").sum(:total_amount)
+    @due_today_count = Sale.where(due_date: @current_date, status: "pendente").count
 
     # AGENDAMENTOS DO DIA
     @appointments_today = ServiceAppointment.where(
@@ -99,10 +99,10 @@ class DailyReportsController < ApplicationController
       hour_end = hour_start + 1.hour
 
       sales_in_hour = Sale.where(created_at: hour_start...hour_end)
-                          .where.not(status: 'cancelado')
+                          .where.not(status: "cancelado")
                           .sum(:total_amount)
 
-      [hour, sales_in_hour]
+      [ hour, sales_in_hour ]
     end
   end
 end

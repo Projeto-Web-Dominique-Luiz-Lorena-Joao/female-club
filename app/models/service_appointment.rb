@@ -4,26 +4,26 @@ class ServiceAppointment < ApplicationRecord
   belongs_to :customer
 
   enum :status, {
-    agendado: 'agendado',
-    concluido: 'concluido',
-    cancelado: 'cancelado',
-    nao_compareceu: 'nao_compareceu'
+    agendado: "agendado",
+    concluido: "concluido",
+    cancelado: "cancelado",
+    nao_compareceu: "nao_compareceu"
   }
 
   # Opções de duração em minutos
   DURATION_OPTIONS = [
-    ['15 minutos', 15],
-    ['30 minutos', 30],
-    ['45 minutos', 45],
-    ['1 hora', 60],
-    ['1 hora e 15 min', 75],
-    ['1 hora e 30 min', 90],
-    ['1 hora e 45 min', 105],
-    ['2 horas', 120],
-    ['2 horas e 30 min', 150],
-    ['3 horas', 180],
-    ['3 horas e 30 min', 210],
-    ['4 horas', 240]
+    [ "15 minutos", 15 ],
+    [ "30 minutos", 30 ],
+    [ "45 minutos", 45 ],
+    [ "1 hora", 60 ],
+    [ "1 hora e 15 min", 75 ],
+    [ "1 hora e 30 min", 90 ],
+    [ "1 hora e 45 min", 105 ],
+    [ "2 horas", 120 ],
+    [ "2 horas e 30 min", 150 ],
+    [ "3 horas", 180 ],
+    [ "3 horas e 30 min", 210 ],
+    [ "4 horas", 240 ]
   ].freeze
 
   validates :service_id, presence: true
@@ -36,14 +36,14 @@ class ServiceAppointment < ApplicationRecord
   validate :no_conflicting_appointments
   validates :status, presence: true, inclusion: { in: %w[agendado concluido cancelado nao_compareceu] }
 
-  scope :upcoming, -> { where('appointment_date > ?', Time.current).order(:appointment_date) }
-  scope :past, -> { where('appointment_date <= ?', Time.current).order(appointment_date: :desc) }
+  scope :upcoming, -> { where("appointment_date > ?", Time.current).order(:appointment_date) }
+  scope :past, -> { where("appointment_date <= ?", Time.current).order(appointment_date: :desc) }
   scope :by_service, ->(service_id) { where(service_id: service_id) }
   scope :by_customer, ->(customer_id) { where(customer_id: customer_id) }
   scope :by_employee, ->(employee_id) { where(employee_id: employee_id) }
-  scope :by_date, ->(date) { where('DATE(appointment_date) = ?', date) }
+  scope :by_date, ->(date) { where("DATE(appointment_date) = ?", date) }
   scope :by_status, ->(status) { where(status: status) }
-  scope :active, -> { where.not(status: 'cancelado') }
+  scope :active, -> { where.not(status: "cancelado") }
 
   def overdue?
     appointment_date < Time.current && agendado?
@@ -51,21 +51,21 @@ class ServiceAppointment < ApplicationRecord
 
   def status_badge_class
     case status
-    when 'agendado'
-      'bg-blue-100 text-blue-800'
-    when 'concluido'
-      'bg-green-100 text-green-800'
-    when 'cancelado'
-      'bg-red-100 text-red-800'
-    when 'nao_compareceu'
-      'bg-yellow-100 text-yellow-800'
+    when "agendado"
+      "bg-blue-100 text-blue-800"
+    when "concluido"
+      "bg-green-100 text-green-800"
+    when "cancelado"
+      "bg-red-100 text-red-800"
+    when "nao_compareceu"
+      "bg-yellow-100 text-yellow-800"
     else
-      'bg-gray-100 text-gray-800'
+      "bg-gray-100 text-gray-800"
     end
   end
 
   def formatted_time
-    appointment_date&.strftime('%H:%M')
+    appointment_date&.strftime("%H:%M")
   end
 
   def appointment_time
@@ -80,7 +80,7 @@ class ServiceAppointment < ApplicationRecord
 
   # Retorna a duração formatada para exibição
   def formatted_duration
-    return '-' unless duration_minutes.present?
+    return "-" unless duration_minutes.present?
 
     hours = duration_minutes / 60
     mins = duration_minutes % 60
@@ -97,7 +97,7 @@ class ServiceAppointment < ApplicationRecord
   # Verifica se há conflito com outro agendamento
   def conflicts_with?(other)
     return false if other.id == id
-    return false if other.status == 'cancelado'
+    return false if other.status == "cancelado"
     return false unless employee_id == other.employee_id
 
     my_start = appointment_date
@@ -120,7 +120,7 @@ class ServiceAppointment < ApplicationRecord
     # Busca agendamentos do mesmo funcionário no mesmo dia
     appointments = active
       .where(employee_id: employee_id)
-      .where('DATE(appointment_date) = ?', start_time.to_date)
+      .where("DATE(appointment_date) = ?", start_time.to_date)
 
     appointments = appointments.where.not(id: exclude_id) if exclude_id.present?
 
@@ -171,7 +171,7 @@ class ServiceAppointment < ApplicationRecord
     return unless new_record? || appointment_date_changed? || employee_id_changed? || duration_minutes_changed?
     return unless appointment_date.present? && employee_id.present? && duration_minutes.present?
     # Não valida conflitos para agendamentos cancelados
-    return if status == 'cancelado'
+    return if status == "cancelado"
 
     conflicts = self.class.find_conflicts(
       employee_id: employee_id,

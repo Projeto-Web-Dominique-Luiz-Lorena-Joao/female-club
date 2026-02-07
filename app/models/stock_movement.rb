@@ -23,9 +23,9 @@ class StockMovement < ApplicationRecord
   scope :by_product, ->(product_id) { where(product_id: product_id) }
   scope :by_movement_type, ->(type) { where(movement_type: type) }
   scope :by_date_range, ->(start_date, end_date) { where(created_at: start_date..end_date) }
-  scope :sales, -> { where(movement_type: 'venda') }
-  scope :acquisitions, -> { where(movement_type: 'aquisicao') }
-  scope :losses, -> { where(movement_type: 'perda_extravio') }
+  scope :sales, -> { where(movement_type: "venda") }
+  scope :acquisitions, -> { where(movement_type: "aquisicao") }
+  scope :losses, -> { where(movement_type: "perda_extravio") }
 
   def self.movement_type_labels
     {

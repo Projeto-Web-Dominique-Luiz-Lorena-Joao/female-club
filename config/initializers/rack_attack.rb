@@ -13,8 +13,8 @@ class Rack::Attack
   # =============================================================================
 
   # Permitir sempre requisições de localhost
-  safelist('allow-localhost') do |req|
-    '127.0.0.1' == req.ip || '::1' == req.ip
+  safelist("allow-localhost") do |req|
+    "127.0.0.1" == req.ip || "::1" == req.ip
   end
 
   # =============================================================================
@@ -23,54 +23,54 @@ class Rack::Attack
 
   # Limitar requisições gerais por IP (300 req/5min)
   # Proteção contra DDoS básico
-  throttle('req/ip', limit: 300, period: 5.minutes) do |req|
-    req.ip unless req.path.start_with?('/assets')
+  throttle("req/ip", limit: 300, period: 5.minutes) do |req|
+    req.ip unless req.path.start_with?("/assets")
   end
 
   # Limitar tentativas de login por IP (5 tentativas/20seg)
   # Proteção contra brute force
-  throttle('logins/ip', limit: 5, period: 20.seconds) do |req|
-    if req.path == '/users/sign_in' && req.post?
+  throttle("logins/ip", limit: 5, period: 20.seconds) do |req|
+    if req.path == "/users/sign_in" && req.post?
       req.ip
     end
   end
 
   # Limitar tentativas de login por email (5 tentativas/min)
   # Proteção contra brute force direcionado
-  throttle('logins/email', limit: 5, period: 1.minute) do |req|
-    if req.path == '/users/sign_in' && req.post?
+  throttle("logins/email", limit: 5, period: 1.minute) do |req|
+    if req.path == "/users/sign_in" && req.post?
       # Normalizar email para lowercase
-      req.params['user']['email'].to_s.downcase.gsub(/\s+/, '') if req.params['user']
+      req.params["user"]["email"].to_s.downcase.gsub(/\s+/, "") if req.params["user"]
     end
   end
 
   # Limitar tentativas de recuperação de senha (3 tentativas/hora)
-  throttle('password_resets/ip', limit: 3, period: 1.hour) do |req|
-    if req.path == '/users/password' && req.post?
+  throttle("password_resets/ip", limit: 3, period: 1.hour) do |req|
+    if req.path == "/users/password" && req.post?
       req.ip
     end
   end
 
   # Limitar criação de registros por IP (10/min)
   # Proteção contra spam/abuso
-  throttle('creates/ip', limit: 10, period: 1.minute) do |req|
-    if req.post? && !req.path.start_with?('/users')
+  throttle("creates/ip", limit: 10, period: 1.minute) do |req|
+    if req.post? && !req.path.start_with?("/users")
       req.ip
     end
   end
 
   # Limitar solicitações de acesso (3/hora por IP)
   # Proteção contra spam de solicitações
-  throttle('access_requests/ip', limit: 3, period: 1.hour) do |req|
-    if req.path == '/access_requests' && req.post?
+  throttle("access_requests/ip", limit: 3, period: 1.hour) do |req|
+    if req.path == "/access_requests" && req.post?
       req.ip
     end
   end
 
   # Limitar buscas na API (30/min por IP)
   # Proteção contra enumeração de dados
-  throttle('api_search/ip', limit: 30, period: 1.minute) do |req|
-    if req.path.start_with?('/api/')
+  throttle("api_search/ip", limit: 30, period: 1.minute) do |req|
+    if req.path.start_with?("/api/")
       req.ip
     end
   end
@@ -92,20 +92,20 @@ class Rack::Attack
 
   # Resposta para requisições bloqueadas por throttle
   self.throttled_responder = lambda do |request|
-    match_data = request.env['rack.attack.match_data']
+    match_data = request.env["rack.attack.match_data"]
     now = match_data[:epoch_time]
     retry_after = match_data[:period] - (now % match_data[:period])
 
     [
       429, # Too Many Requests
       {
-        'Content-Type' => 'application/json',
-        'Retry-After' => retry_after.to_s
+        "Content-Type" => "application/json",
+        "Retry-After" => retry_after.to_s
       },
-      [{
-        error: 'Muitas requisições. Por favor, aguarde um momento antes de tentar novamente.',
+      [ {
+        error: "Muitas requisições. Por favor, aguarde um momento antes de tentar novamente.",
         retry_after: retry_after
-      }.to_json]
+      }.to_json ]
     ]
   end
 
@@ -113,8 +113,8 @@ class Rack::Attack
   self.blocklisted_responder = lambda do |request|
     [
       403, # Forbidden
-      { 'Content-Type' => 'application/json' },
-      [{ error: 'Acesso bloqueado temporariamente devido a comportamento suspeito.' }.to_json]
+      { "Content-Type" => "application/json" },
+      [ { error: "Acesso bloqueado temporariamente devido a comportamento suspeito." }.to_json ]
     ]
   end
 end
@@ -123,10 +123,10 @@ end
 Rails.application.config.middleware.use Rack::Attack
 
 # Logging de eventos (útil para monitoramento)
-ActiveSupport::Notifications.subscribe('rack.attack') do |name, start, finish, request_id, payload|
+ActiveSupport::Notifications.subscribe("rack.attack") do |name, start, finish, request_id, payload|
   req = payload[:request]
 
-  if [:throttle, :blocklist].include?(req.env['rack.attack.match_type'])
+  if [ :throttle, :blocklist ].include?(req.env["rack.attack.match_type"])
     Rails.logger.warn(
       "[Rack::Attack] #{req.env['rack.attack.match_type']} " \
       "#{req.env['rack.attack.matched']} " \

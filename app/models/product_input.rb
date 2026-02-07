@@ -1,7 +1,7 @@
 class ProductInput < ApplicationRecord
   belongs_to :product
   belongs_to :supplier, optional: true
-  belongs_to :created_by, class_name: 'User', optional: true
+  belongs_to :created_by, class_name: "User", optional: true
 
   validates :product_id, presence: true
   validates :quantity, presence: true, numericality: { only_integer: true, greater_than: 0 }
@@ -40,7 +40,7 @@ class ProductInput < ApplicationRecord
 
       old_product.with_lock do
         new_qty_in = (old_product.quantity_in || 0) - old_quantity
-        old_product.quantity_in = [new_qty_in, 0].max
+        old_product.quantity_in = [ new_qty_in, 0 ].max
         old_product.save!
       end
 
@@ -67,7 +67,7 @@ class ProductInput < ApplicationRecord
       new_quantity_in = (product.quantity_in || 0) - quantity
 
       # Garantir que o estoque não fique negativo
-      product.quantity_in = [new_quantity_in, 0].max
+      product.quantity_in = [ new_quantity_in, 0 ].max
       product.save!
     end
   end

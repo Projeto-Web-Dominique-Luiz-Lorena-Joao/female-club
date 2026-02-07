@@ -12,7 +12,7 @@ class CreateStockMovements < ActiveRecord::Migration[8.0]
       t.timestamps
     end
 
-    add_index :stock_movements, [:product_id, :created_at]
+    add_index :stock_movements, [ :product_id, :created_at ]
     add_index :stock_movements, :movement_type
   end
 end

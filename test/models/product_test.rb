@@ -576,7 +576,7 @@ class ProductTest < ActiveSupport::TestCase
     product.save
 
     # Verificar que o status foi atualizado
-    assert_includes ["em_estoque", "baixo", "critico", "fora_de_estoque"], product.stock_status
+    assert_includes [ "em_estoque", "baixo", "critico", "fora_de_estoque" ], product.stock_status
   end
 
   test "callback normaliza categoria antes de salvar" do

@@ -10,6 +10,6 @@ class CreateServiceAppointments < ActiveRecord::Migration[8.0]
       t.timestamps
     end
 
-    add_index :service_appointments, [:service_id, :employee_id, :customer_id, :appointment_date], name: 'idx_service_appointments_lookup'
+    add_index :service_appointments, [ :service_id, :employee_id, :customer_id, :appointment_date ], name: 'idx_service_appointments_lookup'
   end
 end

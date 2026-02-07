@@ -192,7 +192,7 @@ Devise.setup do |config|
   # ==> Configuration for :lockable
   # SEGURANÇA: Bloquear conta após tentativas falhas de login
   config.lock_strategy = :failed_attempts
-  config.unlock_keys = [:email]
+  config.unlock_keys = [ :email ]
   config.unlock_strategy = :time
   config.maximum_attempts = 5
   config.unlock_in = 30.minutes

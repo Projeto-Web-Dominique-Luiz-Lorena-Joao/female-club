@@ -1,16 +1,15 @@
 class ProductsController < ApplicationController
-
-  before_action :set_product, only: [:show, :edit, :update, :destroy]
+  before_action :set_product, only: [ :show, :edit, :update, :destroy ]
 
   def index
     # PERFORMANCE: Eager loading e cálculo de estoque otimizado via SQL
     @products = Product.includes(:supplier, :product_inputs, :product_outputs)
                        .with_attached_cover_image
 
-    @products = @products.active if params[:active] == 'true'
-    @products = @products.inactive if params[:active] == 'false'
+    @products = @products.active if params[:active] == "true"
+    @products = @products.inactive if params[:active] == "false"
     @products = @products.by_category(params[:category]) if params[:category].present?
-    @products = @products.low_stock if params[:low_stock] == 'true'
+    @products = @products.low_stock if params[:low_stock] == "true"
     @products = @products.search(params[:search]) if params[:search].present?
 
     @products = @products.order(created_at: :desc)
@@ -36,7 +35,7 @@ class ProductsController < ApplicationController
     @product = Product.new(product_params.except(:cover_image_delete))
 
     if @product.save
-      redirect_to @product, notice: 'Produto criado com sucesso.'
+      redirect_to @product, notice: "Produto criado com sucesso."
     else
       render :new, status: :unprocessable_entity
     end
@@ -44,7 +43,7 @@ class ProductsController < ApplicationController
 
   def update
     # Remover imagem se solicitado
-    if params[:product][:cover_image_delete] == 'true'
+    if params[:product][:cover_image_delete] == "true"
       @product.cover_image.purge
     end
 
@@ -52,7 +51,7 @@ class ProductsController < ApplicationController
     update_params = product_params.except(:cover_image_delete)
 
     if @product.update(update_params)
-      redirect_to @product, notice: 'Produto atualizado com sucesso.'
+      redirect_to @product, notice: "Produto atualizado com sucesso."
     else
       render :edit, status: :unprocessable_entity
     end
@@ -60,7 +59,7 @@ class ProductsController < ApplicationController
 
   def destroy
     @product.destroy
-    redirect_to products_url, notice: 'Produto removido com sucesso.'
+    redirect_to products_url, notice: "Produto removido com sucesso."
   end
 
   private

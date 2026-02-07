@@ -237,7 +237,7 @@ class CustomersControllerTest < ActionDispatch::IntegrationTest
     cpf_customer = generate_valid_cpf
     cpf_guarantor = generate_valid_cpf
 
-    assert_difference ["Customer.count", "Guarantor.count"], 1 do
+    assert_difference [ "Customer.count", "Guarantor.count" ], 1 do
       post customers_url, params: {
         customer: {
           full_name: "Cliente com Fiador",

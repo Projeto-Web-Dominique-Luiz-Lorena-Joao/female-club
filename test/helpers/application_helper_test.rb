@@ -70,7 +70,7 @@ class ApplicationHelperTest < ActionView::TestCase
   end
 
   test "safe_json serializa array corretamente" do
-    data = [1, 2, 3]
+    data = [ 1, 2, 3 ]
     result = safe_json(data)
 
     assert result.present?

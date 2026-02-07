@@ -722,5 +722,4 @@ class ServiceAppointmentTest < ActiveSupport::TestCase
     assert_includes result, agendado
     assert_not_includes result, concluido
   end
-
 end

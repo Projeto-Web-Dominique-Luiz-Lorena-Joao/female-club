@@ -63,7 +63,7 @@ RSpec.describe ApplicationHelper, type: :helper do
     end
 
     it 'handles arrays' do
-      data = [1, 2, 3]
+      data = [ 1, 2, 3 ]
       result = helper.safe_json(data)
       expect(result).to eq('[1,2,3]')
     end

@@ -324,7 +324,7 @@ class SalesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "create cria venda com cliente pelo nome" do
-    assert_difference ["Sale.count", "Customer.count"], 1 do
+    assert_difference [ "Sale.count", "Customer.count" ], 1 do
       post sales_url, params: {
         sale: {
           employee_id: @employee.id,

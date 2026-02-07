@@ -37,7 +37,7 @@ module CacheHelper
       else
         dep.to_s
       end
-    end.join('-')
+    end.join("-")
 
     "#{base_key}/#{Digest::MD5.hexdigest(version)}"
   end
@@ -67,25 +67,25 @@ module CounterCache
   COUNTER_EXPIRY = 5.minutes
 
   def customers_count
-    Rails.cache.fetch('stats/customers_count', expires_in: COUNTER_EXPIRY) do
+    Rails.cache.fetch("stats/customers_count", expires_in: COUNTER_EXPIRY) do
       Customer.count
     end
   end
 
   def active_employees_count
-    Rails.cache.fetch('stats/active_employees_count', expires_in: COUNTER_EXPIRY) do
-      Employee.where(status: 'active').count
+    Rails.cache.fetch("stats/active_employees_count", expires_in: COUNTER_EXPIRY) do
+      Employee.where(status: "active").count
     end
   end
 
   def active_services_count
-    Rails.cache.fetch('stats/active_services_count', expires_in: COUNTER_EXPIRY) do
+    Rails.cache.fetch("stats/active_services_count", expires_in: COUNTER_EXPIRY) do
       Service.where(active: true).count
     end
   end
 
   def products_low_stock_count
-    Rails.cache.fetch('stats/products_low_stock_count', expires_in: COUNTER_EXPIRY) do
+    Rails.cache.fetch("stats/products_low_stock_count", expires_in: COUNTER_EXPIRY) do
       Product.low_stock.count
     end
   end
@@ -113,16 +113,16 @@ end
 # =============================================================================
 Rails.application.config.after_initialize do
   # Invalidar cache de clientes quando um cliente é criado/atualizado/deletado
-  Customer.after_commit { Rails.cache.delete('stats/customers_count') }
+  Customer.after_commit { Rails.cache.delete("stats/customers_count") }
 
   # Invalidar cache de funcionários
-  Employee.after_commit { Rails.cache.delete('stats/active_employees_count') }
+  Employee.after_commit { Rails.cache.delete("stats/active_employees_count") }
 
   # Invalidar cache de serviços
-  Service.after_commit { Rails.cache.delete('stats/active_services_count') }
+  Service.after_commit { Rails.cache.delete("stats/active_services_count") }
 
   # Invalidar cache de produtos
-  Product.after_commit { Rails.cache.delete('stats/products_low_stock_count') }
+  Product.after_commit { Rails.cache.delete("stats/products_low_stock_count") }
 
   # Invalidar cache de agendamentos do dia
   ServiceAppointment.after_commit do

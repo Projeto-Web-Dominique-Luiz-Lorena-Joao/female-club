@@ -20,8 +20,8 @@ class CreateSales < ActiveRecord::Migration[8.0]
     add_index :sales, :due_date
     add_index :sales, :paid_date
     add_index :sales, :payment_method
-    add_index :sales, [:customer_id, :sale_date]
-    add_index :sales, [:employee_id, :sale_date]
-    add_index :sales, [:status, :due_date]
+    add_index :sales, [ :customer_id, :sale_date ]
+    add_index :sales, [ :employee_id, :sale_date ]
+    add_index :sales, [ :status, :due_date ]
   end
 end

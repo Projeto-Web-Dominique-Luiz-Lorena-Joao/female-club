@@ -22,12 +22,12 @@ class Admin::AccessRequestsController < ApplicationController
     )
     user.save(validate: false)
 
-    @access_request.update!(status: 'approved')
+    @access_request.update!(status: "approved")
     redirect_to admin_access_requests_path, notice: "Solicitação aprovada! Usuário criado com sucesso."
   end
 
   def reject
-    @access_request.update!(status: 'rejected')
+    @access_request.update!(status: "rejected")
     redirect_to admin_access_requests_path, notice: "Solicitação rejeitada."
   end
 

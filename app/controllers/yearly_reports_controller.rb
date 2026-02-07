@@ -73,14 +73,14 @@ class YearlyReportsController < ApplicationController
     # Vendas do ano (apenas pagas ou pendentes, não canceladas)
     # Eager load para evitar N+1 queries
     @sales_this_year = Sale.where(sale_date: @start_date..@end_date)
-                           .where.not(status: 'cancelado')
+                           .where.not(status: "cancelado")
                            .includes(:customer, sale_products: :product, sale_services: :service)
 
     # RECEITAS TOTAIS DO ANO
     @total_revenue = @sales_this_year.sum(:total_amount)
 
     # DESPESAS TOTAIS DO ANO (incluindo compra de produtos)
-    @total_expenses = Expense.where(expense_date: @start_date..@end_date, status: 'ativa').sum(:amount)
+    @total_expenses = Expense.where(expense_date: @start_date..@end_date, status: "ativa").sum(:amount)
 
     # LUCRO LÍQUIDO DO ANO
     # Fórmula simples: Receitas - Despesas
@@ -88,10 +88,10 @@ class YearlyReportsController < ApplicationController
     @net_profit = @total_revenue - @total_expenses
 
     # RECEBIDO NO ANO
-    @received = @sales_this_year.where(status: 'pago').sum(:total_amount)
+    @received = @sales_this_year.where(status: "pago").sum(:total_amount)
 
     # PENDENTE NO ANO
-    @pending = @sales_this_year.where(status: 'pendente').sum(:total_amount)
+    @pending = @sales_this_year.where(status: "pendente").sum(:total_amount)
 
     # MARGEM DE LUCRO (%)
     @profit_margin = @total_revenue.positive? ? (@net_profit / @total_revenue * 100).round(2) : 0

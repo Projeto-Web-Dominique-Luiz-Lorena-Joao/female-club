@@ -1,6 +1,6 @@
 class ProductOutput < ApplicationRecord
   belongs_to :product
-  belongs_to :created_by, class_name: 'User', optional: true
+  belongs_to :created_by, class_name: "User", optional: true
 
   enum :output_type, {
     venda: "venda",
@@ -44,21 +44,21 @@ class ProductOutput < ApplicationRecord
   def output_badge_class
     case output_type.to_sym
     when :venda
-      'bg-green-100 text-green-800'
+      "bg-green-100 text-green-800"
     when :extravio
-      'bg-orange-100 text-orange-800'
+      "bg-orange-100 text-orange-800"
     when :perda
-      'bg-red-100 text-red-800'
+      "bg-red-100 text-red-800"
     when :dano
-      'bg-yellow-100 text-yellow-800'
+      "bg-yellow-100 text-yellow-800"
     when :tragedia_climatica
-      'bg-purple-100 text-purple-800'
+      "bg-purple-100 text-purple-800"
     when :devolucao
-      'bg-blue-100 text-blue-800'
+      "bg-blue-100 text-blue-800"
     when :outro
-      'bg-gray-100 text-gray-800'
+      "bg-gray-100 text-gray-800"
     else
-      'bg-gray-100 text-gray-800'
+      "bg-gray-100 text-gray-800"
     end
   end
 
@@ -96,5 +96,4 @@ class ProductOutput < ApplicationRecord
       end
     end
   end
-
 end

@@ -28,7 +28,7 @@ namespace :coverage do
 
         # Expand array if needed
         if combined[file].length < lines.length
-          combined[file] += [nil] * (lines.length - combined[file].length)
+          combined[file] += [ nil ] * (lines.length - combined[file].length)
         end
 
         # Combine lines using max
@@ -38,7 +38,7 @@ namespace :coverage do
           elsif combined[file][i].nil?
             combined[file][i] = val
           else
-            combined[file][i] = [combined[file][i], val].max
+            combined[file][i] = [ combined[file][i], val ].max
           end
         end
       end

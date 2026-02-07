@@ -565,9 +565,9 @@ RSpec.describe ServiceAppointment, type: :model do
   # ============================================
   describe 'DURATION_OPTIONS' do
     it 'contains expected options' do
-      expect(ServiceAppointment::DURATION_OPTIONS).to include(['15 minutos', 15])
-      expect(ServiceAppointment::DURATION_OPTIONS).to include(['1 hora', 60])
-      expect(ServiceAppointment::DURATION_OPTIONS).to include(['4 horas', 240])
+      expect(ServiceAppointment::DURATION_OPTIONS).to include([ '15 minutos', 15 ])
+      expect(ServiceAppointment::DURATION_OPTIONS).to include([ '1 hora', 60 ])
+      expect(ServiceAppointment::DURATION_OPTIONS).to include([ '4 horas', 240 ])
     end
   end
 end

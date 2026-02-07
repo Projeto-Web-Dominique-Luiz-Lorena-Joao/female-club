@@ -55,8 +55,8 @@ class ServiceAppointmentsController < ApplicationController
           id: apt.id,
           customer: apt.customer.full_name,
           service: apt.service.name,
-          start_time: apt.appointment_date.strftime('%H:%M'),
-          end_time: apt.end_time&.strftime('%H:%M'),
+          start_time: apt.appointment_date.strftime("%H:%M"),
+          end_time: apt.end_time&.strftime("%H:%M"),
           duration: apt.formatted_duration
         }
       end

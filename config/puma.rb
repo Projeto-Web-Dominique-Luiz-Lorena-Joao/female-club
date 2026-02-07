@@ -71,5 +71,5 @@ end
 lowlevel_error_handler do |e, env, status|
   message = "Puma caught error: #{e.class} - #{e.message}"
   Rails.logger.error(message) if defined?(Rails)
-  [500, {}, ["Internal Server Error"]]
+  [ 500, {}, [ "Internal Server Error" ] ]
 end

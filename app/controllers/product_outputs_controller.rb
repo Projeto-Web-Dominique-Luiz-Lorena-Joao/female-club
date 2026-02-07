@@ -1,7 +1,7 @@
 class ProductOutputsController < ApplicationController
-  before_action :set_product_output, only: [:show, :edit, :update, :destroy]
-  before_action :set_product, only: [:new, :create]
-  skip_before_action :set_product, only: [:search_products, :list_products, :new]
+  before_action :set_product_output, only: [ :show, :edit, :update, :destroy ]
+  before_action :set_product, only: [ :new, :create ]
+  skip_before_action :set_product, only: [ :search_products, :list_products, :new ]
 
   def index
     @product_outputs = ProductOutput.recent

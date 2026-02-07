@@ -103,13 +103,13 @@ RSpec.describe 'Sales', type: :system do
     it 'shows payment method options' do
       visit new_sale_path
 
-      expect(page).to have_select('Forma de Pagamento', options: ['Selecione uma opção', 'Dinheiro', 'Cartão de Crédito', 'Cartão de Débito', 'PIX', 'Transferência', 'Boleto'])
+      expect(page).to have_select('Forma de Pagamento', options: [ 'Selecione uma opção', 'Dinheiro', 'Cartão de Crédito', 'Cartão de Débito', 'PIX', 'Transferência', 'Boleto' ])
     end
 
     it 'shows status options' do
       visit new_sale_path
 
-      expect(page).to have_select('Status', with_options: ['Pendente', 'Pago', 'Cancelado'])
+      expect(page).to have_select('Status', with_options: [ 'Pendente', 'Pago', 'Cancelado' ])
     end
   end
 

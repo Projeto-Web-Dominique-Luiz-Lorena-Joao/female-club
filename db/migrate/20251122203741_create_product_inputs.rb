@@ -14,7 +14,7 @@ class CreateProductInputs < ActiveRecord::Migration[8.0]
     end
 
     add_index :product_inputs, :date_input
-    add_index :product_inputs, [:product_id, :date_input]
-    add_index :product_inputs, [:supplier_id, :date_input]
+    add_index :product_inputs, [ :product_id, :date_input ]
+    add_index :product_inputs, [ :supplier_id, :date_input ]
   end
 end

@@ -1,5 +1,4 @@
 class Guarantor < ApplicationRecord
-
   has_one :customer, dependent: :nullify
 
   enum :relationship, {
@@ -15,8 +14,8 @@ class Guarantor < ApplicationRecord
   }
 
   enum :status, {
-    ativo: 'ativo',
-    inativo: 'inativo'
+    ativo: "ativo",
+    inativo: "inativo"
   }, default: :ativo
 
   validates :full_name, presence: true, length: { minimum: 3, maximum: 100 }
@@ -54,12 +53,12 @@ class Guarantor < ApplicationRecord
   private
 
   def normalize_cpf
-    self.cpf = cpf.to_s.gsub(/\D/, '') if cpf.present?
+    self.cpf = cpf.to_s.gsub(/\D/, "") if cpf.present?
     self.cpf = nil if cpf.blank?
   end
 
   def normalize_phone
-    self.phone = phone.to_s.gsub(/\D/, '') if phone.present?
+    self.phone = phone.to_s.gsub(/\D/, "") if phone.present?
     self.phone = nil if phone.blank?
   end
 

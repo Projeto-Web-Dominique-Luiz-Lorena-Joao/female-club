@@ -6,22 +6,22 @@
 # Ajusta os parâmetros do GC para aplicações Rails
 if Rails.env.production?
   # RUBY_GC_HEAP_INIT_SLOTS: Slots iniciais do heap (evita expansões frequentes)
-  ENV['RUBY_GC_HEAP_INIT_SLOTS'] ||= '600000'
+  ENV["RUBY_GC_HEAP_INIT_SLOTS"] ||= "600000"
 
   # RUBY_GC_HEAP_FREE_SLOTS: Slots livres após GC
-  ENV['RUBY_GC_HEAP_FREE_SLOTS'] ||= '600000'
+  ENV["RUBY_GC_HEAP_FREE_SLOTS"] ||= "600000"
 
   # RUBY_GC_HEAP_GROWTH_FACTOR: Fator de crescimento do heap
-  ENV['RUBY_GC_HEAP_GROWTH_FACTOR'] ||= '1.25'
+  ENV["RUBY_GC_HEAP_GROWTH_FACTOR"] ||= "1.25"
 
   # RUBY_GC_HEAP_GROWTH_MAX_SLOTS: Máximo de slots por expansão
-  ENV['RUBY_GC_HEAP_GROWTH_MAX_SLOTS'] ||= '300000'
+  ENV["RUBY_GC_HEAP_GROWTH_MAX_SLOTS"] ||= "300000"
 
   # RUBY_GC_MALLOC_LIMIT: Limite para trigger de GC minor
-  ENV['RUBY_GC_MALLOC_LIMIT'] ||= '64000000'
+  ENV["RUBY_GC_MALLOC_LIMIT"] ||= "64000000"
 
   # RUBY_GC_OLDMALLOC_LIMIT: Limite para objetos antigos
-  ENV['RUBY_GC_OLDMALLOC_LIMIT'] ||= '64000000'
+  ENV["RUBY_GC_OLDMALLOC_LIMIT"] ||= "64000000"
 end
 
 # ACTIVE RECORD OTIMIZAÇÕES

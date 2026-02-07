@@ -48,7 +48,7 @@ RSpec.configure do |config|
   config.include Warden::Test::Helpers
 
   # Fixtures
-  config.fixture_paths = [Rails.root.join('spec/fixtures')]
+  config.fixture_paths = [ Rails.root.join('spec/fixtures') ]
 
   # Transações para testes
   config.use_transactional_fixtures = true
