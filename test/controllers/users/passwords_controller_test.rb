@@ -6,7 +6,7 @@ class Users::PasswordsControllerTest < ActionDispatch::IntegrationTest
   include Devise::Test::IntegrationHelpers
 
   setup do
-    @user = create(:user, email: "test@example.com", password: "Password123", password_confirmation: "Password123")
+    @user = create(:user, email: "test@example.com", password: "Password123!", password_confirmation: "Password123!")
   end
 
   # ============================================
@@ -72,8 +72,8 @@ class Users::PasswordsControllerTest < ActionDispatch::IntegrationTest
     patch user_password_url, params: {
       user: {
         reset_password_token: token,
-        password: "newpassword123",
-        password_confirmation: "newpassword123"
+        password: "NewPassword123!",
+        password_confirmation: "NewPassword123!"
       }
     }
 
@@ -85,8 +85,8 @@ class Users::PasswordsControllerTest < ActionDispatch::IntegrationTest
     patch user_password_url, params: {
       user: {
         reset_password_token: "invalid_token",
-        password: "newpassword123",
-        password_confirmation: "newpassword123"
+        password: "NewPassword123!",
+        password_confirmation: "NewPassword123!"
       }
     }
 
@@ -99,8 +99,8 @@ class Users::PasswordsControllerTest < ActionDispatch::IntegrationTest
     patch user_password_url, params: {
       user: {
         reset_password_token: token,
-        password: "newpassword123",
-        password_confirmation: "different_password"
+        password: "NewPassword123!",
+        password_confirmation: "DifferentPass123!"
       }
     }
 

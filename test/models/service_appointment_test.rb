@@ -9,6 +9,11 @@ class ServiceAppointmentTest < ActiveSupport::TestCase
     @customer = create(:customer)
   end
 
+  # Helper para gerar datetime no horário comercial (usando Time.zone)
+  def business_time(days_from_now: 1, hour: 10, min: 0)
+    Time.zone.now.beginning_of_day + days_from_now.days + hour.hours + min.minutes
+  end
+
   # Helper para criar agendamento com associações padrão
   def build_appointment(**attrs)
     defaults = {
@@ -193,60 +198,52 @@ class ServiceAppointmentTest < ActiveSupport::TestCase
   # ============================================
 
   test "detecta conflito quando novo agendamento começa durante outro" do
-    tomorrow = 1.day.from_now.to_date
-
     create_appointment(
-      appointment_date: tomorrow.to_time.change(hour: 10, min: 0),
+      appointment_date: business_time(hour: 10, min: 0),
       duration_minutes: 60)
 
     conflicting = build_appointment(
       customer: create(:customer),
-      appointment_date: tomorrow.to_time.change(hour: 10, min: 30),
+      appointment_date: business_time(hour: 10, min: 30),
       duration_minutes: 60)
 
     assert_has_conflict_error conflicting
   end
 
   test "detecta conflito quando novo agendamento termina durante outro" do
-    tomorrow = 1.day.from_now.to_date
-
     create_appointment(
-      appointment_date: tomorrow.to_time.change(hour: 10, min: 0),
+      appointment_date: business_time(hour: 10, min: 0),
       duration_minutes: 60)
 
     conflicting = build_appointment(
       customer: create(:customer),
-      appointment_date: tomorrow.to_time.change(hour: 9, min: 30),
+      appointment_date: business_time(hour: 9, min: 30),
       duration_minutes: 60)
 
     assert_has_conflict_error conflicting
   end
 
   test "detecta conflito quando novo agendamento engloba outro completamente" do
-    tomorrow = 1.day.from_now.to_date
-
     create_appointment(
-      appointment_date: tomorrow.to_time.change(hour: 10, min: 0),
+      appointment_date: business_time(hour: 10, min: 0),
       duration_minutes: 60)
 
     conflicting = build_appointment(
       customer: create(:customer),
-      appointment_date: tomorrow.to_time.change(hour: 9, min: 0),
+      appointment_date: business_time(hour: 9, min: 0),
       duration_minutes: 180)
 
     assert_has_conflict_error conflicting
   end
 
   test "detecta conflito quando novo agendamento está contido em outro" do
-    tomorrow = 1.day.from_now.to_date
-
     create_appointment(
-      appointment_date: tomorrow.to_time.change(hour: 9, min: 0),
+      appointment_date: business_time(hour: 9, min: 0),
       duration_minutes: 180)
 
     conflicting = build_appointment(
       customer: create(:customer),
-      appointment_date: tomorrow.to_time.change(hour: 10, min: 0),
+      appointment_date: business_time(hour: 10, min: 0),
       duration_minutes: 60)
 
     assert_has_conflict_error conflicting
@@ -257,30 +254,26 @@ class ServiceAppointmentTest < ActiveSupport::TestCase
   # ============================================
 
   test "permite agendamento que começa exatamente quando outro termina" do
-    tomorrow = 1.day.from_now.to_date
-
     create_appointment(
-      appointment_date: tomorrow.to_time.change(hour: 10, min: 0),
+      appointment_date: business_time(hour: 10, min: 0),
       duration_minutes: 60)
 
     consecutive = build_appointment(
       customer: create(:customer),
-      appointment_date: tomorrow.to_time.change(hour: 11, min: 0),
+      appointment_date: business_time(hour: 11, min: 0),
       duration_minutes: 60)
 
     assert_valid consecutive
   end
 
   test "permite agendamento que termina exatamente quando outro começa" do
-    tomorrow = 1.day.from_now.to_date
-
     create_appointment(
-      appointment_date: tomorrow.to_time.change(hour: 11, min: 0),
+      appointment_date: business_time(hour: 11, min: 0),
       duration_minutes: 60)
 
     consecutive = build_appointment(
       customer: create(:customer),
-      appointment_date: tomorrow.to_time.change(hour: 10, min: 0),
+      appointment_date: business_time(hour: 10, min: 0),
       duration_minutes: 60)
 
     assert_valid consecutive
@@ -333,30 +326,27 @@ class ServiceAppointmentTest < ActiveSupport::TestCase
 
   test "pode alterar horário de agendamento existente para slot livre" do
     employee = create(:employee)
-    tomorrow = 1.day.from_now.to_date
 
     appointment = create(:service_appointment,
                          employee: employee,
-                         appointment_date: tomorrow.to_time.change(hour: 10, min: 0),
+                         appointment_date: business_time(hour: 10, min: 0),
                          duration_minutes: 60)
 
-    appointment.appointment_date = tomorrow.to_time.change(hour: 14, min: 0)
+    appointment.appointment_date = business_time(hour: 14, min: 0)
     assert_valid appointment
   end
 
   test "não pode mover agendamento para horário ocupado por outro" do
-    tomorrow = 1.day.from_now.to_date
-
     create_appointment(
-      appointment_date: tomorrow.to_time.change(hour: 14, min: 0),
+      appointment_date: business_time(hour: 14, min: 0),
       duration_minutes: 60)
 
     appointment = create_appointment(
       customer: create(:customer),
-      appointment_date: tomorrow.to_time.change(hour: 10, min: 0),
+      appointment_date: business_time(hour: 10, min: 0),
       duration_minutes: 60)
 
-    appointment.appointment_date = tomorrow.to_time.change(hour: 14, min: 0)
+    appointment.appointment_date = business_time(hour: 14, min: 0)
     assert_has_conflict_error appointment
   end
 
@@ -366,8 +356,7 @@ class ServiceAppointmentTest < ActiveSupport::TestCase
 
   test "find_conflicts retorna agendamentos conflitantes" do
     employee = create(:employee)
-    tomorrow = 1.day.from_now.to_date
-    start_time = tomorrow.to_time.change(hour: 10, min: 0)
+    start_time = business_time(hour: 10, min: 0)
 
     conflicting = create(:service_appointment,
                          employee: employee,
@@ -385,8 +374,7 @@ class ServiceAppointmentTest < ActiveSupport::TestCase
 
   test "find_conflicts exclui agendamento especificado" do
     employee = create(:employee)
-    tomorrow = 1.day.from_now.to_date
-    start_time = tomorrow.to_time.change(hour: 10, min: 0)
+    start_time = business_time(hour: 10, min: 0)
 
     existing = create(:service_appointment,
                       employee: employee,
@@ -405,8 +393,7 @@ class ServiceAppointmentTest < ActiveSupport::TestCase
 
   test "slot_available? retorna true quando slot está livre" do
     employee = create(:employee)
-    tomorrow = 1.day.from_now.to_date
-    start_time = tomorrow.to_time.change(hour: 10, min: 0)
+    start_time = business_time(hour: 10, min: 0)
 
     assert ServiceAppointment.slot_available?(
       employee_id: employee.id,
@@ -417,8 +404,7 @@ class ServiceAppointmentTest < ActiveSupport::TestCase
 
   test "slot_available? retorna false quando há conflito" do
     employee = create(:employee)
-    tomorrow = 1.day.from_now.to_date
-    start_time = tomorrow.to_time.change(hour: 10, min: 0)
+    start_time = business_time(hour: 10, min: 0)
 
     create(:service_appointment,
            employee: employee,
@@ -467,16 +453,15 @@ class ServiceAppointmentTest < ActiveSupport::TestCase
 
   test "conflicts_with? detecta conflito entre dois agendamentos" do
     employee = create(:employee)
-    tomorrow = 1.day.from_now.to_date
 
     appointment1 = create(:service_appointment,
                           employee: employee,
-                          appointment_date: tomorrow.to_time.change(hour: 10, min: 0),
+                          appointment_date: business_time(hour: 10, min: 0),
                           duration_minutes: 60)
 
     appointment2 = build(:service_appointment,
                          employee: employee,
-                         appointment_date: tomorrow.to_time.change(hour: 10, min: 30),
+                         appointment_date: business_time(hour: 10, min: 30),
                          duration_minutes: 60)
 
     assert appointment1.conflicts_with?(appointment2)
@@ -485,16 +470,15 @@ class ServiceAppointmentTest < ActiveSupport::TestCase
 
   test "conflicts_with? não detecta conflito entre agendamentos consecutivos" do
     employee = create(:employee)
-    tomorrow = 1.day.from_now.to_date
 
     appointment1 = create(:service_appointment,
                           employee: employee,
-                          appointment_date: tomorrow.to_time.change(hour: 10, min: 0),
+                          appointment_date: business_time(hour: 10, min: 0),
                           duration_minutes: 60)
 
     appointment2 = create(:service_appointment,
                           employee: employee,
-                          appointment_date: tomorrow.to_time.change(hour: 11, min: 0),
+                          appointment_date: business_time(hour: 11, min: 0),
                           duration_minutes: 60)
 
     assert_not appointment1.conflicts_with?(appointment2)
@@ -528,13 +512,13 @@ class ServiceAppointmentTest < ActiveSupport::TestCase
   end
 
   test "scope by_date filtra por data" do
-    tomorrow = 1.day.from_now.to_date
-    day_after = 2.days.from_now.to_date
+    date1 = 1.day.from_now.to_date
+    date2 = 2.days.from_now.to_date
 
-    apt1 = create(:service_appointment, appointment_date: tomorrow.to_time.change(hour: 10))
-    apt2 = create(:service_appointment, appointment_date: day_after.to_time.change(hour: 10))
+    apt1 = create(:service_appointment, appointment_date: business_time(hour: 10))
+    apt2 = create(:service_appointment, appointment_date: business_time(days_from_now: 2, hour: 10))
 
-    result = ServiceAppointment.by_date(tomorrow)
+    result = ServiceAppointment.by_date(date1)
 
     assert_includes result, apt1
     assert_not_includes result, apt2
@@ -645,16 +629,15 @@ class ServiceAppointmentTest < ActiveSupport::TestCase
 
   test "conflicts_with? retorna false para agendamento cancelado" do
     employee = create(:employee)
-    tomorrow = 1.day.from_now.to_date
 
     appointment1 = create(:service_appointment,
                           employee: employee,
-                          appointment_date: tomorrow.to_time.change(hour: 10),
+                          appointment_date: business_time(hour: 10),
                           status: :cancelado)
 
     appointment2 = build(:service_appointment,
                          employee: employee,
-                         appointment_date: tomorrow.to_time.change(hour: 10))
+                         appointment_date: business_time(hour: 10))
 
     assert_not appointment2.conflicts_with?(appointment1)
   end
@@ -662,15 +645,14 @@ class ServiceAppointmentTest < ActiveSupport::TestCase
   test "conflicts_with? retorna false para funcionários diferentes" do
     employee1 = create(:employee)
     employee2 = create(:employee)
-    tomorrow = 1.day.from_now.to_date
 
     appointment1 = create(:service_appointment,
                           employee: employee1,
-                          appointment_date: tomorrow.to_time.change(hour: 10))
+                          appointment_date: business_time(hour: 10))
 
     appointment2 = build(:service_appointment,
                          employee: employee2,
-                         appointment_date: tomorrow.to_time.change(hour: 10))
+                         appointment_date: business_time(hour: 10))
 
     assert_not appointment1.conflicts_with?(appointment2)
   end

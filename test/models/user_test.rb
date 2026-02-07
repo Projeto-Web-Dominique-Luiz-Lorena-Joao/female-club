@@ -56,7 +56,7 @@ class UserTest < ActiveSupport::TestCase
   end
 
   test "senha com 8 caracteres válidos é aceita" do
-    user = build(:user, password: "Password1", password_confirmation: "Password1")
+    user = build(:user, password: "Password1!", password_confirmation: "Password1!")
     assert_valid user
   end
 
@@ -71,12 +71,12 @@ class UserTest < ActiveSupport::TestCase
   end
 
   test "senha com letra e número é válida" do
-    user = build(:user, password: "Abc12345", password_confirmation: "Abc12345")
+    user = build(:user, password: "Abc12345!", password_confirmation: "Abc12345!")
     assert_valid user
   end
 
   test "confirmação de senha deve coincidir" do
-    user = build(:user, password: "Password1", password_confirmation: "Different1")
+    user = build(:user, password: "Password1!", password_confirmation: "Different1!")
     assert_invalid user, :password_confirmation
   end
 
@@ -206,8 +206,8 @@ class UserTest < ActiveSupport::TestCase
 
   test "pode atualizar senha" do
     user = create(:user)
-    user.update!(password: "NewPass123", password_confirmation: "NewPass123")
+    user.update!(password: "NewPass123!", password_confirmation: "NewPass123!")
 
-    assert user.valid_password?("NewPass123")
+    assert user.valid_password?("NewPass123!")
   end
 end

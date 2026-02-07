@@ -53,12 +53,12 @@ class Sale < ApplicationRecord
   after_commit :return_stock_on_cancellation, on: :update
 
   def overdue?
-    due_date.present? && due_date < Date.today && pendente?
+    due_date.present? && due_date < Date.current && pendente?
   end
 
   def days_overdue
     return 0 unless overdue?
-    (Date.today - due_date).to_i
+    (Date.current - due_date).to_i
   end
 
   def total_with_discount
@@ -67,7 +67,7 @@ class Sale < ApplicationRecord
   end
 
   def mark_as_paid!
-    update(status: "pago", paid_date: Date.today)
+    update(status: "pago", paid_date: Date.current)
   end
 
   def customer_name

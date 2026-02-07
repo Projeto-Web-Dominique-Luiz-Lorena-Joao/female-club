@@ -75,17 +75,17 @@ class ProductOutput < ApplicationRecord
 
   def ensure_sufficient_stock_on_update
     return unless product && quantity
-    return unless saved_change_to_quantity? || saved_change_to_product_id?
+    return unless will_save_change_to_quantity? || will_save_change_to_product_id?
 
-    if saved_change_to_product_id?
+    if will_save_change_to_product_id?
       # Verificar se o novo produto tem estoque suficiente
       available_stock = product.quantity
       if available_stock < quantity
         errors.add(:base, "Quantidade insuficiente no produto selecionado. Disponível: #{available_stock} unidade(s)")
       end
-    elsif saved_change_to_quantity?
+    elsif will_save_change_to_quantity?
       # Verificar se há estoque suficiente para a diferença
-      old_quantity = quantity_before_last_save || 0
+      old_quantity = quantity_in_database || 0
       difference = quantity - old_quantity
 
       if difference > 0

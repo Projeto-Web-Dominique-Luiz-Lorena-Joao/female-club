@@ -107,7 +107,7 @@ class ServiceAppointmentsControllerTest < ActionDispatch::IntegrationTest
   # ============================================
 
   test "create cria novo agendamento com dados válidos" do
-    appointment_date = 2.days.from_now.change(hour: 14, min: 0)
+    appointment_date = Time.zone.now.beginning_of_day + 2.days + 14.hours + 0.minutes
 
     assert_difference "ServiceAppointment.count", 1 do
       post service_appointments_url, params: {
@@ -142,7 +142,7 @@ class ServiceAppointmentsControllerTest < ActionDispatch::IntegrationTest
 
   test "create não permite agendamento com conflito" do
     # Criar agendamento existente
-    existing_date = 3.days.from_now.change(hour: 10, min: 0)
+    existing_date = Time.zone.now.beginning_of_day + 3.days + 10.hours + 0.minutes
     create(:service_appointment,
            employee: @employee,
            appointment_date: existing_date,
@@ -184,7 +184,7 @@ class ServiceAppointmentsControllerTest < ActionDispatch::IntegrationTest
   # ============================================
 
   test "update atualiza agendamento com dados válidos" do
-    new_date = 5.days.from_now.change(hour: 15, min: 0)
+    new_date = Time.zone.now.beginning_of_day + 5.days + 15.hours + 0.minutes
 
     patch service_appointment_url(@appointment), params: {
       service_appointment: {
@@ -223,7 +223,7 @@ class ServiceAppointmentsControllerTest < ActionDispatch::IntegrationTest
 
   test "update não permite mover para horário com conflito" do
     # Criar outro agendamento
-    other_date = 4.days.from_now.change(hour: 10, min: 0)
+    other_date = Time.zone.now.beginning_of_day + 4.days + 10.hours + 0.minutes
     create(:service_appointment,
            employee: @appointment.employee,
            appointment_date: other_date,
@@ -256,7 +256,7 @@ class ServiceAppointmentsControllerTest < ActionDispatch::IntegrationTest
   # ============================================
 
   test "check_conflicts retorna disponível para slot livre" do
-    free_time = 10.days.from_now.change(hour: 10, min: 0)
+    free_time = Time.zone.now.beginning_of_day + 10.days + 10.hours + 0.minutes
 
     get check_conflicts_service_appointments_url, params: {
       employee_id: @employee.id,
@@ -271,7 +271,7 @@ class ServiceAppointmentsControllerTest < ActionDispatch::IntegrationTest
 
   test "check_conflicts retorna indisponível para slot ocupado" do
     # Criar agendamento
-    occupied_time = 11.days.from_now.change(hour: 10, min: 0)
+    occupied_time = Time.zone.now.beginning_of_day + 11.days + 10.hours + 0.minutes
     create(:service_appointment,
            employee: @employee,
            appointment_date: occupied_time,

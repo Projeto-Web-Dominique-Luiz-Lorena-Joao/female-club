@@ -38,7 +38,7 @@ class Users::RegistrationsControllerTest < ActionDispatch::IntegrationTest
     patch user_registration_url, params: {
       user: {
         items_per_page: 25,
-        current_password: "Password123"
+        current_password: "Password123!"
       }
     }
 
@@ -78,9 +78,9 @@ class Users::RegistrationsControllerTest < ActionDispatch::IntegrationTest
 
     patch user_registration_url, params: {
       user: {
-        password: "newpassword123",
-        password_confirmation: "newpassword123",
-        current_password: "Password123"
+        password: "NewPassword123!",
+        password_confirmation: "NewPassword123!",
+        current_password: "Password123!"
       }
     }
 
@@ -91,7 +91,7 @@ class Users::RegistrationsControllerTest < ActionDispatch::IntegrationTest
     patch user_registration_url, params: {
       user: {
         items_per_page: 25,
-        current_password: "Password123"
+        current_password: "Password123!"
       }
     }
 
