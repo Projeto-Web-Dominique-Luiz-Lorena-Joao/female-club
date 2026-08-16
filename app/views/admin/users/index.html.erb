@@ -120,14 +120,14 @@
                           method: :patch,
                           form: { data: { controller: "submit-once" } },
                           data: { turbo_confirm: "Cancelar a conta de #{user.display_name}? O usuário não conseguirá mais fazer login." },
-                          class: "inline-flex items-center px-3 py-1.5 bg-red-500 hover:bg-red-600 text-white text-xs font-medium rounded-lg transition duration-200" %>
+                          class: "inline-flex items-center px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white text-xs font-medium rounded-lg transition duration-200" %>
                     <% else %>
                       <%= button_to "Reativar",
                           reactivate_admin_user_path(user),
                           method: :patch,
                           form: { data: { controller: "submit-once" } },
                           data: { turbo_confirm: "Reativar a conta de #{user.display_name}?" },
-                          class: "inline-flex items-center px-3 py-1.5 bg-green-500 hover:bg-green-600 text-white text-xs font-medium rounded-lg transition duration-200" %>
+                          class: "inline-flex items-center px-3 py-1.5 bg-green-600 hover:bg-green-500 text-white text-xs font-medium rounded-lg transition duration-200" %>
                     <% end %>
                   <% elsif user == current_user %>
                     <span class="text-xs text-gray-400">Você</span>

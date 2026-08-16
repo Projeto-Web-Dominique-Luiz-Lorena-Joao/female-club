@@ -1,5 +1,5 @@
 <div id="deleteModal"
-     class="hidden absolute inset-0 z-[9999] flex items-center justify-center bg-black/20">
+     class="hidden fixed inset-0 z-[9999] flex items-center justify-center bg-black/20">
 
   <div id="deleteModalBox"
        class="bg-white max-w-md w-full rounded-xl shadow-2xl p-6">
@@ -47,7 +47,7 @@
     document.getElementById("deleteName").innerText = name;
     document.getElementById("deleteType").innerText = label;
 
-    form.action = `${basePath}/${id}`;
+    form.action = id ? `${basePath}/${id}` : basePath;
     form.dataset.redirectUrl = basePath;
 
     modal.classList.remove("hidden");

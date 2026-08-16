@@ -1,13 +1,13 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["text", "arrow", "sidebar", "content", "link", "overlay", "mobileToggle"]
+  static targets = ["text", "arrow", "arrowButton", "sidebar", "content", "link", "overlay"]
 
   connect() {
     this.collapsed = localStorage.getItem("sidebarCollapsed") === "true"
     this.mobileOpen = false
     this.checkScreenSize()
-    this.updateState()
+    this.updateState(true)
     this.openActiveSubmenu()
 
     // Listener para resize da janela
@@ -32,16 +32,11 @@ export default class extends Controller {
       this.contentTarget.classList.remove("ml-72", "ml-20", "lg:ml-72", "lg:ml-20")
       this.contentTarget.classList.add("ml-0")
 
-      // Mostrar botão mobile
-      if (this.hasMobileToggleTarget) {
-        this.mobileToggleTarget.classList.remove("hidden")
-      }
+      this.setArrowRotation(!this.mobileOpen)
+      this.positionArrowButton()
     } else {
       // Em desktop, comportamento normal
       this.sidebarTarget.classList.remove("-translate-x-full")
-      if (this.hasMobileToggleTarget) {
-        this.mobileToggleTarget.classList.add("hidden")
-      }
       if (this.hasOverlayTarget) {
         this.overlayTarget.classList.add("hidden")
       }
@@ -78,6 +73,9 @@ export default class extends Controller {
       }
       document.body.classList.remove("overflow-hidden")
     }
+
+    this.setArrowRotation(!this.mobileOpen)
+    this.positionArrowButton()
   }
 
   // Fechar menu ao clicar no overlay
@@ -95,10 +93,17 @@ export default class extends Controller {
   }
 
   toggleSubmenu(event) {
-    // Em modo recolhido, não abrir submenu (só mostra ícone principal)
-    if (this.collapsed && !this.isMobile) return
-
     const submenuId = event.currentTarget.getAttribute("data-submenu-id")
+
+    // Em modo recolhido, o clique expande a sidebar e já abre o submenu clicado
+    if (this.collapsed && !this.isMobile) {
+      this.collapsed = false
+      localStorage.setItem("sidebarCollapsed", this.collapsed)
+      this.updateState()
+      this.openSubmenuExclusively(submenuId)
+      return
+    }
+
     const submenu = document.getElementById(`${submenuId}-submenu`)
 
     if (submenu) {
@@ -109,6 +114,24 @@ export default class extends Controller {
       if (arrow) {
         arrow.classList.toggle("rotate-180")
       }
+    }
+  }
+
+  // Fecha todos os submenus e abre apenas o indicado (usado ao expandir a sidebar via clique)
+  openSubmenuExclusively(submenuId) {
+    document.querySelectorAll('[id$="-submenu"]').forEach(el => el.classList.add("hidden"))
+    document.querySelectorAll('[data-submenu-id]').forEach(btn => {
+      const arrow = btn.querySelector("svg:last-child")
+      if (arrow) arrow.classList.remove("rotate-180")
+    })
+
+    const submenu = document.getElementById(`${submenuId}-submenu`)
+    const button = document.querySelector(`[data-submenu-id="${submenuId}"]`)
+
+    if (submenu) submenu.classList.remove("hidden")
+    if (button) {
+      const arrow = button.querySelector("svg:last-child")
+      if (arrow) arrow.classList.add("rotate-180")
     }
   }
 
@@ -133,7 +156,27 @@ export default class extends Controller {
     })
   }
 
-  updateState() {
+  // Aponta o ícone para a direita (fechado/recolhido) ou esquerda (aberto/expandido)
+  setArrowRotation(pointRight) {
+    if (!this.hasArrowTarget) return
+    this.arrowTarget.classList.toggle("rotate-180", pointRight)
+  }
+
+  // Reposiciona o botão de seta (fora do <aside>) para acompanhar a borda da sidebar
+  positionArrowButton() {
+    if (!this.hasArrowButtonTarget) return
+
+    let left
+    if (this.isMobile) {
+      left = this.mobileOpen ? "268px" : "16px"
+    } else {
+      left = this.collapsed ? "60px" : "268px"
+    }
+
+    this.arrowButtonTarget.style.left = left
+  }
+
+  updateState(immediate = false) {
     if (this.isMobile) return // Não aplicar estado de collapse em mobile
 
     if (this.collapsed) {
@@ -148,22 +191,27 @@ export default class extends Controller {
         submenu.classList.add("hidden")
       })
 
-      // Adiciona delay antes de esconder os textos
-      setTimeout(() => {
+      if (immediate) {
+        // Sem delay: evita o "piscar" dos textos ao carregar a página com a sidebar já recolhida
         this.textTargets.forEach(el => {
-          el.classList.add("opacity-0")
+          el.classList.add("opacity-0", "hidden")
         })
-      }, 100)
+      } else {
+        // Adiciona delay antes de esconder os textos (dá tempo da transição de collapse rodar)
+        setTimeout(() => {
+          this.textTargets.forEach(el => {
+            el.classList.add("opacity-0")
+          })
+        }, 100)
 
-      setTimeout(() => {
-        this.textTargets.forEach(el => {
-          el.classList.add("hidden")
-        })
-      }, 300)
-
-      if (this.hasArrowTarget) {
-        this.arrowTarget.classList.add("rotate-180")
+        setTimeout(() => {
+          this.textTargets.forEach(el => {
+            el.classList.add("hidden")
+          })
+        }, 300)
       }
+
+      this.setArrowRotation(true)
     } else {
       this.sidebarTarget.classList.remove("w-20")
       this.sidebarTarget.classList.add("w-72")
@@ -182,12 +230,12 @@ export default class extends Controller {
         })
       }, 100)
 
-      if (this.hasArrowTarget) {
-        this.arrowTarget.classList.remove("rotate-180")
-      }
+      this.setArrowRotation(false)
 
       // Reabre o submenu ativo ao expandir novamente
       this.openActiveSubmenu()
     }
+
+    this.positionArrowButton()
   }
 }

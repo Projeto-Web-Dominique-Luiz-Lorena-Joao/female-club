@@ -14,13 +14,13 @@
                       reactivate_employee_path(@employee),
                       method: :patch,
                       form: { data: { controller: "submit-once" } },
-                      class: "bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg font-medium" %>
+                      class: "bg-green-600 hover:bg-green-500 text-white px-4 py-2 rounded-lg font-medium" %>
       <% else %>
         <%= button_to "Inativar Funcionário",
                       employee_path(@employee),
                       method: :delete,
                       form: { data: { controller: "submit-once" } },
-                      class: "bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-medium" %>
+                      class: "bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium" %>
       <% end %>
 
       <%= link_to "javascript:history.back()", class: "bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-lg font-medium flex items-center gap-2" do %>

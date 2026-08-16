@@ -27,7 +27,7 @@ class ApplicationController < ActionController::Base
   private
 
   def set_layout
-    if devise_controller?
+    if devise_controller? && controller_name != "registrations"
       "devise"
     else
       "application"

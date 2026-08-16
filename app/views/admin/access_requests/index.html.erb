@@ -62,12 +62,12 @@
                     <div class="flex items-center justify-end gap-2">
                       <%= button_to "Aprovar", approve_admin_access_request_path(request),
                           method: :patch,
-                          class: "inline-flex items-center px-3 py-1.5 bg-green-500 hover:bg-green-600 text-white text-xs font-medium rounded-lg transition duration-200",
+                          class: "inline-flex items-center px-3 py-1.5 bg-green-600 hover:bg-green-500 text-white text-xs font-medium rounded-lg transition duration-200",
                           form: { data: { controller: "submit-once" } },
                           data: { turbo_confirm: "Aprovar solicitação de #{request.email}? Um novo usuário será criado." } %>
                       <%= button_to "Rejeitar", reject_admin_access_request_path(request),
                           method: :patch,
-                          class: "inline-flex items-center px-3 py-1.5 bg-red-500 hover:bg-red-600 text-white text-xs font-medium rounded-lg transition duration-200",
+                          class: "inline-flex items-center px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white text-xs font-medium rounded-lg transition duration-200",
                           form: { data: { controller: "submit-once" } },
                           data: { turbo_confirm: "Rejeitar solicitação de #{request.email}?" } %>
                     </div>

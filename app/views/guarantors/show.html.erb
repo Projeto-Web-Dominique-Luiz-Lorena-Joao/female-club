@@ -18,7 +18,7 @@
 
     <div class="flex space-x-3">
       <%= link_to edit_guarantor_path(@guarantor),
-                  class: "bg-orange-400 hover:bg-orange-300 text-white px-8 py-2 rounded-lg font-medium" do %>
+                  class: "bg-orange-400 hover:bg-orange-500 text-white px-8 py-2 rounded-lg font-medium" do %>
         Editar
       <% end %>
 
@@ -27,7 +27,7 @@
                     method: :delete,
                     form: { data: { controller: "submit-once" } },
                     data: { confirm: "Tem certeza que deseja excluir este fiador?" },
-                    class: "bg-red-500 hover:bg-red-400 text-white px-4 py-2 rounded-lg font-medium" %>
+                    class: "bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium" %>
 
       <%= link_to "javascript:history.back()", class: "bg-gray-300 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg font-medium flex items-center gap-2" do %>
 

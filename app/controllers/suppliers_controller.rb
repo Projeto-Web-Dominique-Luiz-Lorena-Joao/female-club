@@ -76,12 +76,12 @@ class SuppliersController < ApplicationController
   end
 
   def destroy
-    @supplier.update(active: false)
+    @supplier.update(status: "inativo")
     redirect_to suppliers_path, notice: "Fornecedor inativado com sucesso. Você pode reativá-lo quando quiser."
   end
 
   def reactivate
-    if @supplier.update(active: true)
+    if @supplier.update(status: "ativo")
       redirect_to supplier_path(@supplier), notice: "Fornecedor reativado com sucesso. Você pode inativá-lo quando quiser."
     else
       redirect_to supplier_path(@supplier), alert: "Não foi possível reativar o fornecedor."

@@ -40,7 +40,7 @@
       </div>
       <div class="ml-3 flex-1">
         <p class="text-xs text-gray-500 font-medium">Fornecedores Ativos</p>
-        <p class="text-2xl font-bold text-green-600 mt-1"><%= Supplier.where(active: true).count %></p>
+        <p class="text-2xl font-bold text-green-600 mt-1"><%= Supplier.active.count %></p>
       </div>
     </div>
   </div>
@@ -56,7 +56,7 @@
       </div>
       <div class="ml-3 flex-1">
         <p class="text-xs text-gray-500 font-medium">Fornecedores Inativos</p>
-        <p class="text-2xl font-bold text-red-600 mt-1"><%= Supplier.where(active: false).count %></p>
+        <p class="text-2xl font-bold text-red-600 mt-1"><%= Supplier.inactive.count %></p>
       </div>
     </div>
   </div>
@@ -161,7 +161,7 @@
               </td>
               
               <td class="px-6 py-4 text-center">
-                <% if supplier.active? %>
+                <% if supplier.ativo_status? %>
                   <span class="px-3 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800">
                     Ativo
                   </span>

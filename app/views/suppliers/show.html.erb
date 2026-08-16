@@ -15,20 +15,20 @@
         Editar
       <% end %>
 
-      <% if @supplier.active? %>
+      <% if @supplier.ativo_status? %>
         <%= button_to "Inativar Fornecedor",
                       supplier_path(@supplier),
                       method: :delete,
                       form: { data: { controller: "submit-once" } },
                       data: { confirm: "Tem certeza que deseja inativar este fornecedor?" },
-                      class: "bg-red-500 hover:bg-red-400 text-white px-4 py-2 rounded-lg font-medium" %>
+                      class: "bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium" %>
       <% else %>
         <%= button_to "Reativar Fornecedor",
                       reactivate_supplier_path(@supplier),
                       method: :patch,
                       form: { data: { controller: "submit-once" } },
                       data: { confirm: "Deseja reativar este fornecedor?" },
-                      class: "bg-green-500 hover:bg-green-400 text-white px-4 py-2 rounded-lg font-medium" %>
+                      class: "bg-green-600 hover:bg-green-500 text-white px-4 py-2 rounded-lg font-medium" %>
       <% end %>
 
       <%= link_to "javascript:history.back()", class: "bg-gray-300 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg font-medium flex items-center gap-2" do %>
@@ -124,7 +124,7 @@
       <div>
         <p class="text-sm font-medium text-gray-500">Status</p>
         <p class="mt-1">
-          <% if @supplier.active? %>
+          <% if @supplier.ativo_status? %>
             <span class="inline-block px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
               Ativo
             </span>

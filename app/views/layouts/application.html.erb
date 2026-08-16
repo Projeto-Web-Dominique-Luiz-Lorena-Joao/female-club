@@ -91,12 +91,14 @@
            data-sidebar-target="overlay"
            data-action="click->sidebar#closeOverlay"></div>
 
-      <!-- Botao Hamburger Mobile -->
-      <button class="fixed top-4 left-4 z-50 lg:hidden bg-black text-white p-2 rounded-lg shadow-lg"
-              data-sidebar-target="mobileToggle"
-              data-action="click->sidebar#toggleMobile">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+      <!-- Botao de seta para abrir/fechar a sidebar (desktop e mobile) -->
+      <button data-action="click->sidebar#toggle"
+              data-sidebar-target="arrowButton"
+              class="fixed top-1/2 -translate-y-1/2 z-50 p-1.5 bg-white hover:bg-gray-100 rounded-full shadow-md border border-gray-200 transition-all duration-500 ease-in-out">
+        <svg class="w-5 h-5 text-gray-700 hover:text-black transition-transform duration-300"
+             data-sidebar-target="arrow"
+             fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
         </svg>
       </button>
 
@@ -104,9 +106,6 @@
 
       <main class="flex-1 relative p-4 sm:p-6 lg:p-8 2xl:p-10 overflow-y-auto transition-all duration-300 ml-0 lg:ml-72 hide-scrollbar"
             data-sidebar-target="content">
-        <!-- Espacamento para o botao hamburger em mobile -->
-        <div class="h-14 lg:hidden"></div>
-
         <%= yield %>
         <%= render "shared/delete_modal" %>
       </main>
