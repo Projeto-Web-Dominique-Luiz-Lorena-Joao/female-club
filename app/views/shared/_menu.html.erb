@@ -30,7 +30,7 @@
     <% end %>
 
     <button data-action="click->sidebar#toggleSubmenu" data-submenu-id="estoque"
-            class="flex items-center justify-start w-full px-4 py-3 min-h-[48px] text-gray-300 hover:bg-white/10 hover:text-white rounded-lg transition-all duration-300 mb-2"
+            class="flex items-center justify-start w-full px-4 py-3 min-h-[48px] rounded-lg transition-all duration-300 mb-2 <%= active_submenu?(inventory_status_path, product_inputs_path, product_outputs_path) ? "bg-white text-black" : "text-gray-300 hover:bg-white/10 hover:text-white" %>"
             title="Estoque" data-sidebar-target="link">
       <svg class="w-5 h-5 flex-shrink-0 min-w-[1.25rem]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
@@ -44,21 +44,21 @@
 
     <div id="estoque-submenu" class="hidden ml-8 space-y-1 mb-2">
 
-      <%= link_to inventory_status_path, class: "flex items-center justify-start px-4 py-2 min-h-[40px] text-sm text-gray-400 hover:bg-white/5 hover:text-white rounded-lg transition-all duration-300", title: "Visualizar Estoque", data: { sidebarTarget: "link" } do %>
+      <%= link_to inventory_status_path, class: "flex items-center justify-start px-4 py-2 min-h-[40px] text-sm rounded-lg transition-all duration-300 #{active_submenu_class(inventory_status_path)}", title: "Visualizar Estoque", data: { sidebarTarget: "link" } do %>
         <svg class="w-4 h-4 flex-shrink-0 min-w-[1rem]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
         </svg>
         <span class="ml-2 whitespace-nowrap transition-all duration-500 ease-in-out" data-sidebar-target="text">Estado Atual</span>
       <% end %>
 
-      <%= link_to product_inputs_path, class: "flex items-center justify-start px-4 py-2 min-h-[40px] text-sm text-gray-400 hover:bg-white/5 hover:text-white rounded-lg transition-all duration-300", title: "Registrar Entrada de Produto", data: { sidebarTarget: "link" } do %>
+      <%= link_to product_inputs_path, class: "flex items-center justify-start px-4 py-2 min-h-[40px] text-sm rounded-lg transition-all duration-300 #{active_submenu_class(product_inputs_path)}", title: "Registrar Entrada de Produto", data: { sidebarTarget: "link" } do %>
         <svg class="w-4 h-4 flex-shrink-0 min-w-[1rem]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
         </svg>
         <span class="ml-2 whitespace-nowrap transition-all duration-500 ease-in-out" data-sidebar-target="text">Entrada</span>
       <% end %>
 
-      <%= link_to product_outputs_path, class: "flex items-center justify-start px-4 py-2 min-h-[40px] text-sm text-gray-400 hover:bg-white/5 hover:text-white rounded-lg transition-all duration-300", title: "Registrar Saída de Produto", data: { sidebarTarget: "link" } do %>
+      <%= link_to product_outputs_path, class: "flex items-center justify-start px-4 py-2 min-h-[40px] text-sm rounded-lg transition-all duration-300 #{active_submenu_class(product_outputs_path)}", title: "Registrar Saída de Produto", data: { sidebarTarget: "link" } do %>
         <svg class="w-4 h-4 flex-shrink-0 min-w-[1rem]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"/>
         </svg>
@@ -67,8 +67,8 @@
 
     </div>
 
-    <button data-action="click->sidebar#toggleSubmenu" data-submenu-id="relatorios"
-            class="flex items-center justify-start w-full px-4 py-3 min-h-[48px] text-gray-300 hover:bg-white/10 hover:text-white rounded-lg transition-all duration-300 mb-2"
+<button data-action="click->sidebar#toggleSubmenu" data-submenu-id="relatorios"
+            class="flex items-center justify-start w-full px-4 py-3 min-h-[48px] rounded-lg transition-all duration-300 mb-2 <%= active_submenu?(daily_reports_path, monthly_reports_path, yearly_reports_path) ? "bg-white text-black" : "text-gray-300 hover:bg-white/10 hover:text-white" %>"
             title="Relatórios" data-sidebar-target="link">
       <svg class="w-5 h-5 flex-shrink-0 min-w-[1.25rem]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
@@ -82,21 +82,21 @@
 
     <div id="relatorios-submenu" class="hidden ml-8 space-y-1 mb-2">
 
-      <%= link_to daily_reports_path, class: "flex items-center justify-start px-4 py-2 min-h-[40px] text-sm text-gray-400 hover:bg-white/5 hover:text-white rounded-lg transition-all duration-300", title: "Relatório Diário", data: { sidebarTarget: "link" } do %>
+      <%= link_to daily_reports_path, class: "flex items-center justify-start px-4 py-2 min-h-[40px] text-sm rounded-lg transition-all duration-300 #{active_submenu_class(daily_reports_path)}", title: "Relatório Diário", data: { sidebarTarget: "link" } do %>
         <svg class="w-4 h-4 flex-shrink-0 min-w-[1rem]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
         </svg>
         <span class="ml-2 whitespace-nowrap transition-all duration-500 ease-in-out" data-sidebar-target="text">Diário</span>
       <% end %>
 
-      <%= link_to monthly_reports_path, class: "flex items-center justify-start px-4 py-2 min-h-[40px] text-sm text-gray-400 hover:bg-white/5 hover:text-white rounded-lg transition-all duration-300", title: "Relatório Mensal", data: { sidebarTarget: "link" } do %>
+      <%= link_to monthly_reports_path, class: "flex items-center justify-start px-4 py-2 min-h-[40px] text-sm rounded-lg transition-all duration-300 #{active_submenu_class(monthly_reports_path)}", title: "Relatório Mensal", data: { sidebarTarget: "link" } do %>
         <svg class="w-4 h-4 flex-shrink-0 min-w-[1rem]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
         </svg>
         <span class="ml-2 whitespace-nowrap transition-all duration-500 ease-in-out" data-sidebar-target="text">Mensal</span>
       <% end %>
 
-      <%= link_to yearly_reports_path, class: "flex items-center justify-start px-4 py-2 min-h-[40px] text-sm text-gray-400 hover:bg-white/5 hover:text-white rounded-lg transition-all duration-300", title: "Relatório Anual", data: { sidebarTarget: "link" } do %>
+      <%= link_to yearly_reports_path, class: "flex items-center justify-start px-4 py-2 min-h-[40px] text-sm rounded-lg transition-all duration-300 #{active_submenu_class(yearly_reports_path)}", title: "Relatório Anual", data: { sidebarTarget: "link" } do %>
         <svg class="w-4 h-4 flex-shrink-0 min-w-[1rem]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
         </svg>
@@ -106,7 +106,7 @@
     </div>
 
     <button data-action="click->sidebar#toggleSubmenu" data-submenu-id="agendamentos"
-            class="flex items-center justify-start w-full px-4 py-3 min-h-[48px] text-gray-300 hover:bg-white/10 hover:text-white rounded-lg transition-all duration-300 mb-2"
+            class="flex items-center justify-start w-full px-4 py-3 min-h-[48px] rounded-lg transition-all duration-300 mb-2 <%= active_submenu?(service_appointments_path, appointments_calendar_path) ? "bg-white text-black" : "text-gray-300 hover:bg-white/10 hover:text-white" %>"
             title="Agendamentos" data-sidebar-target="link">
       <svg class="w-5 h-5 flex-shrink-0 min-w-[1.25rem]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
@@ -120,14 +120,14 @@
 
     <div id="agendamentos-submenu" class="hidden ml-8 space-y-1 mb-2">
 
-      <%= link_to service_appointments_path, class: "flex items-center justify-start px-4 py-2 min-h-[40px] text-sm text-gray-400 hover:bg-white/5 hover:text-white rounded-lg transition-all duration-300", title: "Listagem e Filtros", data: { sidebarTarget: "link" } do %>
+      <%= link_to service_appointments_path, class: "flex items-center justify-start px-4 py-2 min-h-[40px] text-sm rounded-lg transition-all duration-300 #{active_submenu_class(service_appointments_path)}", title: "Listagem e Filtros", data: { sidebarTarget: "link" } do %>
         <svg class="w-4 h-4 flex-shrink-0 min-w-[1rem]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/>
         </svg>
         <span class="ml-2 whitespace-nowrap transition-all duration-500 ease-in-out" data-sidebar-target="text">Listagem e Filtros</span>
       <% end %>
 
-      <%= link_to appointments_calendar_path, class: "flex items-center justify-start px-4 py-2 min-h-[40px] text-sm text-gray-400 hover:bg-white/5 hover:text-white rounded-lg transition-all duration-300", title: "Calendário", data: { sidebarTarget: "link" } do %>
+      <%= link_to appointments_calendar_path, class: "flex items-center justify-start px-4 py-2 min-h-[40px] text-sm rounded-lg transition-all duration-300 #{active_submenu_class(appointments_calendar_path)}", title: "Calendário", data: { sidebarTarget: "link" } do %>
         <svg class="w-4 h-4 flex-shrink-0 min-w-[1rem]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
         </svg>

@@ -8,6 +8,7 @@ export default class extends Controller {
     this.mobileOpen = false
     this.checkScreenSize()
     this.updateState()
+    this.openActiveSubmenu()
 
     // Listener para resize da janela
     this.resizeHandler = this.checkScreenSize.bind(this)
@@ -94,6 +95,9 @@ export default class extends Controller {
   }
 
   toggleSubmenu(event) {
+    // Em modo recolhido, não abrir submenu (só mostra ícone principal)
+    if (this.collapsed && !this.isMobile) return
+
     const submenuId = event.currentTarget.getAttribute("data-submenu-id")
     const submenu = document.getElementById(`${submenuId}-submenu`)
 
@@ -108,6 +112,27 @@ export default class extends Controller {
     }
   }
 
+  openActiveSubmenu() {
+    // Não abrir submenus se a barra estiver recolhida
+    if (this.collapsed && !this.isMobile) return
+
+    document.querySelectorAll('[id$="-submenu"]').forEach(submenu => {
+      const activeLink = submenu.querySelector(".bg-white")
+      if (activeLink) {
+        submenu.classList.remove("hidden")
+
+        const submenuId = submenu.id.replace("-submenu", "")
+        const button = document.querySelector(`[data-submenu-id="${submenuId}"]`)
+        if (button) {
+          const arrow = button.querySelector("svg:last-child")
+          if (arrow) {
+            arrow.classList.add("rotate-180")
+          }
+        }
+      }
+    })
+  }
+
   updateState() {
     if (this.isMobile) return // Não aplicar estado de collapse em mobile
 
@@ -117,6 +142,11 @@ export default class extends Controller {
 
       this.contentTarget.classList.remove("ml-72", "lg:ml-72")
       this.contentTarget.classList.add("ml-20", "lg:ml-20")
+
+      // Esconde todos os submenus quando recolhido
+      document.querySelectorAll('[id$="-submenu"]').forEach(submenu => {
+        submenu.classList.add("hidden")
+      })
 
       // Adiciona delay antes de esconder os textos
       setTimeout(() => {
@@ -155,6 +185,9 @@ export default class extends Controller {
       if (this.hasArrowTarget) {
         this.arrowTarget.classList.remove("rotate-180")
       }
+
+      // Reabre o submenu ativo ao expandir novamente
+      this.openActiveSubmenu()
     }
   }
 }

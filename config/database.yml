@@ -7,6 +7,9 @@ default: &default
   idle_timeout: 300
   prepared_statements: true
   advisory_locks: true
+  username: joao
+  password: 1605
+  host: localhost
 
 development:
   <<: *default
