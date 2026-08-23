@@ -22,6 +22,7 @@ class Product < ApplicationRecord
   scope :inactive, -> { where(active: false) }
   scope :by_category, ->(category) { where(category: category) }
   scope :low_stock, -> { where(stock_status: [ "critico", "baixo" ]) }
+  scope :by_stock_status, ->(status) { where(stock_status: status) }
   scope :search, ->(term) {
     where("name ILIKE ? OR code ILIKE ? OR brand ILIKE ?", "%#{term}%", "%#{term}%", "%#{term}%")
   }

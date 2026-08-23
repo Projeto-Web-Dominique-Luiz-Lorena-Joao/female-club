@@ -210,6 +210,23 @@ class ProductsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
+  test "index filtra por stock_status especifico" do
+    critical_product = create(:product, :critical_stock, name: "Produto Critico Unico")
+    low_product = create(:product, :low_stock, name: "Produto Baixo Unico")
+    out_of_stock_product = create(:product, :out_of_stock, name: "Produto Zerado Unico")
+
+    get products_url, params: { stock_status: "critico" }
+    assert_response :success
+    assert_match critical_product.name, response.body
+    assert_no_match(/#{low_product.name}/, response.body)
+    assert_no_match(/#{out_of_stock_product.name}/, response.body)
+
+    get products_url, params: { stock_status: "fora_de_estoque" }
+    assert_response :success
+    assert_match out_of_stock_product.name, response.body
+    assert_no_match(/#{critical_product.name}/, response.body)
+  end
+
   # ============================================
   # UPDATE COM ERRO
   # ============================================

@@ -10,6 +10,7 @@ class ProductsController < ApplicationController
     @products = @products.inactive if params[:active] == "false"
     @products = @products.by_category(params[:category]) if params[:category].present?
     @products = @products.low_stock if params[:low_stock] == "true"
+    @products = @products.by_stock_status(params[:stock_status]) if params[:stock_status].present?
     @products = @products.search(params[:search]) if params[:search].present?
 
     @products = @products.order(created_at: :desc)

@@ -105,7 +105,7 @@
 
   <div class="bg-white rounded-lg shadow p-6">
     <%= form_with url: products_path, method: :get, class: "space-y-4", local: true do %>
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
 
         <div>
           <%= text_field_tag :search, params[:search],
@@ -125,6 +125,18 @@
             { class: "w-full px-4 py-2 border border-gray-300 rounded-lg" } %>
         </div>
 
+        <div>
+          <%= select_tag :stock_status,
+            options_for_select([
+              ["Todo o Estoque", ""],
+              ["Em Estoque", "em_estoque"],
+              ["Estoque Baixo", "baixo"],
+              ["Estoque Crítico", "critico"],
+              ["Fora de Estoque", "fora_de_estoque"]
+            ], params[:stock_status]),
+            { class: "w-full px-4 py-2 border border-gray-300 rounded-lg" } %>
+        </div>
+
         <div class="flex justify-end space-x-2 items-center">
           <%= submit_tag "Buscar",
               class: "bg-black hover:bg-gray-700 text-white px-6 py-2 rounded-lg font-medium transition duration-200" %>
@@ -134,12 +146,6 @@
         </div>
 
       </div>
-
-      <div class="flex items-center space-x-2">
-        <%= check_box_tag :low_stock, "true", params[:low_stock] == "true" %>
-        <label for="low_stock" class="text-sm text-gray-700">Mostrar apenas estoque baixo</label>
-      </div>
-
     <% end %>
   </div>
 
