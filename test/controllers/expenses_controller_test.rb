@@ -42,6 +42,35 @@ class ExpensesControllerTest < ActionDispatch::IntegrationTest
     assert_select "table"
   end
 
+  test "index calcula KPIs sobre o total filtrado, nao apenas a pagina atual" do
+    @expense.update!(status: :inativa) # remove a despesa padrão do setup do cálculo
+    20.times { create(:expense, amount: 100, status: :ativa, expense_date: Date.current) }
+
+    get expenses_url
+    assert_response :success
+    assert_match "2.000,00", response.body
+  end
+
+  test "index calcula despesas fixas mensais somando apenas categoria fixa_mensal" do
+    @expense.update!(status: :inativa)
+    create(:expense, :aluguel, status: :ativa)
+    create(:expense, category: :esporadica, amount: 999, status: :ativa)
+
+    get expenses_url
+    assert_response :success
+    assert_match "2.500,00", response.body
+  end
+
+  test "index calcula total do mes atual excluindo meses anteriores" do
+    @expense.update!(status: :inativa)
+    create(:expense, amount: 300, status: :ativa, expense_date: Date.current)
+    create(:expense, amount: 500, status: :ativa, expense_date: 2.months.ago)
+
+    get expenses_url
+    assert_response :success
+    assert_match "300,00", response.body
+  end
+
   # ============================================
   # SHOW
   # ============================================

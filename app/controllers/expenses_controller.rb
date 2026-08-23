@@ -9,8 +9,13 @@ class ExpensesController < ApplicationController
     @expenses = @expenses.by_expense_type(params[:expense_type]) if params[:expense_type].present?
     @expenses = @expenses.by_category(params[:category]) if params[:category].present?
     @expenses = @expenses.by_payment_method(params[:payment_method]) if params[:payment_method].present?
-    @expenses = @expenses.by_date_range(params[:start_date].to_date, params[:end_date].to_date) if params[:start_date].present? && params[:end_date].present?
+    start_date = parse_filter_date(params[:start_date])
+    end_date = parse_filter_date(params[:end_date])
+    @expenses = @expenses.by_date_range(start_date, end_date) if start_date && end_date
     @expenses = @expenses.where(status: params[:status]) if params[:status].present?
+
+    load_expense_kpis(@expenses)
+
     @expenses = @expenses.page(params[:page]).per(per_page)
   end
 
@@ -67,5 +72,27 @@ end
 
   def expense_params
     params.require(:expense).permit(:employee_id, :supplier_id, :expense_date, :expense_type, :amount, :payment_method, :notes, :category, :status)
+  end
+
+  # KPIs calculados sobre o escopo filtrado (antes da paginação), para refletir
+  # os filtros aplicados sem ficar restrito aos itens da página atual
+  def load_expense_kpis(scope)
+    active_scope = params[:status].present? ? scope : scope.where(status: "ativa")
+
+    @total_expenses_amount = active_scope.sum(:amount)
+    @total_expenses_count = active_scope.count
+    @average_expense_amount = active_scope.average(:amount)&.round(2) || 0
+    @monthly_fixed_total = active_scope.monthly_fixed.sum(:amount)
+
+    current_month = Date.current.beginning_of_month..Date.current.end_of_month
+    previous_month_date = 1.month.ago.to_date
+    previous_month = previous_month_date.beginning_of_month..previous_month_date.end_of_month
+
+    @current_month_total = active_scope.where(expense_date: current_month).sum(:amount)
+    previous_month_total = active_scope.where(expense_date: previous_month).sum(:amount)
+
+    @month_over_month_change = if previous_month_total.positive?
+      (((@current_month_total - previous_month_total) / previous_month_total) * 100).round(1)
+    end
   end
 end
