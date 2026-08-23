@@ -7,7 +7,9 @@ class ProductOutputsController < ApplicationController
     @product_outputs = ProductOutput.recent
     @product_outputs = @product_outputs.by_product(params[:product_id]) if params[:product_id].present?
     @product_outputs = @product_outputs.by_output_type(params[:output_type]) if params[:output_type].present?
-    @product_outputs = @product_outputs.by_date_range(params[:start_date].to_date, params[:end_date].to_date) if params[:start_date].present? && params[:end_date].present?
+    start_date = parse_filter_date(params[:start_date])
+    end_date = parse_filter_date(params[:end_date])
+    @product_outputs = @product_outputs.by_date_range(start_date, end_date) if start_date && end_date
     @product_outputs = @product_outputs.page(params[:page]).per(per_page)
   end
 

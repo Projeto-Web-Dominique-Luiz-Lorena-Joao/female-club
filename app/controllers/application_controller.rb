@@ -41,6 +41,16 @@ class ApplicationController < ActionController::Base
     term.to_s.gsub("\x00", "").strip.truncate(max_length, omission: "")
   end
 
+  # Converte parâmetro de data com segurança, retornando nil se inválido
+  # ao invés de lançar Date::Error (evita erro 500 em filtros de período)
+  def parse_filter_date(value)
+    return nil if value.blank?
+
+    Date.parse(value.to_s)
+  rescue Date::Error, TypeError
+    nil
+  end
+
   # Torna per_page disponível como helper para as views
   helper_method :per_page
 
