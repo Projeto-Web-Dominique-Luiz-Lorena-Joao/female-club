@@ -124,12 +124,4 @@ Rails.application.routes.draw do
   end
 
   get "dashboard", to: "home#dashboard"
-
-  get "employee", to: "home#employees"
-  get "customers", to: "home#customers"
-  get "suppliers", to: "home#suppliers"
-  get "sales", to: "home#sales"
-  get "products", to: "home#products"
-  get "services", to: "home#services"
-  get "expenses", to: "home#expenses"
 end
