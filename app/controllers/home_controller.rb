@@ -34,6 +34,12 @@ class HomeController < ApplicationController
 
     # Vendas recentes
     calculate_recent_sales
+
+    # Vendas vencidas
+    calculate_overdue_sales
+
+    # Aniversariantes do mês
+    calculate_birthdays
   end
 
   private
@@ -184,6 +190,20 @@ class HomeController < ApplicationController
                            .where.not(status: "cancelado")
                            .order(sale_date: :desc, created_at: :desc)
                            .limit(5)
+  end
+
+  def calculate_overdue_sales
+    vendas_vencidas = Sale.includes(:customer, :employee).overdue
+
+    @total_vendas_vencidas = vendas_vencidas.count
+    @valor_total_vencido = vendas_vencidas.sum(:total_amount)
+    @vendas_vencidas = vendas_vencidas.order(due_date: :asc).limit(5)
+  end
+
+  def calculate_birthdays
+    @aniversariantes_mes = Customer.where.not(birth_date: nil)
+                                   .where("EXTRACT(MONTH FROM birth_date) = ?", Date.current.month)
+                                   .order(Arel.sql("EXTRACT(DAY FROM birth_date)"))
   end
 
   def calculate_variation(current, previous)

@@ -40,7 +40,7 @@ class Sale < ApplicationRecord
 
   scope :recent, -> { order(sale_date: :desc) }
   scope :by_status, ->(status) { where(status: status) }
-  scope :overdue, -> { where("due_date < ? AND status = ?", Date.today, "pendente") }
+  scope :overdue, -> { where("sales.due_date < ? AND sales.status = ?", Date.today, "pendente") }
   scope :by_period, ->(start_date, end_date) { where(sale_date: start_date..end_date) }
   scope :by_customer, ->(customer_id) { where(customer_id: customer_id) }
   scope :by_employee, ->(employee_id) { where(employee_id: employee_id) }

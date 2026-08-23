@@ -95,6 +95,36 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
+  test "dashboard exibe vendas vencidas com valor total correto" do
+    employee = create(:employee)
+    customer = create(:customer, full_name: "Cliente Vencido Teste")
+
+    create(:sale, :overdue, employee: employee, customer: customer, total_amount: 250, status: :pendente)
+
+    get dashboard_url
+    assert_response :success
+    assert_match "Vendas Vencidas", response.body
+    assert_match "Cliente Vencido Teste", response.body
+    assert_match "250,00", response.body
+  end
+
+  test "dashboard exibe aniversariantes apenas do mes atual" do
+    aniversariante = create(:customer, full_name: "Aniversariante Teste", birth_date: Date.current.change(year: 1990))
+    fora_do_mes = create(:customer, full_name: "Fora Do Mes Teste", birth_date: (Date.current + 6.months).change(year: 1990))
+
+    get dashboard_url
+    assert_response :success
+    assert_match "Aniversariante Teste", response.body
+    assert_no_match(/Fora Do Mes Teste/, response.body)
+  end
+
+  test "dashboard não quebra com cliente sem data de nascimento" do
+    create(:customer, birth_date: nil)
+
+    get dashboard_url
+    assert_response :success
+  end
+
   test "dashboard ignora vendas canceladas no cálculo de top produtos" do
     employee = create(:employee)
     product = create(:product, :with_stock, initial_stock: 100)

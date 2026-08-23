@@ -285,6 +285,71 @@
       </div>
 
     </div>
+
+    <!-- Vendas Vencidas + Aniversariantes do Mês -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+
+      <!-- Vendas Vencidas -->
+      <div class="bg-white rounded-lg shadow p-6">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h3 class="text-lg font-semibold text-gray-900">Vendas Vencidas</h3>
+            <% if @total_vendas_vencidas > 0 %>
+              <p class="text-xs text-red-600 mt-0.5">
+                <%= @total_vendas_vencidas %> venda<%= @total_vendas_vencidas > 1 ? "s" : "" %> &middot;
+                R$ <%= number_with_precision(@valor_total_vencido, precision: 2, delimiter: '.', separator: ',') %> em atraso
+              </p>
+            <% end %>
+          </div>
+          <%= link_to sales_path(status: "pendente"), class: "text-sm text-gray-500 hover:text-gray-900" do %>
+            Ver todas
+          <% end %>
+        </div>
+        <div class="space-y-3">
+          <% if @vendas_vencidas.any? %>
+            <% @vendas_vencidas.each do |venda| %>
+              <%= link_to sale_path(venda), class: "flex items-center justify-between p-3 rounded-lg bg-red-50 hover:bg-red-100 transition" do %>
+                <div class="min-w-0 flex-1">
+                  <p class="text-sm font-medium text-gray-900 truncate"><%= venda.customer&.full_name || "Cliente Avulso" %></p>
+                  <p class="text-xs text-red-600">Venceu em <%= I18n.l(venda.due_date, format: :short) %> &middot; <%= venda.days_overdue %>d de atraso</p>
+                </div>
+                <p class="text-sm font-bold text-gray-900 flex-shrink-0 ml-3">R$ <%= number_with_precision(venda.total_amount, precision: 2, delimiter: '.', separator: ',') %></p>
+              <% end %>
+            <% end %>
+          <% else %>
+            <p class="text-gray-500 text-center py-4">Nenhuma venda vencida</p>
+          <% end %>
+        </div>
+      </div>
+
+      <!-- Aniversariantes do Mês -->
+      <div class="bg-white rounded-lg shadow p-6">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-lg font-semibold text-gray-900">Aniversariantes do Mês</h3>
+          <%= link_to customers_path, class: "text-sm text-gray-500 hover:text-gray-900" do %>
+            Ver todos
+          <% end %>
+        </div>
+        <div class="space-y-3">
+          <% if @aniversariantes_mes.any? %>
+            <% @aniversariantes_mes.each do |cliente| %>
+              <%= link_to customer_path(cliente), class: "flex items-center justify-between p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition" do %>
+                <div class="min-w-0 flex-1">
+                  <p class="text-sm font-medium text-gray-900 truncate"><%= cliente.full_name %></p>
+                  <p class="text-xs text-gray-500"><%= cliente.phone_number.present? ? cliente.formatted_phone : cliente.email %></p>
+                </div>
+                <span class="flex-shrink-0 text-xs px-2 py-1 rounded-full bg-pink-100 text-pink-800 font-medium ml-3">
+                  <%= I18n.l(cliente.birth_date, format: "%d/%m") %>
+                </span>
+              <% end %>
+            <% end %>
+          <% else %>
+            <p class="text-gray-500 text-center py-4">Nenhum aniversariante este mês</p>
+          <% end %>
+        </div>
+      </div>
+
+    </div>
 </div>
 
 <script>
