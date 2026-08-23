@@ -157,7 +157,5 @@
   </div>
 
   <!-- Paginação Bottom -->
-  <% if @customers.any? %>
-    <%= render "shared/pagination_top", collection: @customers %>
-  <% end %>
+  <%= render "shared/pagination_top", collection: @customers %>
 </div>
