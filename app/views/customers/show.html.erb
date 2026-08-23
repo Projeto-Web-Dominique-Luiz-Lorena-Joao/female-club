@@ -143,7 +143,87 @@
     <div class="px-6 py-4 bg-black">
       <h2 class="text-xl font-bold text-white">Histórico de Compras</h2>
     </div>
-    <div class="p-6">
-    </div>
+
+    <% if @sales.any? %>
+      <%= render "shared/pagination_top", collection: @sales %>
+
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-100">
+            <tr>
+              <th class="px-6 py-3 text-center text-xs font-medium text-gray-600 uppercase">Data</th>
+              <th class="px-6 py-3 text-center text-xs font-medium text-gray-600 uppercase">Itens</th>
+              <th class="px-6 py-3 text-center text-xs font-medium text-gray-600 uppercase">Funcionário</th>
+              <th class="px-6 py-3 text-center text-xs font-medium text-gray-600 uppercase">Valor Total</th>
+              <th class="px-6 py-3 text-center text-xs font-medium text-gray-600 uppercase">Pagamento</th>
+              <th class="px-6 py-3 text-center text-xs font-medium text-gray-600 uppercase">Status</th>
+              <th class="px-6 py-3 text-center text-xs font-medium text-gray-600 uppercase">Ações</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            <% @sales.each do |sale| %>
+              <tr class="hover:bg-gray-50">
+                <td class="px-6 py-4 text-center text-sm text-gray-900">
+                  <%= sale.sale_date.strftime("%d/%m/%Y") %>
+                  <% if sale.overdue? %>
+                    <span class="block text-xs text-red-600 font-medium mt-1">Vencida (<%= sale.days_overdue %>d)</span>
+                  <% end %>
+                </td>
+
+                <td class="px-6 py-4 text-center text-sm text-gray-900">
+                  <% items = sale.sale_products.map { |sp| sp.product ? "#{sp.product.name} (#{sp.quantity}x)" : nil }.compact +
+                             sale.sale_services.map { |ss| ss.service ? "#{ss.service.name} (#{ss.quantity}x)" : nil }.compact %>
+                  <% if items.any? %>
+                    <span class="text-xs"><%= items.join(", ") %></span>
+                  <% else %>
+                    <span class="text-xs text-gray-400">-</span>
+                  <% end %>
+                </td>
+
+                <td class="px-6 py-4 text-center text-sm text-gray-900"><%= sale.employee_name %></td>
+
+                <td class="px-6 py-4 text-center text-sm font-semibold text-gray-900">
+                  R$ <%= number_to_currency(sale.total_amount, unit: "", precision: 2, delimiter: ".", separator: ",") %>
+                  <% if sale.discount_percentage.present? && sale.discount_percentage > 0 %>
+                    <span class="block text-xs text-green-600 font-normal">Desc. <%= sale.discount_percentage %>%</span>
+                  <% end %>
+                </td>
+
+                <td class="px-6 py-4 text-center text-sm text-gray-900"><%= sale.payment_method.humanize %></td>
+
+                <td class="px-6 py-4 text-center">
+                  <% if sale.pago? %>
+                    <span class="px-3 py-1 text-xs rounded-full bg-green-100 text-green-800 font-medium">Pago</span>
+                  <% elsif sale.pendente? %>
+                    <span class="px-3 py-1 text-xs rounded-full bg-yellow-100 text-yellow-800 font-medium">Pendente</span>
+                  <% elsif sale.cancelado? %>
+                    <span class="px-3 py-1 text-xs rounded-full bg-red-100 text-red-800 font-medium">Cancelado</span>
+                  <% else %>
+                    <span class="px-3 py-1 text-xs rounded-full bg-gray-100 text-gray-800 font-medium">Expirado</span>
+                  <% end %>
+                </td>
+
+                <td class="px-6 py-4 text-center">
+                  <%= link_to "Visualizar", sale_path(sale), class: "bg-blue-200 text-blue-700 px-5 py-2 rounded-lg hover:bg-blue-100 text-center text-sm font-medium" %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+
+      <%= render "shared/pagination_top", collection: @sales %>
+    <% else %>
+      <div class="text-center py-12 px-6">
+        <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+        </svg>
+        <p class="mt-4 text-lg text-gray-600">Nenhuma compra registrada</p>
+        <%= link_to new_sale_path,
+            class: "mt-4 inline-block bg-black hover:bg-gray-700 text-white px-6 py-3 rounded-lg font-medium transition duration-200" do %>
+          Registrar primeira compra
+        <% end %>
+      </div>
+    <% end %>
   </div>
 </div>

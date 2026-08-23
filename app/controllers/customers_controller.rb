@@ -45,6 +45,11 @@ class CustomersController < ApplicationController
   end
 
   def show
+    @sales = @customer.sales
+                       .includes(:employee, sale_products: :product, sale_services: :service)
+                       .order(sale_date: :desc)
+                       .page(params[:page])
+                       .per(per_page)
   end
 
   def new
