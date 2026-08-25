@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["text", "arrow", "arrowButton", "sidebar", "content", "link", "overlay"]
+  static targets = ["text", "arrow", "arrowButton", "sidebar", "content", "link", "overlay", "nav"]
 
   connect() {
     this.collapsed = localStorage.getItem("sidebarCollapsed") === "true"
@@ -9,14 +9,36 @@ export default class extends Controller {
     this.checkScreenSize()
     this.updateState(true)
     this.openActiveSubmenu()
+    this.restoreScrollPosition()
 
     // Listener para resize da janela
     this.resizeHandler = this.checkScreenSize.bind(this)
     window.addEventListener('resize', this.resizeHandler)
+
+    // Guarda a posição de rolagem do menu para restaurar na próxima navegação
+    if (this.hasNavTarget) {
+      this.scrollHandler = () => {
+        sessionStorage.setItem("sidebarScrollTop", this.navTarget.scrollTop)
+      }
+      this.navTarget.addEventListener("scroll", this.scrollHandler)
+    }
   }
 
   disconnect() {
     window.removeEventListener('resize', this.resizeHandler)
+    if (this.hasNavTarget && this.scrollHandler) {
+      this.navTarget.removeEventListener("scroll", this.scrollHandler)
+    }
+  }
+
+  // Restaura o scroll do menu (perdido a cada carregamento de página, já que
+  // o <nav> é recriado do zero e volta ao topo mesmo estando na mesma seção)
+  restoreScrollPosition() {
+    if (!this.hasNavTarget) return
+    const saved = sessionStorage.getItem("sidebarScrollTop")
+    if (saved) {
+      this.navTarget.scrollTop = parseInt(saved, 10)
+    }
   }
 
   checkScreenSize() {
