@@ -5,15 +5,25 @@ require 'rails_helper'
 RSpec.describe ApplicationHelper, type: :helper do
   describe '#active_class' do
     before do
-      allow(helper).to receive(:current_page?).and_return(false)
+      allow(helper.request).to receive(:path).and_return('/other')
     end
 
-    context 'when current page matches' do
+    context 'when current page matches exactly' do
       before do
-        allow(helper).to receive(:current_page?).with('/products').and_return(true)
+        allow(helper.request).to receive(:path).and_return('/products')
       end
 
       it 'returns active class' do
+        expect(helper.active_class('/products')).to eq('bg-white text-black')
+      end
+    end
+
+    context 'when on a sub-page of the current section (e.g. show/edit)' do
+      before do
+        allow(helper.request).to receive(:path).and_return('/products/5/edit')
+      end
+
+      it 'still returns active class' do
         expect(helper.active_class('/products')).to eq('bg-white text-black')
       end
     end
@@ -23,16 +33,36 @@ RSpec.describe ApplicationHelper, type: :helper do
         expect(helper.active_class('/products')).to eq('text-gray-300 hover:bg-white/10 hover:text-white')
       end
     end
+
+    context 'when path is only a prefix collision, not a real sub-page' do
+      before do
+        allow(helper.request).to receive(:path).and_return('/productsfoo')
+      end
+
+      it 'returns inactive class' do
+        expect(helper.active_class('/products')).to eq('text-gray-300 hover:bg-white/10 hover:text-white')
+      end
+    end
   end
 
   describe '#active_submenu?' do
     before do
-      allow(helper).to receive(:current_page?).and_return(false)
+      allow(helper.request).to receive(:path).and_return('/other')
     end
 
     context 'when one of the paths matches' do
       before do
-        allow(helper).to receive(:current_page?).with('/products').and_return(true)
+        allow(helper.request).to receive(:path).and_return('/products')
+      end
+
+      it 'returns true' do
+        expect(helper.active_submenu?('/products', '/services')).to be true
+      end
+    end
+
+    context 'when on a sub-page of one of the paths' do
+      before do
+        allow(helper.request).to receive(:path).and_return('/services/3')
       end
 
       it 'returns true' do
