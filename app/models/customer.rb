@@ -41,7 +41,10 @@ class Customer < ApplicationRecord
 
   def age
     return nil if birth_date.nil?
-    ((Date.today - birth_date).to_i / 365.25).floor
+    today = Date.today
+    years = today.year - birth_date.year
+    years -= 1 if today < birth_date + years.years
+    years
   end
 
   def total_purchases

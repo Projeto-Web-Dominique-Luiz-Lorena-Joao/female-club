@@ -36,8 +36,8 @@ RSpec.describe 'Suppliers', type: :request do
 
     context 'with status filter' do
       before do
-        create(:supplier, active: true)
-        create(:supplier, active: false)
+        create(:supplier, status: :ativo)
+        create(:supplier, status: :inativo)
       end
 
       it 'filters by active status' do
@@ -218,7 +218,7 @@ RSpec.describe 'Suppliers', type: :request do
   end
 
   describe 'DELETE /suppliers/:id' do
-    let!(:supplier) { create(:supplier, active: true) }
+    let!(:supplier) { create(:supplier, status: :ativo) }
 
     it 'inactivates the supplier instead of destroying' do
       expect {
@@ -226,7 +226,7 @@ RSpec.describe 'Suppliers', type: :request do
       }.not_to change(Supplier, :count)
 
       supplier.reload
-      expect(supplier.active).to be false
+      expect(supplier.status).to eq('inativo')
     end
 
     it 'redirects to suppliers list' do
@@ -245,12 +245,12 @@ RSpec.describe 'Suppliers', type: :request do
   end
 
   describe 'PATCH /suppliers/:id/reactivate' do
-    let(:inactive_supplier) { create(:supplier, active: false) }
+    let(:inactive_supplier) { create(:supplier, status: :inativo) }
 
     it 'reactivates the supplier' do
       patch reactivate_supplier_path(inactive_supplier)
       inactive_supplier.reload
-      expect(inactive_supplier.active).to be true
+      expect(inactive_supplier.status).to eq('ativo')
     end
 
     it 'redirects to the supplier' do
