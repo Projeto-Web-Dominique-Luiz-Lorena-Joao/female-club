@@ -85,6 +85,7 @@ jobs:
           DATABASE_URL: postgres://postgres:postgres@localhost:5432
         run: |
           bin/rails db:test:prepare
+          bin/rails tailwindcss:build
           bundle exec rspec
 
       - name: Keep screenshots from failed system tests
