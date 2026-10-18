@@ -1,4 +1,7 @@
 Rails.application.routes.draw do
+  # Health check usado pelo Render (retorna 200 se a app inicializou sem erros)
+  get "up" => "rails/health#show", as: :rails_health_check
+
   namespace :api do
     get "employees/search", to: "employees#search"
     get "suppliers/search", to: "suppliers#search"
