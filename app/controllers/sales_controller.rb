@@ -1,5 +1,5 @@
 class SalesController < ApplicationController
-  before_action :set_sale, only: [:show, :edit, :update, :destroy, :mark_as_paid]
+  before_action :set_sale, only: [ :show, :edit, :update, :mark_as_paid ]
 
   def index
     @sales = Sale.includes(:customer, :employee)
@@ -15,22 +15,22 @@ class SalesController < ApplicationController
 
     # Ordenação por valor total
     if params[:sort_amount].present?
-      @sales = @sales.order(total_amount: params[:sort_amount] == 'desc' ? :desc : :asc)
+      @sales = @sales.order(total_amount: params[:sort_amount] == "desc" ? :desc : :asc)
     # Ordenação por valor descontado em reais (desconto em reais)
     elsif params[:sort_discounted_amount].present?
       # Ordenar por valor do desconto em reais (total_amount * discount_percentage / 100)
-      order_direction = params[:sort_discounted_amount] == 'desc' ? 'DESC' : 'ASC'
-      @sales = @sales.order(Arel.sql("total_amount * COALESCE(discount_percentage, 0)::float / 100 #{order_direction}"))
+      # SEGURANÇA: Whitelist estrito para prevenir SQL Injection
+      direction = params[:sort_discounted_amount].to_s.downcase == "desc" ? "DESC" : "ASC"
+      @sales = @sales.order(Arel.sql("total_amount * COALESCE(discount_percentage, 0)::float / 100 #{direction}"))
     # Ordenação por desconto aplicado (percentual)
     elsif params[:sort_discount].present?
-      @sales = @sales.order(discount_percentage: params[:sort_discount] == 'desc' ? :desc : :asc)
+      @sales = @sales.order(discount_percentage: params[:sort_discount] == "desc" ? :desc : :asc)
     else
       # Ordenação padrão (mais recente)
       @sales = @sales.recent
     end
 
-    # Aplicar paginação DEPOIS de todas as ordenações
-    @sales = @sales.page(params[:page]).per(20)
+    @sales = @sales.page(params[:page]).per(per_page)
   end
 
   def show
@@ -58,7 +58,7 @@ class SalesController < ApplicationController
     end
 
     if @sale.save
-      redirect_to @sale, notice: 'Venda criada com sucesso.'
+      redirect_to @sale, notice: "Venda criada com sucesso."
     else
       load_form_data
       render :new, status: :unprocessable_entity
@@ -78,29 +78,24 @@ class SalesController < ApplicationController
     end
 
     if @sale.update(filtered_params)
-      redirect_to @sale, notice: 'Venda atualizada com sucesso.'
+      redirect_to @sale, notice: "Venda atualizada com sucesso."
     else
       load_form_data
       render :edit, status: :unprocessable_entity
     end
   end
 
-  def destroy
-    @sale.destroy
-    redirect_to sales_url, notice: 'Venda excluída com sucesso.'
-  end
-
   def mark_as_paid
     if @sale.mark_as_paid!
-      redirect_to @sale, notice: 'Venda marcada como paga.'
+      redirect_to @sale, notice: "Venda marcada como paga."
     else
-      redirect_to @sale, alert: 'Erro ao marcar venda como paga.'
+      redirect_to @sale, alert: "Erro ao marcar venda como paga."
     end
   end
 
   def search_employees
     query = params[:query].to_s.strip
-    @employees = Employee.where(status: 'ativo')
+    @employees = Employee.where(status: "ativo")
                         .where("full_name ILIKE ?", "%#{query}%")
                         .order(:full_name)
                         .limit(10)
@@ -129,7 +124,7 @@ class SalesController < ApplicationController
 
   def search_services
     query = params[:query].to_s.strip
-    @services = Service.where(active: 'ativo')
+    @services = Service.where(active: "ativo")
                       .where("name ILIKE ?", "%#{query}%")
                       .order(:name)
                       .limit(10)
@@ -155,32 +150,32 @@ class SalesController < ApplicationController
       :notes,
       :status,
       :paid_date,
-      sale_products_attributes: [:id, :product_id, :quantity, :unit_price, :_destroy],
-      sale_services_attributes: [:id, :service_id, :quantity, :unit_price, :_destroy]
+      sale_products_attributes: [ :id, :product_id, :quantity, :unit_price, :_destroy ],
+      sale_services_attributes: [ :id, :service_id, :quantity, :unit_price, :_destroy ]
     )
   end
 
 
   def load_form_data
     @customers = Customer.order(:full_name)
-    @employees = Employee.where(status: 'active').order(:full_name)
+    @employees = Employee.where(status: "active").order(:full_name)
     @payment_methods = [
-      ['Dinheiro', 'dinheiro'],
-      ['Cartão de Crédito', 'cartao_credito'],
-      ['Cartão de Débito', 'cartao_debito'],
-      ['PIX', 'pix'],
-      ['Transferência', 'transferencia'],
-      ['Boleto', 'boleto']
+      [ "Dinheiro", "dinheiro" ],
+      [ "Cartão de Crédito", "cartao_credito" ],
+      [ "Cartão de Débito", "cartao_debito" ],
+      [ "PIX", "pix" ],
+      [ "Transferência", "transferencia" ],
+      [ "Boleto", "boleto" ]
     ]
 
     # Mapeia as opções de status para português e mantém a ordem
     status_labels = {
-      'pendente' => 'Pendente',
-      'pago' => 'Pago',
-      'cancelado' => 'Cancelado',
-      'expirado' => 'Expirado'
+      "pendente" => "Pendente",
+      "pago" => "Pago",
+      "cancelado" => "Cancelado",
+      "expirado" => "Expirado"
     }
-    @statuses = Sale.statuses.keys.map { |s| [status_labels[s], s] }
+    @statuses = Sale.statuses.keys.map { |s| [ status_labels[s], s ] }
   end
 
   def filter_empty_nested_attributes(sale)
@@ -216,7 +211,7 @@ class SalesController < ApplicationController
         end
 
         # If marked for destruction but has no ID, it was never saved - SKIP IT completely
-        attrs[:_destroy].to_s == '1' && attrs[:id].blank?
+        attrs[:_destroy].to_s == "1" && attrs[:id].blank?
       end
 
       # Replace the attributes with filtered version
@@ -242,7 +237,7 @@ class SalesController < ApplicationController
         end
 
         # If marked for destruction but has no ID, it was never saved - SKIP IT completely
-        attrs[:_destroy].to_s == '1' && attrs[:id].blank?
+        attrs[:_destroy].to_s == "1" && attrs[:id].blank?
       end
 
       # Replace the attributes with filtered version

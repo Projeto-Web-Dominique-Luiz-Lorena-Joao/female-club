@@ -1,5 +1,4 @@
 class Guarantor < ApplicationRecord
-
   has_one :customer, dependent: :nullify
 
   enum :relationship, {
@@ -15,14 +14,13 @@ class Guarantor < ApplicationRecord
   }
 
   enum :status, {
-    ativo: 'ativo',
-    inativo: 'inativo'
+    ativo: "ativo",
+    inativo: "inativo"
   }, default: :ativo
 
   validates :full_name, presence: true, length: { minimum: 3, maximum: 100 }
-  validates :cpf, format: { with: /\A\d{11}\z/, message: "deve conter 11 dígitos" },
-                  allow_blank: true,
-                  uniqueness: true
+  validates :cpf, allow_blank: true, uniqueness: true
+  validate :cpf_must_be_valid
   validates :phone, format: { with: /\A\d{10,11}\z/, message: "deve conter 10 ou 11 dígitos" },
                     allow_blank: true
   validates :relationship, length: { maximum: 50 }, allow_blank: true
@@ -55,12 +53,20 @@ class Guarantor < ApplicationRecord
   private
 
   def normalize_cpf
-    self.cpf = cpf.to_s.gsub(/\D/, '') if cpf.present?
+    self.cpf = cpf.to_s.gsub(/\D/, "") if cpf.present?
     self.cpf = nil if cpf.blank?
   end
 
   def normalize_phone
-    self.phone = phone.to_s.gsub(/\D/, '') if phone.present?
+    self.phone = phone.to_s.gsub(/\D/, "") if phone.present?
     self.phone = nil if phone.blank?
+  end
+
+  def cpf_must_be_valid
+    return if cpf.blank?
+
+    unless CPF.valid?(cpf)
+      errors.add(:cpf, "não é válido")
+    end
   end
 end

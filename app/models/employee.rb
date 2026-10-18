@@ -5,30 +5,36 @@ class Employee < ApplicationRecord
   has_many :expenses, dependent: :nullify
   # has_many :incomes, dependent: :nullify
 
+  has_one_attached :photo
+
+  # SEGURANÇA: Validação de upload de imagem
+  validate :acceptable_photo
+
 
   enum :position, {
-    gerente: 'gerente',
-    vendedor: 'vendedor',
-    caixa: 'caixa',
-    estoquista: 'estoquista',
-    manicure: 'manicure',
-    cabeleireira: 'cabeleireira',
-    esteticista: 'esteticista',
-    maquiador: 'maquiador',
-    atendente: 'atendente',
-    auxiliar: 'auxiliar'
+    gerente: "gerente",
+    vendedor: "vendedor",
+    caixa: "caixa",
+    estoquista: "estoquista",
+    manicure: "manicure",
+    cabeleireira: "cabeleireira",
+    esteticista: "esteticista",
+    maquiador: "maquiador",
+    atendente: "atendente",
+    auxiliar: "auxiliar"
   }, suffix: true
 
   enum :status, {
-    ativo: 'ativo',
-    inativo: 'inativo',
-    ferias: 'ferias',
-    afastado: 'afastado'
+    ativo: "ativo",
+    inativo: "inativo",
+    ferias: "ferias",
+    afastado: "afastado"
   }, suffix: true, default: :ativo
 
   validates :full_name, presence: true, length: { minimum: 3 }
-  validates :cpf, presence: true, uniqueness: true, length: { is: 11 }
-  validates :email, format: { with: URI::MailTo::EMAIL_REGEXP }, allow_blank: true
+  validates :cpf, presence: true, uniqueness: true
+  validate :cpf_must_be_valid
+  validates :email, format: { with: URI::MailTo::EMAIL_REGEXP, message: "não é válido" }, uniqueness: { case_sensitive: false, message: "já está em uso" }, allow_blank: true
   validates :salary, numericality: { greater_than: 0 }, allow_nil: true
   validates :phone, presence: true
   validates :position, presence: true, inclusion: { in: positions.keys }
@@ -38,29 +44,29 @@ class Employee < ApplicationRecord
   before_validation :clean_phone
 
 
-  scope :active, -> { where(status: ['ativo', 'ferias']) }
-  scope :on_payroll, -> { where(status: ['ativo', 'ferias']) }
-  scope :working, -> { where(status: 'ativo') }
+  scope :active, -> { where(status: [ "ativo", "ferias" ]) }
+  scope :on_payroll, -> { where(status: [ "ativo", "ferias" ]) }
+  scope :working, -> { where(status: "ativo") }
   scope :recent, -> { order(created_at: :desc) }
   scope :by_position, ->(position) { where(position: position) if position.present? }
 
   def clean_cpf
-    self.cpf = cpf.gsub(/\D/, '') if cpf.present?
+    self.cpf = cpf.gsub(/\D/, "") if cpf.present?
   end
 
   def clean_phone
-  self.phone = phone.gsub(/\D/, '') if phone.present?
+  self.phone = phone.gsub(/\D/, "") if phone.present?
   end
 
   def formatted_cpf
-    return '-' if cpf.blank?
+    return "-" if cpf.blank?
     cpf.gsub(/(\d{3})(\d{3})(\d{3})(\d{2})/, '\1.\2.\3-\4')
   end
 
 
   def formatted_phone
-    return '-' if phone.blank?
-    clean = phone.gsub(/\D/, '')
+    return "-" if phone.blank?
+    clean = phone.gsub(/\D/, "")
 
     if clean.length == 11
       clean.gsub(/(\d{2})(\d{5})(\d{4})/, '(\1) \2-\3')  # Celular
@@ -72,7 +78,7 @@ class Employee < ApplicationRecord
   end
 
   def formatted_salary
-    return '-' if salary.nil?
+    return "-" if salary.nil?
     "R$ #{salary.to_f.round(2)}"
   end
 
@@ -82,7 +88,7 @@ class Employee < ApplicationRecord
   end
 
   def formatted_admission_time
-    return '-' if admission_date.nil?
+    return "-" if admission_date.nil?
 
     days_diff = (Date.today - admission_date).to_i
     years = (days_diff / 365.25).floor
@@ -104,16 +110,42 @@ class Employee < ApplicationRecord
 
   def status_color
     case status
-    when 'ativo' then 'bg-green-100 text-green-800'
-    when 'inativo' then 'bg-gray-100 text-gray-800'
-    when 'ferias' then 'bg-blue-100 text-blue-800'
-    when 'afastado' then 'bg-yellow-100 text-yellow-800'
-    else 'bg-gray-100 text-gray-800'
+    when "ativo" then "bg-green-100 text-green-800"
+    when "inativo" then "bg-gray-100 text-gray-800"
+    when "ferias" then "bg-blue-100 text-blue-800"
+    when "afastado" then "bg-yellow-100 text-yellow-800"
+    else "bg-gray-100 text-gray-800"
     end
   end
 
 
   def on_payroll?
-    ['ativo', 'ferias'].include?(status)
+    [ "ativo", "ferias" ].include?(status)
+  end
+
+  private
+
+  def cpf_must_be_valid
+    return if cpf.blank?
+
+    unless CPF.valid?(cpf)
+      errors.add(:cpf, "não é válido")
+    end
+  end
+
+  # SEGURANÇA: Validação de arquivo de imagem
+  def acceptable_photo
+    return unless photo.attached?
+
+    # Validar tipo de arquivo (MIME type)
+    acceptable_types = [ "image/jpeg", "image/png", "image/gif", "image/webp" ]
+    unless acceptable_types.include?(photo.content_type)
+      errors.add(:photo, "deve ser uma imagem (JPEG, PNG, GIF ou WebP)")
+    end
+
+    # Validar tamanho do arquivo (máximo 5MB)
+    if photo.byte_size > 5.megabytes
+      errors.add(:photo, "é muito grande (máximo 5MB)")
+    end
   end
 end

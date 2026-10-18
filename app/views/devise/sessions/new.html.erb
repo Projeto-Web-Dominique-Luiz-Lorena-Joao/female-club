@@ -55,12 +55,12 @@
         <% end %>
 
         <div>
-          <%= f.submit "Entrar", class: "w-full bg-black hover:bg-gray-800 text-white font-medium py-3 px-4 rounded-lg transition duration-200 cursor-pointer" %>
+          <%= f.submit "Entrar", class: "w-full bg-black hover:bg-gray-700 text-white font-medium py-3 px-4 rounded-lg transition duration-200 cursor-pointer" %>
         </div>
 
         <div class="text-center text-sm text-gray-600">
           Não tem uma conta? 
-          <%= link_to "Solicitar acesso", new_registration_path(resource_name), class: "text-gray-900 font-medium hover:underline" %>
+          <%= link_to "Solicitar acesso", new_access_request_path, class: "text-gray-900 font-medium hover:underline" %>
         </div>
       <% end %>
     </div>

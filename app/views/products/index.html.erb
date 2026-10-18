@@ -11,9 +11,9 @@
     <% end %>
   </div>
 
-  <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
     <!-- Card Total de Produtos -->
-    <div class="bg-white rounded-lg border border-gray-200 p-4">
+    <div class="bg-white rounded-lg border border-gray-200 p-4" title="Quantidade total de produtos cadastrados no sistema">
       <div class="flex items-start">
         <div class="flex-shrink-0 bg-gray-100 rounded-lg p-3">
           <svg class="h-6 w-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -28,7 +28,7 @@
     </div>
 
     <!-- Card Produtos Ativos -->
-    <div class="bg-white rounded-lg border border-gray-200 p-4">
+    <div class="bg-white rounded-lg border border-gray-200 p-4" title="Produtos disponíveis para venda">
       <div class="flex items-start">
         <div class="flex-shrink-0 bg-green-100 rounded-lg p-3">
           <svg class="h-6 w-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -43,31 +43,61 @@
     </div>
 
     <!-- Card Produtos Inativos -->
-    <div class="bg-white rounded-lg border border-gray-200 p-4">
+    <div class="bg-white rounded-lg border border-gray-200 p-4" title="Produtos temporariamente indisponíveis para venda">
       <div class="flex items-start">
-        <div class="flex-shrink-0 bg-red-100 rounded-lg p-3">
-          <svg class="h-6 w-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="flex-shrink-0 bg-orange-100 rounded-lg p-3">
+          <svg class="h-6 w-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
           </svg>
         </div>
         <div class="ml-3 flex-1">
           <p class="text-xs text-gray-500 font-medium">Produtos Inativos</p>
-          <p class="text-2xl font-bold text-red-600 mt-1"><%= Product.inactive.count %></p>
+          <p class="text-2xl font-bold text-orange-600 mt-1"><%= Product.inactive.count %></p>
         </div>
       </div>
     </div>
 
     <!-- Card Estoque Baixo -->
-    <div class="bg-white rounded-lg border border-gray-200 p-4">
+    <div class="bg-white rounded-lg border border-gray-200 p-4" title="Produtos com estoque entre o mínimo e o dobro do mínimo configurado">
       <div class="flex items-start">
-        <div class="flex-shrink-0 bg-orange-100 rounded-lg p-3">
-          <svg class="h-6 w-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="flex-shrink-0 bg-yellow-100 rounded-lg p-3">
+          <svg class="h-6 w-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
           </svg>
         </div>
         <div class="ml-3 flex-1">
           <p class="text-xs text-gray-500 font-medium">Estoque Baixo</p>
-          <p class="text-2xl font-bold text-orange-600 mt-1"><%= Product.low_stock.count %></p>
+          <p class="text-2xl font-bold text-yellow-600 mt-1"><%= Product.where(stock_status: 'baixo').count %></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card Estoque Crítico -->
+    <div class="bg-white rounded-lg border border-gray-200 p-4" title="Produtos com quantidade igual ou abaixo do estoque mínimo - reposição urgente necessária">
+      <div class="flex items-start">
+        <div class="flex-shrink-0 bg-purple-100 rounded-lg p-3">
+          <svg class="h-6 w-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+          </svg>
+        </div>
+        <div class="ml-3 flex-1">
+          <p class="text-xs text-gray-500 font-medium">Estoque Crítico</p>
+          <p class="text-2xl font-bold text-purple-600 mt-1"><%= Product.where(stock_status: 'critico').count %></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card Fora de Estoque -->
+    <div class="bg-white rounded-lg border border-gray-200 p-4" title="Produtos sem quantidade disponível em estoque">
+      <div class="flex items-start">
+        <div class="flex-shrink-0 bg-red-100 rounded-lg p-3">
+          <svg class="h-6 w-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </div>
+        <div class="ml-3 flex-1">
+          <p class="text-xs text-gray-500 font-medium">Fora de Estoque</p>
+          <p class="text-2xl font-bold text-red-600 mt-1"><%= Product.where(stock_status: 'fora_de_estoque').count %></p>
         </div>
       </div>
     </div>
@@ -75,7 +105,7 @@
 
   <div class="bg-white rounded-lg shadow p-6">
     <%= form_with url: products_path, method: :get, class: "space-y-4", local: true do %>
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
 
         <div>
           <%= text_field_tag :search, params[:search],
@@ -95,6 +125,18 @@
             { class: "w-full px-4 py-2 border border-gray-300 rounded-lg" } %>
         </div>
 
+        <div>
+          <%= select_tag :stock_status,
+            options_for_select([
+              ["Todo o Estoque", ""],
+              ["Em Estoque", "em_estoque"],
+              ["Estoque Baixo", "baixo"],
+              ["Estoque Crítico", "critico"],
+              ["Fora de Estoque", "fora_de_estoque"]
+            ], params[:stock_status]),
+            { class: "w-full px-4 py-2 border border-gray-300 rounded-lg" } %>
+        </div>
+
         <div class="flex justify-end space-x-2 items-center">
           <%= submit_tag "Buscar",
               class: "bg-black hover:bg-gray-700 text-white px-6 py-2 rounded-lg font-medium transition duration-200" %>
@@ -104,14 +146,13 @@
         </div>
 
       </div>
-
-      <div class="flex items-center space-x-2">
-        <%= check_box_tag :low_stock, "true", params[:low_stock] == "true" %>
-        <label for="low_stock" class="text-sm text-gray-700">Mostrar apenas estoque baixo</label>
-      </div>
-
     <% end %>
   </div>
+
+  <!-- Paginação Topo -->
+  <% if @products.any? %>
+    <%= render "shared/pagination_top", collection: @products %>
+  <% end %>
 
   <div class="bg-white rounded-lg shadow overflow-hidden">
     <% if @products.any? %>
@@ -145,7 +186,7 @@
 
               <td class="px-6 py-4 text-sm text-center text-gray-900">
                 <% if product.category.present? %>
-                  <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                  <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium <%= product.category_badge_class %>">
                     <%= Product.categories[product.category] %>
                   </span>
                 <% else %>
@@ -156,9 +197,6 @@
               <td class="px-6 py-4 text-center text-sm text-green-600">
                 <% if product.sale_price.present? %>
                   <p class="font-medium">R$ <%= number_with_precision(product.sale_price, precision: 2, delimiter: ",", separator: ".") %></p>
-                  <% if product.purchase_price.present? && product.purchase_price > 0 %>
-                    </p>
-                  <% end %>
                 <% else %>
                   <span class="text-gray-400">-</span>
                 <% end %>
@@ -166,9 +204,17 @@
 
               <td class="px-6 py-4 text-center">
                 <div class="flex flex-col items-center">
-                  <p class="text-sm font-medium text-gray-900"><%= product.quantity || 0 %></p>
-                  <% if product.min_stock.present? && product.low_stock? %>
+                  <p class="text-sm font-medium text-gray-900"><%= [product.quantity, 0].max %></p>
+                  <% if product.stock_status == "fora_de_estoque" %>
                     <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800 mt-1">
+                      Fora de Estoque
+                    </span>
+                  <% elsif product.stock_status == "critico" %>
+                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800 mt-1">
+                      Crítico (mín: <%= product.min_stock %>)
+                    </span>
+                  <% elsif product.stock_status == "baixo" %>
+                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 mt-1">
                       Baixo (mín: <%= product.min_stock %>)
                     </span>
                   <% elsif product.min_stock.present? %>
@@ -214,4 +260,6 @@
 
     <% end %>
   </div>
+
+  <%= render "shared/pagination_top", collection: @products %>
 </div>

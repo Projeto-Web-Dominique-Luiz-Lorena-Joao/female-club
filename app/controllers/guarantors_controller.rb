@@ -1,20 +1,20 @@
 class GuarantorsController < ApplicationController
-
-  before_action :set_guarantor, only: [:show, :edit, :update, :destroy]
+  before_action :set_guarantor, only: [ :show, :edit, :update, :destroy ]
 
   def index
-    @guarantors = Guarantor.left_joins(:customer).order(created_at: :desc)
+    # PERFORMANCE: Eager loading de customer para evitar N+1
+    @guarantors = Guarantor.includes(:customer).order(created_at: :desc)
 
     if params[:search].present?
-      
-      search_term = params[:search].strip
+
+      search_term = sanitize_search(params[:search])
       clean_search = search_term.gsub(/\D/, "")
 
       conditions = [
-        'guarantors.full_name ILIKE ?',
-        'customers.full_name ILIKE ?'
+        "guarantors.full_name ILIKE ?",
+        "customers.full_name ILIKE ?"
       ]
-      values = ["%#{search_term}%", "%#{search_term}%"]
+      values = [ "%#{search_term}%", "%#{search_term}%" ]
 
       if clean_search.present?
         conditions << "REGEXP_REPLACE(guarantors.cpf, '[^0-9]', '', 'g') LIKE ?"
@@ -24,15 +24,17 @@ class GuarantorsController < ApplicationController
         values << "%#{clean_search}%"
       end
 
-      @guarantors = @guarantors.where(conditions.join(' OR '), *values)
+      # FIX: Usar left_joins para permitir busca por nome do cliente
+      @guarantors = @guarantors.left_joins(:customer).where(conditions.join(" OR "), *values)
     end
 
     if params[:status].present?
     @guarantors = @guarantors.where(status: params[:status])
-  end
+    end
 
       @total_guarantors = Guarantor.count
-      @active_guarantors = Guarantor.where(status: 'ativo').count
+      @active_guarantors = Guarantor.where(status: "ativo").count
+      @guarantors = @guarantors.page(params[:page]).per(per_page)
   end
 
   def show
@@ -84,7 +86,7 @@ class GuarantorsController < ApplicationController
         remove_customer_association(@guarantor)
       end
 
-      redirect_to guarantors_path, notice: 'Fiador atualizado com sucesso!'
+      redirect_to guarantors_path, notice: "Fiador atualizado com sucesso!"
     else
       render :edit, status: :unprocessable_entity
     end
@@ -92,7 +94,7 @@ class GuarantorsController < ApplicationController
 
   def destroy
     @guarantor.destroy
-    redirect_to guarantors_path, notice: 'Fiador excluído com sucesso!'
+    redirect_to guarantors_path, notice: "Fiador excluído com sucesso!"
   end
 
   def search_customers
@@ -107,7 +109,8 @@ class GuarantorsController < ApplicationController
   private
 
   def set_guarantor
-    @guarantor = Guarantor.find(params[:id])
+    # PERFORMANCE: Eager loading para show/edit
+    @guarantor = Guarantor.includes(:customer).find(params[:id])
   end
 
   def guarantor_params

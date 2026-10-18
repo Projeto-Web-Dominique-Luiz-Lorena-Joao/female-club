@@ -13,16 +13,17 @@
         <%= button_to "Reativar Funcionário",
                       reactivate_employee_path(@employee),
                       method: :patch,
-
-                      class: "bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg font-medium" %>
+                      form: { data: { controller: "submit-once" } },
+                      class: "bg-green-600 hover:bg-green-500 text-white px-4 py-2 rounded-lg font-medium" %>
       <% else %>
         <%= button_to "Inativar Funcionário",
                       employee_path(@employee),
                       method: :delete,
-                      class: "bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-medium" %>
+                      form: { data: { controller: "submit-once" } },
+                      class: "bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium" %>
       <% end %>
 
-      <%= link_to employees_path, class: "bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-lg font-medium flex items-center gap-2" do %>
+      <%= link_to "javascript:history.back()", class: "bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-lg font-medium flex items-center gap-2" do %>
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
             stroke="currentColor" stroke-width="2" fill="none"
             class="w-5 h-5">
@@ -37,32 +38,50 @@
     <div class="px-6 py-4 bg-black">
       <h2 class="text-xl font-bold text-white">Informações Pessoais</h2>
     </div>
-    <div class="p-6 grid grid-cols-2 gap-6">
-      <div>
-        <p class="text-sm font-medium text-gray-500">CPF</p>
-        <p class="mt-1 text-lg text-gray-900"><%= @employee.formatted_cpf %></p>
-      </div>
-      <div>
-        <p class="text-sm font-medium text-gray-500">Telefone</p>
-        <p class="mt-1 text-lg text-gray-900"><%= @employee.formatted_phone %></p>
-      </div>
-      <div>
-        <p class="text-sm font-medium text-gray-500">E-mail</p>
-        <p class="mt-1 text-lg text-gray-900"><%= @employee.email || '-' %></p>
-      </div>
-      <div>
-        <p class="text-sm font-medium text-gray-500">Status</p>
-        <span class="inline-block mt-1 px-3 py-1 text-sm font-medium rounded-full <%= @employee.status_color %>">
-          <%= @employee.status&.titleize %>
-        </span>
+    <div class="p-6 flex flex-col md:flex-row gap-6">
+      <!-- Foto 3x4 -->
+      <div class="flex-shrink-0 flex justify-center">
+        <% if @employee.photo.attached? %>
+          <%= image_tag @employee.photo.variant(resize_to_limit: [180, 240]),
+              class: "w-44 h-80 rounded-lg object-cover border border-gray-300 shadow-sm" %>
+        <% else %>
+          <div class="w-44 h-80 rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 flex flex-col items-center justify-center text-gray-400">
+            <svg class="w-12 h-12 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+            </svg>
+            <span class="text-xs">Sem foto</span>
+          </div>
+        <% end %>
       </div>
 
-      <% if @employee.address.present? %>
-        <div class="col-span-2">
-          <p class="text-sm font-medium text-gray-500">Endereço</p>
-          <p class="mt-1 text-gray-900"><%= @employee.address %></p>
+      <!-- Dados pessoais -->
+      <div class="flex-1 grid grid-cols-2 gap-6">
+        <div>
+          <p class="text-sm font-medium text-gray-500">CPF</p>
+          <p class="mt-1 text-lg text-gray-900"><%= @employee.formatted_cpf %></p>
         </div>
-      <% end %>
+        <div>
+          <p class="text-sm font-medium text-gray-500">Telefone</p>
+          <p class="mt-1 text-lg text-gray-900"><%= @employee.formatted_phone %></p>
+        </div>
+        <div>
+          <p class="text-sm font-medium text-gray-500">E-mail</p>
+          <p class="mt-1 text-lg text-gray-900"><%= @employee.email || '-' %></p>
+        </div>
+        <div>
+          <p class="text-sm font-medium text-gray-500">Status</p>
+          <span class="inline-block mt-1 px-3 py-1 text-sm font-medium rounded-full <%= @employee.status_color %>">
+            <%= @employee.status&.titleize %>
+          </span>
+        </div>
+
+        <% if @employee.address.present? %>
+          <div class="col-span-2">
+            <p class="text-sm font-medium text-gray-500">Endereço</p>
+            <p class="mt-1 text-gray-900"><%= @employee.address %></p>
+          </div>
+        <% end %>
+      </div>
     </div>
   </div>
 

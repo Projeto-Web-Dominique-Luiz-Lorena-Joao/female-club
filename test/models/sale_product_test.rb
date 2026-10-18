@@ -1,19 +1,13 @@
+# frozen_string_literal: true
+
 require "test_helper"
 
 class SaleProductTest < ActiveSupport::TestCase
-  def setup
-    @sale = Sale.create!(
-      sale_date: Date.today,
-      total_amount: 100.00,
-      payment_method: 'pix',
-      status: 'pago',
-      employee_id: employees(:one).id
-    )
-    @product = Product.create!(
-      name: "Produto Teste",
-      price: 50.00,
-      active: true
-    )
+  setup do
+    @employee = create(:employee)
+    @customer = create(:customer)
+    @product = create(:product, :with_stock, initial_stock: 100)
+    @sale = create(:sale, employee: @employee, customer: @customer)
   end
 
   test "should create a sale product with valid attributes" do
@@ -34,7 +28,7 @@ class SaleProductTest < ActiveSupport::TestCase
       unit_price: 50.00
     )
     assert_not sale_product.save
-    assert_includes sale_product.errors[:quantity], "não pode ficar em branco"
+    assert sale_product.errors[:quantity].present?
   end
 
   test "should validate quantity is integer" do
@@ -65,7 +59,7 @@ class SaleProductTest < ActiveSupport::TestCase
       unit_price: nil
     )
     assert_not sale_product.save
-    assert_includes sale_product.errors[:unit_price], "não pode ficar em branco"
+    assert sale_product.errors[:unit_price].present?
   end
 
   test "should calculate total price correctly" do

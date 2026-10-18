@@ -13,7 +13,7 @@ class CreateExpenses < ActiveRecord::Migration[8.0]
       t.timestamps
     end
 
-    add_index :expenses, [:employee_id, :created_at]
+    add_index :expenses, [ :employee_id, :created_at ]
     add_index :expenses, :expense_type
     add_index :expenses, :category
     add_index :expenses, :expense_date

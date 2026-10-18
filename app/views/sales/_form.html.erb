@@ -1,5 +1,5 @@
 <div class="space-y-6">
-  <%= form_with(model: sale, id: "sale_form", local: true, method: sale.new_record? ? :post : :patch, class: "space-y-8 max-w-4xl mx-auto") do |form| %>
+  <%= form_with(model: sale, id: "sale_form", local: true, method: sale.new_record? ? :post : :patch, class: "space-y-8 max-w-4xl mx-auto", data: { controller: "submit-once" }) do |form| %>
 
     <div class="bg-white rounded-lg shadow-lg overflow-hidden">
 
@@ -8,24 +8,6 @@
       </div>
 
       <div class="p-6">
-
-        <% if sale.errors.any? %>
-          <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded-md mb-6">
-            <div class="flex">
-              <span class="text-red-500 text-xl">⚠️</span>
-              <div class="ml-3">
-                <h3 class="text-sm font-medium text-red-800">
-                  <%= pluralize(sale.errors.count, "erro") %> impediram que esta venda fosse salva:
-                </h3>
-                <ul class="mt-2 text-sm text-red-700 list-disc list-inside">
-                  <% sale.errors.full_messages.each do |message| %>
-                    <li><%= message %></li>
-                  <% end %>
-                </ul>
-              </div>
-            </div>
-          </div>
-        <% end %>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
@@ -152,7 +134,7 @@
                      data-sale-items-target="results"></div>
               </div>
               <button type="button"
-                      class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium"
+                      class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium"
                       data-action="click->sale-items#addItem"
                       id="add_product_btn">
                 + Produto
@@ -222,7 +204,7 @@
                      data-sale-items-target="results"></div>
               </div>
               <button type="button"
-                      class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 font-medium"
+                      class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-500 focus:outline-none focus:ring-2 focus:ring-green-500 font-medium"
                       data-action="click->sale-items#addItem"
                       id="add_service_btn">
                 + Serviço
@@ -291,11 +273,98 @@
                   text-gray-700 font-medium transition" %>
 
       <%= form.submit "Salvar Venda",
-          class: "px-6 py-3 bg-green-600 hover:bg-green-500 text-white rounded-lg 
+          class: "px-6 py-3 bg-green-600 hover:bg-green-500 text-white rounded-lg
                   font-medium shadow-lg transition cursor-pointer" %>
     </div>
   <% end %>
+
+  <!-- Modal de Erro -->
+  <% if sale.errors.any? %>
+    <div id="errorModal" class="fixed inset-0 bg-gray-900 bg-opacity-40 backdrop-blur-sm flex items-center justify-center z-50 px-4">
+      <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full animate-fade-in-scale">
+        <!-- Header do Modal -->
+        <div class="bg-gradient-to-r from-red-500 to-red-600 px-6 py-5 rounded-t-2xl">
+          <div class="flex items-center gap-3">
+            <div class="bg-white bg-opacity-20 rounded-full p-2">
+              <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+              </svg>
+            </div>
+            <div>
+              <h3 class="text-xl font-bold text-white">Ops! Algo deu errado</h3>
+              <p class="text-red-100 text-sm">Não foi possível salvar a venda</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Conteúdo do Modal -->
+        <div class="px-6 py-6">
+          <div class="space-y-3">
+            <% sale.errors.full_messages.each do |message| %>
+              <div class="flex items-start gap-3 p-3 bg-red-50 rounded-lg border border-red-200">
+                <svg class="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                </svg>
+                <p class="text-sm text-gray-700 flex-1"><%= message.gsub('Sale products quantity ', '') %></p>
+              </div>
+            <% end %>
+          </div>
+        </div>
+
+        <!-- Footer do Modal -->
+        <div class="px-6 py-4 bg-gray-50 rounded-b-2xl flex justify-end">
+          <button onclick="closeErrorModal()" class="px-6 py-2.5 bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg transition-colors shadow-md">
+            Entendi
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      function closeErrorModal() {
+        const modal = document.getElementById('errorModal');
+        if (modal) {
+          modal.style.animation = 'fadeOut 0.2s ease-out';
+          setTimeout(() => {
+            modal.remove();
+          }, 200);
+        }
+      }
+
+      @keyframes fadeOut {
+        from { opacity: 1; }
+        to { opacity: 0; }
+      }
+
+      // Fechar modal ao clicar fora dele
+      document.getElementById('errorModal')?.addEventListener('click', function(e) {
+        if (e.target === this) {
+          closeErrorModal();
+        }
+      });
+
+      // Fechar modal com ESC
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+          closeErrorModal();
+        }
+      });
+    </script>
+  <% end %>
 </div>
+
+<!-- Script para fechar modal (deve estar fora do bloco condicional) -->
+<script>
+  function closeErrorModal() {
+    const modal = document.getElementById('errorModal');
+    if (modal) {
+      modal.style.animation = 'fadeOut 0.2s ease-out';
+      setTimeout(() => {
+        modal.remove();
+      }, 200);
+    }
+  }
+</script>
 
 <script>
 // Test to check if Stimulus is loading controllers

@@ -1,7 +1,8 @@
 class Api::SuppliersController < ApplicationController
   def search
+    query = sanitize_search(params[:q], max_length: 50)
     @suppliers = Supplier.where("legal_name ILIKE ? OR trade_name ILIKE ?",
-                               "%#{params[:q]}%", "%#{params[:q]}%")
+                               "%#{query}%", "%#{query}%")
                         .limit(10)
                         .order(:legal_name)
 

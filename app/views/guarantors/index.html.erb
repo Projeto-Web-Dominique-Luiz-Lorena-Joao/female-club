@@ -77,6 +77,11 @@
     <% end %>
   </div>
 
+  <!-- Paginação Topo -->
+  <% if @guarantors.any? %>
+    <%= render "shared/pagination_top", collection: @guarantors %>
+  <% end %>
+
   <!-- Lista de Fiadores -->
   <div class="bg-white rounded-lg shadow overflow-hidden">
     <% if @guarantors.any? %>
@@ -144,8 +149,10 @@
       <div class="text-center py-12">
         <p class="mt-4 text-xl text-gray-600">Nenhum fiador cadastrado</p>
         <%= link_to "Cadastrar primeiro fiador", new_guarantor_path,
-            class: "mt-4 inline-block bg-black hover:bg-gray-800 text-white px-6 py-3 rounded-lg font-medium transition duration-200" %>
+            class: "mt-4 inline-block bg-black hover:bg-gray-700 text-white px-6 py-3 rounded-lg font-medium transition duration-200" %>
       </div>
     <% end %>
   </div>
+
+  <%= render "shared/pagination_top", collection: @guarantors %>
 </div>

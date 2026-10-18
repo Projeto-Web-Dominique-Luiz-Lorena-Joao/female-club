@@ -1,16 +1,20 @@
 class CustomersController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_customer, only: [:show, :edit, :update, :destroy]
+  before_action :set_customer, only: [ :show, :edit, :update, :destroy ]
 
   def index
-    @customers = Customer.all.order(created_at: :desc)
+    # Otimizado: Calcular gasto total com SQL agregado para evitar N+1 queries
+    @customers = Customer.left_joins(:sales)
+                         .select("customers.*, COALESCE(SUM(CASE WHEN sales.status <> 'cancelado' THEN sales.total_amount ELSE 0 END), 0) as total_spent")
+                         .group("customers.id")
+                         .order("customers.created_at DESC")
 
     if params[:search].present?
-      search_term  = params[:search].strip
+      search_term  = sanitize_search(params[:search])
       clean_search = search_term.gsub(/\D/, "")
 
-      conditions = ['full_name ILIKE ? OR email ILIKE ?']
-      values     = ["%#{search_term}%", "%#{search_term}%"]
+      conditions = [ "full_name ILIKE ? OR email ILIKE ?" ]
+      values     = [ "%#{search_term}%", "%#{search_term}%" ]
 
       if clean_search.present?
         conditions << "REGEXP_REPLACE(phone_number, '[^0-9]', '', 'g') LIKE ?"
@@ -20,20 +24,32 @@ class CustomersController < ApplicationController
         values     << "%#{clean_search}%"
       end
 
-      @customers = @customers.where(conditions.join(' OR '), *values)
+      @customers = @customers.where(conditions.join(" OR "), *values)
     end
 
     case params[:tier]
-    when 'vip'
+    when "vip"
       @customers = @customers.vip
-    when 'active'
+    when "active"
       @customers = @customers.active
     end
 
-    @total_customers = @customers.count
+    # Calcular totais antes da paginação
+    # Para queries com GROUP BY, count retorna um hash, então usamos size para obter o total
+    all_customers_for_totals = @customers.to_a
+    @total_customers = all_customers_for_totals.size
+    @total_revenue = all_customers_for_totals.sum { |c| c.total_spent.to_f }
+
+    # Aplicar paginação
+    @customers = @customers.page(params[:page]).per(per_page)
   end
 
   def show
+    @sales = @customer.sales
+                       .includes(:employee, sale_products: :product, sale_services: :service)
+                       .order(sale_date: :desc)
+                       .page(params[:page])
+                       .per(per_page)
   end
 
   def new
@@ -61,9 +77,9 @@ class CustomersController < ApplicationController
       end
     end
   rescue => e
-    Rails.logger.error("Erro ao criar cliente: #{e.message}\n#{e.backtrace.join("\n")}")
+    Rails.logger.error("Erro ao criar cliente: #{e.message}\n#{e.backtrace.first(5).join("\n")}")
     respond_to do |format|
-      format.json { render json: { errors: [e.message] }, status: :unprocessable_entity }
+      format.json { render json: { errors: [ "Erro interno ao processar a requisição." ] }, status: :unprocessable_entity }
       format.html { render :new, status: :unprocessable_entity }
     end
   end
@@ -75,7 +91,7 @@ class CustomersController < ApplicationController
         create_or_update_guarantor(@customer)
       end
 
-      redirect_to customers_path, notice: 'Cliente atualizado com sucesso!'
+      redirect_to customers_path, notice: "Cliente atualizado com sucesso!"
     else
       render :edit, status: :unprocessable_entity
     end
@@ -83,7 +99,7 @@ class CustomersController < ApplicationController
 
   def destroy
     @customer.destroy
-    redirect_to customers_path, notice: 'Cliente excluído com sucesso!'
+    redirect_to customers_path, notice: "Cliente excluído com sucesso!"
   end
 
   private
@@ -108,27 +124,16 @@ class CustomersController < ApplicationController
 
 
   def create_or_update_guarantor(customer)
-    guarantor_params = params[:guarantor]
+    # SEGURANÇA: Usar strong parameters para filtrar dados do fiador
+    permitted_guarantor = params.require(:guarantor).permit(
+      :id, :full_name, :cpf, :phone, :relationship, :address
+    )
 
-    if guarantor_params[:id].present?
-     
-      guarantor = Guarantor.find(guarantor_params[:id])
-      guarantor.update(
-        full_name:     guarantor_params[:full_name],
-        cpf:           guarantor_params[:cpf],
-        phone:         guarantor_params[:phone],
-        relationship:  guarantor_params[:relationship],
-        address:       guarantor_params[:address]
-      )
+    if permitted_guarantor[:id].present?
+      guarantor = Guarantor.find(permitted_guarantor[:id])
+      guarantor.update(permitted_guarantor.except(:id))
     else
-      
-      guarantor = Guarantor.create(
-        full_name:     guarantor_params[:full_name],
-        cpf:           guarantor_params[:cpf],
-        phone:         guarantor_params[:phone],
-        relationship:  guarantor_params[:relationship],
-        address:       guarantor_params[:address]
-      )
+      guarantor = Guarantor.create(permitted_guarantor.except(:id))
     end
 
     customer.update(guarantor: guarantor)

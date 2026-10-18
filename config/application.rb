@@ -15,7 +15,7 @@ module FemaleClub
 
     # Configuração de locale para português do Brasil
     config.i18n.default_locale = :'pt-BR'
-    config.i18n.available_locales = [:'pt-BR', :en]
+    config.i18n.available_locales = [ :'pt-BR', :en ]
     config.time_zone = "Brasilia"
 
     # Please, add to the `ignore` list any other `lib` subdirectories that do

@@ -1,5 +1,5 @@
 class ServicesController < ApplicationController
-  before_action :set_service, only: [:show, :edit, :update, :destroy, :change_status]
+  before_action :set_service, only: [ :show, :edit, :update, :destroy, :change_status ]
 
   # GET /services
   def index
@@ -10,7 +10,7 @@ class ServicesController < ApplicationController
       @services = @services.where(active: params[:active])
     end
 
-    @services = @services.page(params[:page]).per(15)
+    @services = @services.page(params[:page]).per(per_page)
   end
 
   # GET /services/:id
@@ -29,7 +29,7 @@ class ServicesController < ApplicationController
     @service = Service.new(service_params)
 
     if @service.save
-      redirect_to @service, notice: 'Serviço criado com sucesso!'
+      redirect_to @service, notice: "Serviço criado com sucesso!"
     else
       render :new, status: :unprocessable_entity
     end
@@ -42,7 +42,7 @@ class ServicesController < ApplicationController
   # PATCH/PUT /services/:id
   def update
     if @service.update(service_params)
-      redirect_to @service, notice: 'Serviço atualizado com sucesso!'
+      redirect_to @service, notice: "Serviço atualizado com sucesso!"
     else
       render :edit, status: :unprocessable_entity
     end
@@ -51,9 +51,9 @@ class ServicesController < ApplicationController
   # DELETE /services/:id
   def destroy
     if @service.destroy
-      redirect_to services_url, notice: 'Serviço excluído com sucesso!'
+      redirect_to services_url, notice: "Serviço excluído com sucesso!"
     else
-      redirect_to services_url, alert: 'Erro ao excluir serviço. Verifique se não há registros relacionados.'
+      redirect_to services_url, alert: "Erro ao excluir serviço. Verifique se não há registros relacionados."
     end
   end
 
@@ -64,7 +64,7 @@ class ServicesController < ApplicationController
     if Service.actives.key?(new_active) && @service.update(active: new_active)
       redirect_to services_url, notice: "Status atualizado para #{@service.status_label}!"
     else
-      redirect_to services_url, alert: 'Erro ao atualizar status.'
+      redirect_to services_url, alert: "Erro ao atualizar status."
     end
   end
 

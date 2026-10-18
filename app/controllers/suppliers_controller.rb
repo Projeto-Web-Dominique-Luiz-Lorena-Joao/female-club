@@ -22,7 +22,7 @@ class SuppliersController < ApplicationController
     end
 
     if params[:search].present?
-      search_term = params[:search].strip
+      search_term = sanitize_search(params[:search])
     clean_search = search_term.gsub(/\D/, "")
 
     conditions = [ "legal_name ILIKE ? OR trade_name ILIKE ? OR email ILIKE ?" ]
@@ -42,6 +42,7 @@ class SuppliersController < ApplicationController
     # @active_suppliers = Supplier.active.count
     # @total_items = StockItem.count
     # @total_stock_value = StockItem.sum('quantity * sale_price')
+    @suppliers = @suppliers.page(params[:page]).per(per_page)
   end
 
   def show
@@ -75,12 +76,12 @@ class SuppliersController < ApplicationController
   end
 
   def destroy
-    @supplier.update(active: false)
+    @supplier.update(status: "inativo")
     redirect_to suppliers_path, notice: "Fornecedor inativado com sucesso. Você pode reativá-lo quando quiser."
   end
 
   def reactivate
-    if @supplier.update(active: true)
+    if @supplier.update(status: "ativo")
       redirect_to supplier_path(@supplier), notice: "Fornecedor reativado com sucesso. Você pode inativá-lo quando quiser."
     else
       redirect_to supplier_path(@supplier), alert: "Não foi possível reativar o fornecedor."

@@ -1,4 +1,10 @@
 pt-BR:
+  errors:
+    messages:
+      not_saved:
+        one: "1 erro impediu que este %{resource} fosse salvo:"
+        other: "%{count} erros impediram que este %{resource} fosse salvo:"
+
   time:
     formats:
       default: "%d de %B de %Y às %H:%M"
@@ -83,7 +89,26 @@ pt-BR:
       - Nov
       - Dez
 
+  views:
+    pagination:
+      first: "Primeira"
+      last: "Última"
+      previous: "Anterior"
+      next: "Próxima"
+      truncate: "..."
+
   activerecord:
+    models:
+      user: "usuário"
+      customer: "cliente"
+      employee: "funcionário"
+      product: "produto"
+      service: "serviço"
+      supplier: "fornecedor"
+      guarantor: "fiador"
+      expense: "despesa"
+      sale: "venda"
+      service_appointment: "agendamento"
     errors:
       messages:
         record_invalid: "Validação falhou: %{errors}"

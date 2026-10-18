@@ -1,0 +1,31 @@
+<%= paginator.render do -%>
+<nav class="flex items-center gap-1">
+  <% if current_page.first? %>
+    <span class="inline-flex items-center justify-center min-w-[32px] h-8 px-2 bg-black text-white text-sm font-medium rounded opacity-50">«</span>
+    <span class="inline-flex items-center justify-center min-w-[32px] h-8 px-2 bg-black text-white text-sm font-medium rounded opacity-50">‹</span>
+  <% else %>
+    <%= link_to '«', url_for(page: 1), class: 'inline-flex items-center justify-center min-w-[32px] h-8 px-2 bg-black text-white text-sm font-medium rounded hover:bg-gray-700 no-underline' %>
+    <%= link_to '‹', url_for(page: current_page - 1), class: 'inline-flex items-center justify-center min-w-[32px] h-8 px-2 bg-black text-white text-sm font-medium rounded hover:bg-gray-700 no-underline' %>
+  <% end %>
+
+  <% each_page do |page| -%>
+    <% if page.left_outer? || page.right_outer? || page.inside_window? -%>
+      <% if page.current? -%>
+        <span class="inline-flex items-center justify-center min-w-[32px] h-8 px-2 bg-gray-600 text-white text-sm font-medium rounded"><%= page %></span>
+      <% else -%>
+        <%= link_to page, url_for(page: page), class: 'inline-flex items-center justify-center min-w-[32px] h-8 px-2 bg-black text-white text-sm font-medium rounded hover:bg-gray-700 no-underline' %>
+      <% end -%>
+    <% elsif !page.was_truncated? -%>
+      <span class="inline-flex items-center justify-center min-w-[32px] h-8 px-2 bg-black text-white text-sm font-medium rounded">…</span>
+    <% end -%>
+  <% end -%>
+
+  <% if current_page.last? %>
+    <span class="inline-flex items-center justify-center min-w-[32px] h-8 px-2 bg-black text-white text-sm font-medium rounded opacity-50">›</span>
+    <span class="inline-flex items-center justify-center min-w-[32px] h-8 px-2 bg-black text-white text-sm font-medium rounded opacity-50">»</span>
+  <% else %>
+    <%= link_to '›', url_for(page: current_page + 1), class: 'inline-flex items-center justify-center min-w-[32px] h-8 px-2 bg-black text-white text-sm font-medium rounded hover:bg-gray-700 no-underline' %>
+    <%= link_to '»', url_for(page: total_pages), class: 'inline-flex items-center justify-center min-w-[32px] h-8 px-2 bg-black text-white text-sm font-medium rounded hover:bg-gray-700 no-underline' %>
+  <% end %>
+</nav>
+<% end -%>

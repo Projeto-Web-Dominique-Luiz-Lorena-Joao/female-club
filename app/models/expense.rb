@@ -50,10 +50,10 @@ class Expense < ApplicationRecord
   scope :by_category, ->(category) { where(category: category) }
   scope :by_payment_method, ->(method) { where(payment_method: method) }
   scope :by_date_range, ->(start_date, end_date) { where(expense_date: start_date..end_date) }
-  scope :monthly_fixed, -> { where(category: 'fixa_mensal') }
-  scope :annual_fixed, -> { where(category: 'fixa_anual') }
-  scope :active, -> { where(status: 'ativa') }
-  scope :inactive, -> { where(status: 'inativa') }
+  scope :monthly_fixed, -> { where(category: "fixa_mensal") }
+  scope :annual_fixed, -> { where(category: "fixa_anual") }
+  scope :active, -> { where(status: "ativa") }
+  scope :inactive, -> { where(status: "inativa") }
 
   def self.expense_type_labels
     {
