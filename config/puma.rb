@@ -40,7 +40,6 @@ port ENV.fetch("PORT", 3000)
 
 # PLUGINS
 plugin :tmp_restart
-plugin :solid_queue if ENV["SOLID_QUEUE_IN_PUMA"]
 
 # PID FILE
 pidfile ENV["PIDFILE"] if ENV["PIDFILE"]
