@@ -7,31 +7,23 @@ default: &default
   idle_timeout: 300
   prepared_statements: true
   advisory_locks: true
-  username: joao
-  password: 1605
-  host: localhost
 
 development:
   <<: *default
   database: female_club_development
+  username: <%= ENV["DB_USERNAME"] %>
+  password: <%= ENV["DB_PASSWORD"] %>
+  host: <%= ENV.fetch("DB_HOST", "localhost") %>
 
 test:
   <<: *default
   database: female_club_test
+  username: <%= ENV["DB_USERNAME"] %>
+  password: <%= ENV["DB_PASSWORD"] %>
+  host: <%= ENV.fetch("DB_HOST", "localhost") %>
 
 production:
-  primary:
-    <<: *default
-    url: <%= ENV["DATABASE_URL"] %>
-  cache:
-    <<: *default
-    url: <%= ENV["DATABASE_URL"] %>
-    migrations_paths: db/cache_migrate
-  queue:
-    <<: *default
-    url: <%= ENV["DATABASE_URL"] %>
-    migrations_paths: db/queue_migrate
-  cable:
-    <<: *default
-    url: <%= ENV["DATABASE_URL"] %>
-    migrations_paths: db/cable_migrate
+  <<: *default
+  url: <%= ENV["DATABASE_URL"] %>
+  variables:
+    statement_timeout: 30s

@@ -11,9 +11,9 @@ Rails.application.configure do
     "vary" => "Accept-Encoding"
   }
 
-  # Active Storage - local no disco do Render (efêmero, mas funcional para início)
-  # Para persistência, configure S3/Cloudinary e troque para :amazon ou :cloudinary
-  config.active_storage.service = :local
+  # Active Storage - "local" no teste (fotos se perdem ao reiniciar);
+  # "cloudflare" quando o R2 estiver configurado
+  config.active_storage.service = ENV.fetch("ACTIVE_STORAGE_SERVICE", "local").to_sym
 
   config.assume_ssl = true
   config.force_ssl = true
@@ -25,14 +25,16 @@ Rails.application.configure do
   config.silence_healthcheck_path = "/up"
   config.active_support.report_deprecations = false
 
-  # Cache e Jobs - Solid Cache/Queue usando o mesmo banco via DATABASE_URL
-  config.cache_store = :solid_cache_store
-  config.active_job.queue_adapter = :solid_queue
-  config.solid_queue.connects_to = { database: { writing: :queue } }
+  # Cache e Jobs em memória (instância única no Render).
+  # Migrar para Solid Cache/Queue depois, com bancos dedicados.
+  config.cache_store = :memory_store
+  config.active_job.queue_adapter = :async
 
-  # Mailer
-  config.action_mailer.perform_deliveries = true
-  config.action_mailer.raise_delivery_errors = true
+  # Mailer - só envia se as credenciais SMTP estiverem configuradas.
+  # Obs.: o plano free do Render bloqueia as portas SMTP (25/465/587).
+  smtp_configurado = ENV["SMTP_USERNAME"].present? && ENV["SMTP_PASSWORD"].present?
+  config.action_mailer.perform_deliveries = smtp_configurado
+  config.action_mailer.raise_delivery_errors = false
   config.action_mailer.default_url_options = { host: ENV.fetch("APP_HOST", "female-club.onrender.com"), protocol: "https" }
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.smtp_settings = {

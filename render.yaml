@@ -1,36 +1,41 @@
 databases:
   - name: female-club-db
     plan: free
+    region: virginia
     databaseName: female_club_production
     user: female_club
 
 services:
   - type: web
     name: female-club
-    runtime: ruby
+    runtime: docker
     plan: free
-    buildCommand: "./bin/render-build.sh"
-    startCommand: "bundle exec puma -C config/puma.rb"
+    region: virginia
+    branch: main
+    dockerCommand: ./bin/rails server
+    healthCheckPath: /up
     envVars:
       - key: DATABASE_URL
         fromDatabase:
           name: female-club-db
           property: connectionString
-      - key: RAILS_ENV
-        value: production
       - key: RAILS_MASTER_KEY
         sync: false
       - key: SECRET_KEY_BASE
         generateValue: true
-      - key: SOLID_QUEUE_IN_PUMA
-        value: "true"
+      - key: WEB_CONCURRENCY
+        value: 1
+      - key: ACTIVE_STORAGE_SERVICE
+        value: local
       - key: APP_HOST
+        value: female-club.onrender.com
+      - key: ADMIN_EMAIL
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: ADMIN_NAME
         sync: false
       - key: SMTP_USERNAME
         sync: false
       - key: SMTP_PASSWORD
-        sync: false
-      - key: ADMIN_EMAIL
-        sync: false
-      - key: ADMIN_PASSWORD
         sync: false
