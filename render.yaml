@@ -12,7 +12,7 @@ services:
     plan: free
     region: virginia
     branch: main
-    dockerCommand: ./bin/rails server
+    dockerCommand: ./bin/docker-entrypoint ./bin/rails server
     healthCheckPath: /up
     envVars:
       - key: DATABASE_URL
