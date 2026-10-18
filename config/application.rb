@@ -11,6 +11,13 @@ module FemaleClub
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 8.0
 
+    config.active_storage.variant_processor = :mini_magick
+
+    # Configuração de locale para português do Brasil
+    config.i18n.default_locale = :'pt-BR'
+    config.i18n.available_locales = [ :'pt-BR', :en ]
+    config.time_zone = "Brasilia"
+
     # Please, add to the `ignore` list any other `lib` subdirectories that do
     # not contain `.rb` files, or that should not be reloaded or eager loaded.
     # Common ones are `templates`, `generators`, or `middleware`, for example.

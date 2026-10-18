@@ -1,0 +1,138 @@
+<div class="w-full mb-8 pb-4 border-b border-gray-200 px-8">
+  <div class="flex justify-between items-center max-w-4xl mx-auto">
+
+    <div class="flex items-center gap-4">
+      <div class="bg-black p-3 rounded-2xl shadow-lg flex items-center justify-center">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="white" class="size-8">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 8.25H7.5a2.25 2.25 0 0 0-2.25 2.25v9a2.25 2.25 0 0 0 2.25 2.25h9a2.25 2.25 0 0 0 2.25-2.25v-9a2.25 2.25 0 0 0-2.25-2.25H15M9 12l3 3m0 0 3-3m-3 3V2.25" />
+        </svg>
+      </div>
+
+      <div>
+        <h1 class="text-2xl font-medium text-gray-900">Registrar Entrada de Produto</h1>
+        <p class="text-gray-600 text-sm mt-1">
+          Preencha os dados abaixo para registrar uma nova entrada no estoque
+        </p>
+      </div>
+    </div>
+
+    <%= link_to "javascript:history.back()", class: "bg-white border border-gray-300 hover:bg-gray-100 text-gray-700 px-4 py-2 rounded-lg font-medium flex items-center gap-2 transition shadow-sm" do %>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+           stroke="currentColor" stroke-width="3" fill="none"
+           class="w-4 h-4">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7 7-7M3 12h18" />
+      </svg>
+      Voltar
+    <% end %>
+
+  </div>
+</div>
+
+<div class="max-w-4xl mx-auto">
+  <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+    <div class="px-6 py-4 bg-black border-b border-gray-200">
+      <h2 class="text-xl font-bold text-white">Dados da Entrada</h2>
+    </div>
+
+    <div class="p-6">
+      <%= form_with(model: @product_input, local: true, data: { turbo: false, controller: "submit-once" }) do |form| %>
+        <% if @product_input.errors.any? %>
+          <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded-md mb-6">
+            <div class="flex">
+              <span class="text-red-500 text-xl">⚠️</span>
+              <div class="ml-3">
+                <h3 class="text-sm font-medium text-red-800">
+                  <%= pluralize(@product_input.errors.count, "erro") %> encontrado:
+                </h3>
+                <ul class="mt-2 text-sm text-red-700 list-disc list-inside">
+                  <% @product_input.errors.full_messages.each do |message| %>
+                    <li><%= message %></li>
+                  <% end %>
+                </ul>
+              </div>
+            </div>
+          </div>
+        <% end %>
+
+        <!-- Seção de Seleção de Produto -->
+        <div class="mb-6" data-controller="dynamic-search" data-dynamic-search-search-url="<%= search_products_product_inputs_path %>" data-dynamic-search-item-type="product">
+          <label for="product_input_product_id" class="block text-sm font-medium text-gray-700 mb-2">
+            Produto <span class="text-red-600">*</span>
+          </label>
+          <div style="position: relative;">
+            <input type="text" id="product_input_product_id" name="product_input[product_name]" placeholder="Digite para buscar..." class="block w-full px-4 py-2 h-11 border border-gray-300 rounded-lg bg-gray-100 focus:ring-2 focus:ring-gray-900 focus:border-transparent" required data-dynamic-search-target="input" autocomplete="off" />
+            <div class="hidden absolute top-full left-0 right-0 mt-1 border border-gray-300 rounded-md shadow-lg bg-white z-10 max-h-64 overflow-y-auto" data-dynamic-search-target="results"></div>
+          </div>
+          <input type="hidden" id="product_input_product_id_hidden" name="product_input[product_id]" />
+        </div>
+
+        <!-- Seção de Seleção de Fornecedor -->
+        <div class="mb-6" data-controller="dynamic-search" data-dynamic-search-search-url="<%= search_suppliers_product_inputs_path %>" data-dynamic-search-item-type="supplier">
+          <label for="product_input_supplier_id" class="block text-sm font-medium text-gray-700 mb-2">
+            Fornecedor
+          </label>
+          <div style="position: relative;">
+            <input type="text" id="product_input_supplier_id" name="product_input[supplier_name]" placeholder="Digite para buscar (opcional)..." class="block w-full px-4 py-2 h-11 border border-gray-300 rounded-lg bg-gray-100 focus:ring-2 focus:ring-gray-900 focus:border-transparent" data-dynamic-search-target="input" autocomplete="off" />
+            <div class="hidden absolute top-full left-0 right-0 mt-1 border border-gray-300 rounded-md shadow-lg bg-white z-10 max-h-64 overflow-y-auto" data-dynamic-search-target="results"></div>
+          </div>
+          <input type="hidden" id="product_input_supplier_id_hidden" name="product_input[supplier_id]" />
+        </div>
+
+        <div class="grid grid-cols-2 gap-6 mb-6">
+          <div>
+            <label for="product_input_quantity" class="block text-sm font-medium text-gray-700 mb-2">
+              Quantidade <span class="text-red-600">*</span>
+            </label>
+            <%= form.number_field :quantity, min: 1, value: nil, class: "block w-full px-4 py-2 h-11 border border-gray-300 rounded-lg bg-gray-100 focus:ring-2 focus:ring-gray-900 focus:border-transparent", placeholder: "0", required: true %>
+          </div>
+
+          <div>
+            <label for="product_input_unit_cost" class="block text-sm font-medium text-gray-700 mb-2">
+              Custo Unitário
+            </label>
+            <%= form.text_field :unit_cost, inputmode: "decimal", class: "block w-full px-4 py-2 h-11 border border-gray-300 rounded-lg bg-gray-100 focus:ring-2 focus:ring-gray-900 focus:border-transparent", placeholder: "0,00", data: { controller: "currency-mask" } %>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-6 mb-6">
+          <div>
+            <label for="product_input_date_input" class="block text-sm font-medium text-gray-700 mb-2">
+              Data da Entrada <span class="text-red-600">*</span>
+            </label>
+            <%= form.date_field :date_input, value: Date.today, class: "block w-full px-4 py-2 h-11 border border-gray-300 rounded-lg bg-gray-100 focus:ring-2 focus:ring-gray-900 focus:border-transparent", required: true %>
+          </div>
+
+          <div>
+            <label for="product_input_date_input_time" class="block text-sm font-medium text-gray-700 mb-2">
+              Horário
+            </label>
+            <input type="time" id="product_input_date_input_time" name="product_input[date_input_time]" value="<%= Time.current.strftime('%H:%M') %>" class="block w-full px-4 py-2 h-11 border border-gray-300 rounded-lg bg-gray-100 focus:ring-2 focus:ring-gray-900 focus:border-transparent" />
+          </div>
+        </div>
+
+        <div class="mb-6">
+          <label for="product_input_invoice_number" class="block text-sm font-medium text-gray-700 mb-2">
+            Número da Nota Fiscal
+          </label>
+          <%= form.text_field :invoice_number, class: "block w-full px-4 py-2 h-11 border border-gray-300 rounded-lg bg-gray-100 focus:ring-2 focus:ring-gray-900 focus:border-transparent", placeholder: "NF-123456" %>
+        </div>
+
+        <div class="mb-6">
+          <label for="product_input_notes" class="block text-sm font-medium text-gray-700 mb-2">
+            Observações
+          </label>
+          <%= form.text_area :notes, rows: 4, class: "block w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 focus:ring-2 focus:ring-gray-900 focus:border-transparent", placeholder: "Detalhes adicionais sobre a entrada..." %>
+        </div>
+
+        <div class="flex justify-between items-center pt-2 mb-4">
+          <div class="text-xs text-gray-500">* campos obrigatórios</div>
+        </div>
+
+        <div class="flex justify-end gap-3 pt-6 border-t border-gray-200">
+          <%= link_to "Cancelar", product_inputs_path, class: "px-6 py-3 rounded-lg bg-gray-200 border border-gray-300 hover:bg-white text-gray-700 font-medium transition" %>
+          <%= form.submit "Registrar Entrada", class: "px-6 py-3 bg-green-600 hover:bg-green-500 text-white rounded-lg font-medium shadow-lg transition cursor-pointer" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

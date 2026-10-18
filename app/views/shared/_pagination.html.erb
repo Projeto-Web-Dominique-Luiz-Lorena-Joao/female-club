@@ -1,0 +1,17 @@
+<div class="flex items-center justify-between py-4 px-6 bg-white border-t border-gray-200"
+     data-controller="pagination">
+  <!-- Seletor de registros por página -->
+  <div class="flex items-center gap-2">
+    <label for="per_page_select" class="text-sm text-gray-700 whitespace-nowrap">Itens/pág:</label>
+    <select id="per_page_select"
+            class="px-3 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 cursor-pointer"
+            data-action="change->pagination#changePerPage">
+      <% [10, 15, 20, 25, 50].each do |num| %>
+        <option value="<%= num %>" <%= 'selected' if (params[:per_page] || per_page).to_i == num %>><%= num %></option>
+      <% end %>
+    </select>
+  </div>
+
+  <!-- Navegação de páginas -->
+  <%= paginate collection, window: 2, outer_window: 1 %>
+</div>

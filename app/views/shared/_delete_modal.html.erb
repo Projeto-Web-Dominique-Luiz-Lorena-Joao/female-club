@@ -1,5 +1,5 @@
 <div id="deleteModal"
-     class="hidden absolute inset-0 z-[9999] flex items-center justify-center bg-black/20">
+     class="hidden fixed inset-0 z-[9999] flex items-center justify-center bg-black/20">
 
   <div id="deleteModalBox"
        class="bg-white max-w-md w-full rounded-xl shadow-2xl p-6">
@@ -26,11 +26,11 @@
         Cancelar
       </button>
 
-      <form id="deleteForm" method="post" class="inline">
+      <form id="deleteForm" method="post" class="inline" data-turbo="false">
         <input type="hidden" name="_method" value="delete">
         <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
 
-        <button class="px-5 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 transition">
+        <button type="submit" class="px-5 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 transition">
           Excluir
         </button>
       </form>
@@ -47,7 +47,8 @@
     document.getElementById("deleteName").innerText = name;
     document.getElementById("deleteType").innerText = label;
 
-    form.action = `${basePath}/${id}`;
+    form.action = id ? `${basePath}/${id}` : basePath;
+    form.dataset.redirectUrl = basePath;
 
     modal.classList.remove("hidden");
   }

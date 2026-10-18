@@ -1,43 +1,170 @@
-<h2>Edit <%= resource_name.to_s.humanize %></h2>
+<div class="w-full mb-8 pb-4 border-b border-gray-200 px-8">
+  <div class="flex justify-between items-center max-w-4xl mx-auto">
 
-<%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put }) do |f| %>
-  <%= render "devise/shared/error_messages", resource: resource %>
+    <div class="flex items-center gap-4">
+      <div class="bg-black p-3 rounded-2xl shadow-lg flex items-center justify-center">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+          stroke-width="1.5" stroke="white" class="size-8">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+        </svg>
+      </div>
 
-  <div class="field">
-    <%= f.label :email %><br />
-    <%= f.email_field :email, autofocus: true, autocomplete: "email" %>
+      <div>
+        <h1 class="text-2xl font-medium text-gray-900">Configurações</h1>
+        <p class="text-gray-600 text-sm mt-1">
+          Gerencie suas informações e preferências
+        </p>
+      </div>
+    </div>
+
+    <%= link_to "javascript:history.back()", class: "bg-white border border-gray-300 hover:bg-gray-100 text-gray-700 px-4 py-2 rounded-lg font-medium flex items-center gap-2 transition shadow-sm" do %>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+           stroke="currentColor" stroke-width="3" fill="none"
+           class="w-4 h-4">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7 7-7M3 12h18" />
+      </svg>
+      Voltar
+    <% end %>
+
   </div>
+</div>
 
-  <% if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
-    <div>Currently waiting confirmation for: <%= resource.unconfirmed_email %></div>
+<div class="max-w-4xl mx-auto space-y-6">
+  <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put, data: { controller: "submit-once" } }) do |f| %>
+    <% if resource.errors.any? %>
+      <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded-md">
+        <div class="flex">
+          <span class="text-red-500 text-xl">⚠️</span>
+          <div class="ml-3">
+            <h3 class="text-sm font-medium text-red-800">
+              <%= pluralize(resource.errors.count, "erro") %>:
+            </h3>
+            <ul class="mt-2 text-sm text-red-700 list-disc list-inside">
+              <% resource.errors.full_messages.each do |message| %>
+                <li><%= message %></li>
+              <% end %>
+            </ul>
+          </div>
+        </div>
+      </div>
+    <% end %>
+
+    <!-- Informações da Conta -->
+    <div class="bg-white rounded-lg shadow-lg overflow-hidden mb-6">
+      <div class="px-6 py-4 bg-black border-b border-gray-200">
+        <h2 class="text-xl font-bold text-white">Informações da Conta</h2>
+      </div>
+
+      <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <%= f.label :name, "Nome", class: "block text-sm font-medium text-gray-700 mb-2" %>
+          <%= f.text_field :name, autocomplete: "name", placeholder: "Seu nome completo",
+              class: "w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 focus:ring-2 focus:ring-gray-900 focus:border-transparent" %>
+        </div>
+
+        <div>
+          <%= f.label :email, "E-mail", class: "block text-sm font-medium text-gray-700 mb-2" %>
+          <%= f.email_field :email, autofocus: true, autocomplete: "email",
+              class: "w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 focus:ring-2 focus:ring-gray-900 focus:border-transparent" %>
+        </div>
+
+        <% if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
+          <div class="md:col-span-2 bg-yellow-50 border border-yellow-200 text-yellow-800 px-4 py-3 rounded-lg text-sm">
+            Aguardando confirmação para: <%= resource.unconfirmed_email %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Alterar Senha -->
+    <div class="bg-white rounded-lg shadow-lg overflow-hidden mb-6">
+      <div class="px-6 py-4 bg-black border-b border-gray-200">
+        <h2 class="text-xl font-bold text-white">Alterar Senha</h2>
+      </div>
+
+      <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+        <p class="md:col-span-2 text-sm text-gray-500 -mt-2">Deixe em branco se não quiser alterar</p>
+
+        <div>
+          <%= f.label :password, "Nova Senha", class: "block text-sm font-medium text-gray-700 mb-2" %>
+          <%= f.password_field :password, autocomplete: "new-password",
+              class: "w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 focus:ring-2 focus:ring-gray-900 focus:border-transparent" %>
+          <% if @minimum_password_length %>
+            <p class="mt-1 text-xs text-gray-500">Mínimo de <%= @minimum_password_length %> caracteres, com letras maiúsculas e minúsculas, números e pelo menos 1 caractere especial (!@#$%...)</p>
+          <% end %>
+        </div>
+
+        <div>
+          <%= f.label :password_confirmation, "Confirmar Nova Senha", class: "block text-sm font-medium text-gray-700 mb-2" %>
+          <%= f.password_field :password_confirmation, autocomplete: "new-password",
+              class: "w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 focus:ring-2 focus:ring-gray-900 focus:border-transparent" %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Preferências -->
+    <div class="bg-white rounded-lg shadow-lg overflow-hidden mb-6">
+      <div class="px-6 py-4 bg-black border-b border-gray-200">
+        <h2 class="text-xl font-bold text-white">Preferências</h2>
+      </div>
+
+      <div class="p-6">
+        <div class="md:w-1/2">
+          <%= f.label :items_per_page, "Registros por página (padrão)", class: "block text-sm font-medium text-gray-700 mb-2" %>
+          <%= f.select :items_per_page,
+              options_for_select(
+                [
+                  ["10 registros", 10],
+                  ["15 registros", 15],
+                  ["20 registros", 20],
+                  ["25 registros", 25],
+                  ["50 registros", 50]
+                ],
+                resource.items_per_page || 15
+              ),
+              {},
+              { class: "w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 focus:ring-2 focus:ring-gray-900 focus:border-transparent" } %>
+          <p class="mt-1 text-xs text-gray-500">Define quantos registros serão exibidos por padrão nas listagens</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Confirmação -->
+    <div class="bg-white rounded-lg shadow-lg overflow-hidden mb-6">
+      <div class="px-6 py-4 bg-black border-b border-gray-200">
+        <h2 class="text-xl font-bold text-white">Confirmar Alterações</h2>
+      </div>
+
+      <div class="p-6">
+        <div class="md:w-1/2">
+          <%= f.label :current_password, "Senha Atual", class: "block text-sm font-medium text-gray-700 mb-2" %>
+          <%= f.password_field :current_password, autocomplete: "current-password",
+              class: "w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 focus:ring-2 focus:ring-gray-900 focus:border-transparent" %>
+          <p class="mt-1 text-xs text-gray-500">Precisamos da sua senha atual para confirmar as alterações</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Botões -->
+    <div class="flex justify-end space-x-3 pt-2">
+      <%= link_to "Cancelar", "javascript:history.back()", class: "px-6 py-3 rounded-lg bg-gray-200 border border-gray-300 hover:bg-white text-gray-700 font-medium transition" %>
+      <%= f.submit "Salvar Alterações", class: "px-6 py-3 bg-green-600 hover:bg-green-500 text-white rounded-lg font-medium shadow-lg transition cursor-pointer" %>
+    </div>
   <% end %>
 
-  <div class="field">
-    <%= f.label :password %> <i>(leave blank if you don't want to change it)</i><br />
-    <%= f.password_field :password, autocomplete: "new-password" %>
-    <% if @minimum_password_length %>
-      <br />
-      <em><%= @minimum_password_length %> characters minimum</em>
-    <% end %>
+  <!-- Zona de Perigo -->
+  <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+    <div class="px-6 py-4 bg-red-600 border-b border-gray-200">
+      <h2 class="text-xl font-bold text-white">Zona de Perigo</h2>
+    </div>
+    <div class="p-6">
+      <p class="text-sm text-gray-600 mb-4">Uma vez que você deletar sua conta, não há como voltar atrás.</p>
+      <button type="button"
+              onclick="openDeleteModal('<%= j registration_path(resource_name) %>', '', '<%= j resource.email %>', 'usuário')"
+              class="px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium shadow-lg transition cursor-pointer">
+        Cancelar minha conta
+      </button>
+    </div>
   </div>
-
-  <div class="field">
-    <%= f.label :password_confirmation %><br />
-    <%= f.password_field :password_confirmation, autocomplete: "new-password" %>
-  </div>
-
-  <div class="field">
-    <%= f.label :current_password %> <i>(we need your current password to confirm your changes)</i><br />
-    <%= f.password_field :current_password, autocomplete: "current-password" %>
-  </div>
-
-  <div class="actions">
-    <%= f.submit "Update" %>
-  </div>
-<% end %>
-
-<h3>Cancel my account</h3>
-
-<div>Unhappy? <%= button_to "Cancel my account", registration_path(resource_name), data: { confirm: "Are you sure?", turbo_confirm: "Are you sure?" }, method: :delete %></div>
-
-<%= link_to "Back", :back %>
+</div>

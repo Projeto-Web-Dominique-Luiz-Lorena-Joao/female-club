@@ -1,0 +1,158 @@
+<div class="space-y-6">
+  <!-- Header -->
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900">Usuários do Sistema</h1>
+      <p class="text-gray-600 text-sm mt-1">Gerencie os usuários que têm acesso ao sistema</p>
+    </div>
+  </div>
+
+  <!-- Estatísticas -->
+  <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+    <div class="bg-white rounded-lg shadow p-4 flex items-center gap-4">
+      <div class="bg-blue-100 p-3 rounded-lg">
+        <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
+        </svg>
+      </div>
+      <div>
+        <p class="text-2xl font-bold text-gray-900"><%= @total_users %></p>
+        <p class="text-sm text-gray-500">Total</p>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow p-4 flex items-center gap-4">
+      <div class="bg-green-100 p-3 rounded-lg">
+        <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+      </div>
+      <div>
+        <p class="text-2xl font-bold text-gray-900"><%= @active_users %></p>
+        <p class="text-sm text-gray-500">Ativos</p>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow p-4 flex items-center gap-4">
+      <div class="bg-red-100 p-3 rounded-lg">
+        <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/>
+        </svg>
+      </div>
+      <div>
+        <p class="text-2xl font-bold text-gray-900"><%= @inactive_users %></p>
+        <p class="text-sm text-gray-500">Cancelados</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filtros -->
+  <div class="bg-white rounded-lg shadow p-4">
+    <div class="flex flex-wrap gap-2">
+      <%= link_to "Todos", admin_users_path,
+          class: "px-4 py-2 rounded-lg text-sm font-medium transition #{params[:status].blank? || params[:status] == 'all' ? 'bg-black text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}" %>
+      <%= link_to "Ativos", admin_users_path(status: "active"),
+          class: "px-4 py-2 rounded-lg text-sm font-medium transition #{params[:status] == 'active' ? 'bg-black text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}" %>
+      <%= link_to "Cancelados", admin_users_path(status: "false"),
+          class: "px-4 py-2 rounded-lg text-sm font-medium transition #{params[:status] == 'false' ? 'bg-black text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}" %>
+    </div>
+  </div>
+
+  <!-- Tabela -->
+  <div class="bg-white rounded-lg shadow overflow-hidden">
+    <% if @users.any? %>
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Usuário</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Perfil</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Último Acesso</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Criado em</th>
+              <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Ações</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            <% @users.each do |user| %>
+              <tr class="hover:bg-gray-50">
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="flex items-center">
+                    <div class="flex-shrink-0 h-10 w-10 bg-gray-200 rounded-full flex items-center justify-center">
+                      <span class="text-gray-600 font-medium text-sm"><%= user.display_name.first(2).upcase %></span>
+                    </div>
+                    <div class="ml-4">
+                      <div class="text-sm font-medium text-gray-900"><%= user.display_name %></div>
+                      <div class="text-sm text-gray-500"><%= user.email %></div>
+                    </div>
+                  </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full <%= user.status_badge_class %>">
+                    <%= user.status_label %>
+                  </span>
+                  <% if user.access_locked? %>
+                    <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800 ml-1">Bloqueado</span>
+                  <% end %>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <% if user.admin? %>
+                    <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-purple-100 text-purple-800">Admin</span>
+                  <% else %>
+                    <span class="text-gray-400">Usuário</span>
+                  <% end %>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <% if user.last_sign_in_at %>
+                    <%= l(user.last_sign_in_at, format: :short) rescue user.last_sign_in_at.strftime("%d/%m/%Y %H:%M") %>
+                  <% else %>
+                    <span class="text-gray-400">Nunca</span>
+                  <% end %>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <%= user.created_at.strftime("%d/%m/%Y") %>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-right text-sm">
+                  <% if user != current_user && !user.admin? %>
+                    <% if user.active? %>
+                      <%= button_to "Cancelar",
+                          deactivate_admin_user_path(user),
+                          method: :patch,
+                          form: { data: { controller: "submit-once" } },
+                          data: { turbo_confirm: "Cancelar a conta de #{user.display_name}? O usuário não conseguirá mais fazer login." },
+                          class: "inline-flex items-center px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white text-xs font-medium rounded-lg transition duration-200" %>
+                    <% else %>
+                      <%= button_to "Reativar",
+                          reactivate_admin_user_path(user),
+                          method: :patch,
+                          form: { data: { controller: "submit-once" } },
+                          data: { turbo_confirm: "Reativar a conta de #{user.display_name}?" },
+                          class: "inline-flex items-center px-3 py-1.5 bg-green-600 hover:bg-green-500 text-white text-xs font-medium rounded-lg transition duration-200" %>
+                    <% end %>
+                  <% elsif user == current_user %>
+                    <span class="text-xs text-gray-400">Você</span>
+                  <% elsif user.admin? %>
+                    <span class="text-xs text-gray-400">Admin</span>
+                  <% end %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+
+      <% if @users.total_pages > 1 %>
+        <div class="px-6 py-4 border-t border-gray-200">
+          <%= paginate @users, theme: 'twitter-bootstrap-4' %>
+        </div>
+      <% end %>
+    <% else %>
+      <div class="p-12 text-center">
+        <svg class="w-12 h-12 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
+        </svg>
+        <p class="text-gray-500 text-lg">Nenhum usuário encontrado</p>
+      </div>
+    <% end %>
+  </div>
+</div>

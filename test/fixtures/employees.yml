@@ -1,27 +1,27 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  full_name: MyString
-  cpf: MyString
-  position: MyString
-  phone: MyString
-  email: MyString
+  full_name: Employee One
+  cpf: "33333333333"
+  position: vendedor
+  phone: "11987654321"
+  email: employee1@example.com
   address: MyText
   admission_date: 2025-11-12
-  salary: 9.99
+  salary: 2000.00
   work_days: MyString
   notes: MyText
-  status: MyString
+  status: ativo
 
 two:
-  full_name: MyString
-  cpf: MyString
-  position: MyString
-  phone: MyString
-  email: MyString
+  full_name: Employee Two
+  cpf: "44444444444"
+  position: gerente
+  phone: "21987654321"
+  email: employee2@example.com
   address: MyText
   admission_date: 2025-11-12
-  salary: 9.99
+  salary: 3000.00
   work_days: MyString
   notes: MyText
-  status: MyString
+  status: ativo

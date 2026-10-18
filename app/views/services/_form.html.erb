@@ -1,0 +1,136 @@
+<%= form_with(model: service, class: "space-y-8 max-w-4xl mx-auto", data: { controller: "submit-once" }) do |form| %>
+  <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+    <div class="px-6 py-4 bg-black border-b border-gray-200">
+      <h2 class="text-xl font-bold text-white">Dados do Serviço</h2>
+    </div>
+
+    <div class="p-6">
+      <% if service.errors.any? %>
+        <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded-md mb-6">
+          <div class="flex">
+            <span class="text-red-500 text-xl">⚠️</span>
+            <div class="ml-3">
+              <h3 class="text-sm font-medium text-red-800">
+                <%= pluralize(service.errors.count, "erro") %> ao salvar:
+              </h3>
+              <ul class="mt-2 text-sm text-red-700 list-disc list-inside">
+                <% service.errors.full_messages.each do |message| %>
+                  <li><%= message %></li>
+                <% end %>
+              </ul>
+            </div>
+          </div>
+        </div>
+      <% end %>
+
+      <!-- Seção: Informações Básicas -->
+      <div class="pb-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="md:col-span-2">
+            <%= form.label :name, "Nome do Serviço *", class: "block text-sm font-medium text-gray-700 mb-2" %>
+            <%= form.text_field :name,
+                id: "service_name",
+                class: "w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 focus:ring-2 focus:ring-gray-900 focus:border-transparent",
+                placeholder: "Ex: Limpeza Profunda, Corte de Cabelo",
+                required: true %>
+          </div>
+
+          <div class="md:col-span-2">
+            <%= form.label :description, "Descrição", class: "block text-sm font-medium text-gray-700 mb-2" %>
+            <%= form.text_area :description,
+                rows: 4,
+                class: "w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 focus:ring-2 focus:ring-gray-900 focus:border-transparent",
+                placeholder: "Descrição detalhada do serviço..." %>
+          </div>
+        </div>
+      </div>
+
+      <!-- Seção: Preço e Status lado a lado -->
+      <div class="py-1">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+          <!-- Campo Preço -->
+          <div>
+            <%= form.label :price, "Preço do Serviço *", class: "block text-sm font-medium text-gray-700 mb-2" %>
+            <div class="relative">
+              <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">R$</span>
+              <%= form.number_field :price,
+                  step: "0.01",
+                  class: "w-full px-4 py-2 pl-10 h-11 border border-gray-300 rounded-lg bg-gray-100 focus:ring-2 focus:ring-gray-900 focus:border-transparent",
+                  placeholder: "0,00",
+                  required: true %>
+            </div>
+          </div>
+
+          <!-- Campo Status -->
+          <div>
+            <%= form.label :active, "Status do Serviço *", class: "block text-sm font-medium text-gray-700 mb-2" %>
+            <select name="service[active]"
+              class="w-full px-4 py-2 h-11 border border-gray-300 rounded-lg bg-gray-100 focus:ring-2 focus:ring-gray-900 focus:border-transparent"
+              required>
+              <option value="ativo" <%= "selected" if (service.active || "ativo") == "ativo" %>>Ativo</option>
+              <option value="inativo" <%= "selected" if service.active == "inativo" %>>Inativo</option>
+              <option value="arquivado" <%= "selected" if service.active == "arquivado" %>>Arquivado</option>
+            </select>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="flex justify-between items-center pt-2">
+        <div class="text-xs text-gray-500">* campos obrigatórios</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Botões de Ação -->
+  <div class="flex justify-end space-x-3 pt-6">
+    <%= link_to "Cancelar", services_path, class: "px-6 py-3 rounded-lg bg-gray-200 border border-gray-300 hover:bg-white text-gray-700 font-medium transition" %>
+    <%= form.submit service.new_record? ? "Criar Serviço" : "Atualizar Serviço",
+        class: "px-6 py-3 bg-green-600 hover:bg-green-500 text-white rounded-lg font-medium shadow-lg transition cursor-pointer" %>
+  </div>
+<% end %>
+
+<script>
+  function initializePriceMasks() {
+    const priceFields = document.querySelectorAll('input[type="number"][step="0.01"]');
+
+    priceFields.forEach(field => {
+      field.addEventListener('input', function() {
+        if (this.value) {
+          let value = this.value.replace(/[^\d]/g, '');
+
+          if (!value) {
+            this.value = '';
+            return;
+          }
+
+          if (value.length === 1) {
+            value = '00' + value;
+          } else if (value.length === 2) {
+            value = '0' + value;
+          }
+
+          let integerPart = value.slice(0, -2);
+          const decimalPart = value.slice(-2);
+
+          integerPart = integerPart.replace(/^0+/, '') || '0';
+
+          this.value = integerPart + '.' + decimalPart;
+        }
+      });
+    });
+  }
+
+  function initializeAllMasks() {
+    initializePriceMasks();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeAllMasks);
+  } else {
+    initializeAllMasks();
+  }
+
+  document.addEventListener('turbo:load', initializeAllMasks);
+</script>

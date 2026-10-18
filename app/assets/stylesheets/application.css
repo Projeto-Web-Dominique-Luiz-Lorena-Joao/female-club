@@ -33,3 +33,236 @@
   scrollbar-width: thin;
 }
 
+/* ========================================
+   RESPONSIVIDADE GLOBAL
+   ======================================== */
+
+/* Tabelas responsivas */
+.table-responsive {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Em mobile, garantir que tabelas tenham largura mínima */
+@media (max-width: 768px) {
+  .table-responsive table {
+    min-width: 600px;
+  }
+
+  /* Ajustar padding de células em mobile */
+  .table-responsive th,
+  .table-responsive td {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+
+  /* Cards empilhados em mobile */
+  .cards-responsive {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .cards-responsive > div {
+    width: 100%;
+  }
+
+  /* Formulários empilhados */
+  .form-responsive {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .form-responsive > div {
+    width: 100%;
+  }
+
+  /* Botões full width em mobile */
+  .btn-responsive {
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* Header de página responsivo */
+  .page-header-responsive {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .page-header-responsive > * {
+    width: 100%;
+  }
+
+  /* Filtros empilhados */
+  .filters-responsive {
+    flex-direction: column;
+  }
+
+  .filters-responsive > div {
+    width: 100%;
+  }
+}
+
+/* Tablet (768px - 1024px) */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .cards-responsive {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+}
+
+/* Desktop (1024px+) */
+@media (min-width: 1024px) {
+  .cards-responsive {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+}
+
+/* Telas grandes / TV (1920px+) */
+@media (min-width: 1920px) {
+  .cards-responsive {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  /* Textos maiores para TV */
+  .tv-text {
+    font-size: 1.125rem;
+  }
+
+  /* Mais espaçamento */
+  .tv-spacing {
+    padding: 2rem;
+  }
+}
+
+/* Telas muito grandes (2560px+) */
+@media (min-width: 2560px) {
+  .cards-responsive {
+    grid-template-columns: repeat(5, 1fr);
+  }
+
+  body {
+    font-size: 1.1rem;
+  }
+}
+
+/* Utilitários de responsividade */
+.mobile-only {
+  display: none;
+}
+
+.desktop-only {
+  display: block;
+}
+
+@media (max-width: 1024px) {
+  .mobile-only {
+    display: block;
+  }
+
+  .desktop-only {
+    display: none;
+  }
+}
+
+/* Touch-friendly: aumentar área de toque em mobile */
+@media (max-width: 768px) {
+  button,
+  a.btn,
+  [role="button"],
+  select,
+  input[type="checkbox"],
+  input[type="radio"] {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Links em tabela mais fáceis de tocar */
+  table a,
+  table button {
+    padding: 0.5rem 1rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+/* ========================================
+   TOOLTIPS DOS RELATÓRIOS
+   ======================================== */
+.info-tooltip {
+  position: relative;
+  display: inline-block;
+}
+
+.info-tooltip .tooltip-text {
+  visibility: hidden;
+  width: 280px;
+  background-color: #1f2937;
+  color: #fff;
+  text-align: left;
+  border-radius: 8px;
+  padding: 12px;
+  position: absolute;
+  z-index: 1000;
+  top: -10px;
+  right: 30px;
+  opacity: 0;
+  transition: opacity 0.3s;
+  font-size: 0.813rem;
+  line-height: 1.4;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.info-tooltip .tooltip-text::after {
+  content: "";
+  position: absolute;
+  top: 10px;
+  left: 100%;
+  margin-left: 0;
+  border-width: 8px;
+  border-style: solid;
+  border-color: transparent transparent transparent #1f2937;
+}
+
+.info-tooltip:hover .tooltip-text {
+  visibility: visible;
+  opacity: 1;
+}
+
+/* ========================================
+   ANIMAÇÕES DE MODAL
+   ======================================== */
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.animate-fade-in-scale {
+  animation: fadeInScale 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+#errorModal {
+  animation: fadeIn 0.2s ease-out;
+}

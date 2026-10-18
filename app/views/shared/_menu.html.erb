@@ -1,117 +1,228 @@
-<aside class="w-64 bg-black text-white flex flex-col h-screen">
-  <!-- Header -->
-  <div class="p-6 border-b border-gray-700">
-    <h1 class="text-2xl font-bold">Female Club</h1>
-    <div class="w-12 h-0.5 bg-cyan-400 mt-2"></div>
+<aside class="bg-black text-white flex flex-col h-screen transition-all duration-500 ease-in-out fixed left-0 top-0 z-40 w-72"
+       data-sidebar-target="sidebar">
+
+  <div class="p-4 pl-5 border-b border-gray-700">
+    <div class="flex items-center">
+      <div class="w-10 h-10 rounded flex items-center justify-center flex-shrink-0 overflow-hidden">
+        <%= image_tag "logo-female-club.jpg", class: "w-full h-full object-cover", alt: "Female Club" %>
+      </div>
+      <h1 class="text-xl font-bold transition-all duration-500 ease-in-out ml-3 whitespace-nowrap overflow-hidden"
+          data-sidebar-target="text">Female Club</h1>
+    </div>
   </div>
 
-  <!-- Navigation - Scrollable -->
-  <nav class="flex-1 overflow-y-auto py-6 px-4">
-    <!-- Dashboard -->
-    <%= link_to dashboard_path, class: "flex items-center px-4 py-3 text-gray-300 hover:bg-gray-800 rounded-lg transition-colors mb-2" do %>
-      <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+  <nav class="flex-1 py-6 px-3 overflow-y-auto" data-sidebar-target="nav">
+
+    <%= link_to dashboard_path, class: "flex items-center justify-start px-4 py-3 min-h-[48px] rounded-lg transition-all duration-300 mb-2 #{active_class(dashboard_path)}", title: "Dashboard", data: { sidebarTarget: "link" } do %>
+      <svg class="w-5 h-5 flex-shrink-0 min-w-[1.25rem]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
       </svg>
-     Dashboard
+      <span class="ml-3 whitespace-nowrap transition-all duration-500 ease-in-out" data-sidebar-target="text">Dashboard</span>
     <% end %>
 
-    <!-- Clients -->
-    <%= link_to customers_path, class: "flex items-center px-4 py-3 text-gray-300 hover:bg-gray-800 rounded-lg transition-colors mb-2" do %>
-      <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
-      </svg>
-     Clientes
-    <% end %>
-
-    <!-- Services -->
-    <%= link_to customers_path, class: "flex items-center px-4 py-3 text-gray-300 hover:bg-gray-800 rounded-lg transition-colors mb-2" do %>
-      <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>
-      </svg>
-     Serviços
-    <% end %>
-
-    <!-- Products -->
-    <%= link_to customers_path, class: "flex items-center px-4 py-3 text-gray-300 hover:bg-gray-800 rounded-lg transition-colors mb-2" do %>
-      <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
-      </svg>
-     Produtos
-    <% end %>
-
-    <!-- Stock -->
-    <%= link_to customers_path, class: "flex items-center px-4 py-3 text-gray-300 hover:bg-gray-800 rounded-lg transition-colors mb-2" do %>
-      <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <button data-action="click->sidebar#toggleSubmenu" data-submenu-id="estoque"
+            class="flex items-center justify-start w-full px-4 py-3 min-h-[48px] rounded-lg transition-all duration-300 mb-2 <%= active_submenu?(inventory_status_path, product_inputs_path, product_outputs_path) ? "bg-white text-black" : "text-gray-300 hover:bg-white/10 hover:text-white" %>"
+            title="Estoque" data-sidebar-target="link">
+      <svg class="w-5 h-5 flex-shrink-0 min-w-[1.25rem]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
       </svg>
-     Estoque
-    <% end %>
-
-    <!-- Employees -->
-    <%= link_to employees_path, class: "flex items-center px-4 py-3 text-gray-300 hover:bg-gray-800 rounded-lg transition-colors mb-2" do %>
-     <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M4.5 17H4a1 1 0 0 1-1-1 3 3 0 0 1 3-3h1m0-3.05A2.5 2.5 0 1 1 9 5.5M19.5 17h.5a1 1 0 0 0 1-1 3 3 0 0 0-3-3h-1m0-3.05a2.5 2.5 0 1 0-2-4.45m.5 13.5h-5a1 1 0 0 1-1-1 3 3 0 0 1 3-3h3a3 3 0 0 1 3 3 1 1 0 0 1-1 1Zm-1-9.5a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0Z"/>
+      <span class="ml-3 whitespace-nowrap transition-all duration-500 ease-in-out" data-sidebar-target="text">Estoque</span>
+      <svg class="w-4 h-4 ml-auto flex-shrink-0 transition-transform duration-300 min-w-[1rem]"
+           data-sidebar-target="text" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
       </svg>
-     Funcionários
-    <% end %>
+    </button>
 
-    <!-- Schedule -->
-    <%= link_to customers_path, class: "flex items-center px-4 py-3 text-gray-300 hover:bg-gray-800 rounded-lg transition-colors mb-2" do %>
-       <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <div id="estoque-submenu" class="hidden ml-8 space-y-1 mb-2">
+
+      <%= link_to inventory_status_path, class: "flex items-center justify-start px-4 py-2 min-h-[40px] text-sm rounded-lg transition-all duration-300 #{active_submenu_class(inventory_status_path)}", title: "Visualizar Estoque", data: { sidebarTarget: "link" } do %>
+        <svg class="w-4 h-4 flex-shrink-0 min-w-[1rem]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+        </svg>
+        <span class="ml-2 whitespace-nowrap transition-all duration-500 ease-in-out" data-sidebar-target="text">Estado Atual</span>
+      <% end %>
+
+      <%= link_to product_inputs_path, class: "flex items-center justify-start px-4 py-2 min-h-[40px] text-sm rounded-lg transition-all duration-300 #{active_submenu_class(product_inputs_path)}", title: "Registrar Entrada de Produto", data: { sidebarTarget: "link" } do %>
+        <svg class="w-4 h-4 flex-shrink-0 min-w-[1rem]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+        </svg>
+        <span class="ml-2 whitespace-nowrap transition-all duration-500 ease-in-out" data-sidebar-target="text">Entrada</span>
+      <% end %>
+
+      <%= link_to product_outputs_path, class: "flex items-center justify-start px-4 py-2 min-h-[40px] text-sm rounded-lg transition-all duration-300 #{active_submenu_class(product_outputs_path)}", title: "Registrar Saída de Produto", data: { sidebarTarget: "link" } do %>
+        <svg class="w-4 h-4 flex-shrink-0 min-w-[1rem]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"/>
+        </svg>
+        <span class="ml-2 whitespace-nowrap transition-all duration-500 ease-in-out" data-sidebar-target="text">Saída</span>
+      <% end %>
+
+    </div>
+
+<button data-action="click->sidebar#toggleSubmenu" data-submenu-id="relatorios"
+            class="flex items-center justify-start w-full px-4 py-3 min-h-[48px] rounded-lg transition-all duration-300 mb-2 <%= active_submenu?(daily_reports_path, monthly_reports_path, yearly_reports_path) ? "bg-white text-black" : "text-gray-300 hover:bg-white/10 hover:text-white" %>"
+            title="Relatórios" data-sidebar-target="link">
+      <svg class="w-5 h-5 flex-shrink-0 min-w-[1.25rem]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+      </svg>
+      <span class="ml-3 whitespace-nowrap transition-all duration-500 ease-in-out" data-sidebar-target="text">Relatórios</span>
+      <svg class="w-4 h-4 ml-auto flex-shrink-0 transition-transform duration-300 min-w-[1rem]"
+           data-sidebar-target="text" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
+      </svg>
+    </button>
+
+    <div id="relatorios-submenu" class="hidden ml-8 space-y-1 mb-2">
+
+      <%= link_to daily_reports_path, class: "flex items-center justify-start px-4 py-2 min-h-[40px] text-sm rounded-lg transition-all duration-300 #{active_submenu_class(daily_reports_path)}", title: "Relatório Diário", data: { sidebarTarget: "link" } do %>
+        <svg class="w-4 h-4 flex-shrink-0 min-w-[1rem]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+        <span class="ml-2 whitespace-nowrap transition-all duration-500 ease-in-out" data-sidebar-target="text">Diário</span>
+      <% end %>
+
+      <%= link_to monthly_reports_path, class: "flex items-center justify-start px-4 py-2 min-h-[40px] text-sm rounded-lg transition-all duration-300 #{active_submenu_class(monthly_reports_path)}", title: "Relatório Mensal", data: { sidebarTarget: "link" } do %>
+        <svg class="w-4 h-4 flex-shrink-0 min-w-[1rem]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+        </svg>
+        <span class="ml-2 whitespace-nowrap transition-all duration-500 ease-in-out" data-sidebar-target="text">Mensal</span>
+      <% end %>
+
+      <%= link_to yearly_reports_path, class: "flex items-center justify-start px-4 py-2 min-h-[40px] text-sm rounded-lg transition-all duration-300 #{active_submenu_class(yearly_reports_path)}", title: "Relatório Anual", data: { sidebarTarget: "link" } do %>
+        <svg class="w-4 h-4 flex-shrink-0 min-w-[1rem]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+        </svg>
+        <span class="ml-2 whitespace-nowrap transition-all duration-500 ease-in-out" data-sidebar-target="text">Anual</span>
+      <% end %>
+
+    </div>
+
+    <button data-action="click->sidebar#toggleSubmenu" data-submenu-id="agendamentos"
+            class="flex items-center justify-start w-full px-4 py-3 min-h-[48px] rounded-lg transition-all duration-300 mb-2 <%= active_submenu?(service_appointments_path, appointments_calendar_path) ? "bg-white text-black" : "text-gray-300 hover:bg-white/10 hover:text-white" %>"
+            title="Agendamentos" data-sidebar-target="link">
+      <svg class="w-5 h-5 flex-shrink-0 min-w-[1.25rem]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
       </svg>
-     Agendamentos
-    <% end %>
+      <span class="ml-3 whitespace-nowrap transition-all duration-500 ease-in-out" data-sidebar-target="text">Agendamentos</span>
+      <svg class="w-4 h-4 ml-auto flex-shrink-0 transition-transform duration-300 min-w-[1rem]"
+           data-sidebar-target="text" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
+      </svg>
+    </button>
 
-    <!-- Sales -->
-    <%= link_to employees_path, class: "flex items-center px-4 py-3 text-gray-300 hover:bg-gray-800 rounded-lg transition-colors mb-2" do %>
-      <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <div id="agendamentos-submenu" class="hidden ml-8 space-y-1 mb-2">
+
+      <%= link_to service_appointments_path, class: "flex items-center justify-start px-4 py-2 min-h-[40px] text-sm rounded-lg transition-all duration-300 #{active_submenu_class(service_appointments_path)}", title: "Listagem e Filtros", data: { sidebarTarget: "link" } do %>
+        <svg class="w-4 h-4 flex-shrink-0 min-w-[1rem]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/>
+        </svg>
+        <span class="ml-2 whitespace-nowrap transition-all duration-500 ease-in-out" data-sidebar-target="text">Listagem e Filtros</span>
+      <% end %>
+
+      <%= link_to appointments_calendar_path, class: "flex items-center justify-start px-4 py-2 min-h-[40px] text-sm rounded-lg transition-all duration-300 #{active_submenu_class(appointments_calendar_path)}", title: "Calendário", data: { sidebarTarget: "link" } do %>
+        <svg class="w-4 h-4 flex-shrink-0 min-w-[1rem]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+        </svg>
+        <span class="ml-2 whitespace-nowrap transition-all duration-500 ease-in-out" data-sidebar-target="text">Calendário</span>
+      <% end %>
+
+    </div>
+
+    <%= link_to sales_path, class: "flex items-center justify-start px-4 py-3 min-h-[48px] rounded-lg transition-all duration-300 mb-2 #{active_class(sales_path)}", title: "Vendas", data: { sidebarTarget: "link" } do %>
+      <svg class="w-5 h-5 flex-shrink-0 min-w-[1.25rem]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
       </svg>
-     Vendas
+      <span class="ml-3 whitespace-nowrap transition-all duration-500 ease-in-out" data-sidebar-target="text">Vendas</span>
     <% end %>
 
-    <!-- Financial -->
-    <%= link_to customers_path, class: "flex items-center px-4 py-3 text-gray-300 hover:bg-gray-800 rounded-lg transition-colors mb-2" do %>
-      <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <%= link_to customers_path, class: "flex items-center justify-start px-4 py-3 min-h-[48px] rounded-lg transition-all duration-300 mb-2 #{active_class(customers_path)}", title: "Clientes", data: { sidebarTarget: "link" } do %>
+      <svg class="w-5 h-5 flex-shrink-0 min-w-[1.25rem]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
+      </svg>
+      <span class="ml-3 whitespace-nowrap transition-all duration-500 ease-in-out" data-sidebar-target="text">Clientes</span>
+    <% end %>
+
+    <%= link_to services_path, class: "flex items-center justify-start px-4 py-3 min-h-[48px] rounded-lg transition-all duration-300 mb-2 #{active_class(services_path)}", title: "Serviços", data: { sidebarTarget: "link" } do %>
+      <svg class="w-5 h-5 flex-shrink-0 min-w-[1.25rem]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>
+      </svg>
+      <span class="ml-3 whitespace-nowrap transition-all duration-500 ease-in-out" data-sidebar-target="text">Serviços</span>
+    <% end %>
+
+    <%= link_to products_path, class: "flex items-center justify-start px-4 py-3 min-h-[48px] rounded-lg transition-all duration-300 mb-2 #{active_class(products_path)}", title: "Produtos", data: { sidebarTarget: "link" } do %>
+      <svg class="w-5 h-5 flex-shrink-0 min-w-[1.25rem]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+      </svg>
+      <span class="ml-3 whitespace-nowrap transition-all duration-500 ease-in-out" data-sidebar-target="text">Produtos</span>
+    <% end %>
+
+    <%= link_to employees_path, class: "flex items-center justify-start px-4 py-3 min-h-[48px] rounded-lg transition-all duration-300 mb-2 #{active_class(employees_path)}", title: "Funcionários", data: { sidebarTarget: "link" } do %>
+      <svg class="w-5 h-5 flex-shrink-0 min-w-[1.25rem]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M4.5 17H4a1 1 0 0 1-1-1 3 3 0 0 1 3-3h1m0-3.05A2.5 2.5 0 1 1 9 5.5M19.5 17h.5a1 1 0 0 0 1-1 3 3 0 0 0-3-3h-1m0-3.05a2.5 2.5 0 1 0-2-4.45m.5 13.5h-5a1 1 0 0 1-1-1 3 3 0 0 1 3-3h3a3 3 0 0 1 3 3 1 1 0 0 1-1 1Zm-1-9.5a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0Z"/>
+      </svg>
+      <span class="ml-3 whitespace-nowrap transition-all duration-500 ease-in-out" data-sidebar-target="text">Funcionários</span>
+    <% end %>
+
+    <%= link_to expenses_path, class: "flex items-center justify-start px-4 py-3 min-h-[48px] rounded-lg transition-all duration-300 mb-2 #{active_class(expenses_path)}", title: "Despesas", data: { sidebarTarget: "link" } do %>
+      <svg class="w-5 h-5 flex-shrink-0 min-w-[1.25rem]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
       </svg>
-     Financeiro
+      <span class="ml-3 whitespace-nowrap transition-all duration-500 ease-in-out" data-sidebar-target="text">Despesas</span>
     <% end %>
 
-    <!-- Suppliers -->
-    <%= link_to customers_path, class: "flex items-center px-4 py-3 text-gray-300 hover:bg-gray-800 rounded-lg transition-colors mb-2" do %>
-      <svg class="w-5 h-5 mr-3" fill="#c5c9d1" stroke="currentColor" viewBox="0 0 24 24">
-      <svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 112.34 122.88"><defs><style>.cls-1{fill-rule:evenodd;}</style></defs><title>only-use-the-trolley</title><path class="cls-1" d="M53.85,94.05a14.42,14.42,0,1,1-14.41,14.42A14.43,14.43,0,0,1,53.85,94.05ZM3.92,9.83A5,5,0,1,1,6,.11L28.56,5,51.9,87.53a20.87,20.87,0,0,0-9.4,3.24L20.63,13.45,3.92,9.83Zm48.75,47L92,46.87a2.22,2.22,0,0,1,2.62,1.54l8.59,30A2,2,0,0,1,101.78,81L62.46,90.9a2.22,2.22,0,0,1-2.62-1.54l-8.6-30a2,2,0,0,1,1.43-2.55ZM41,16,80.23,6a2.24,2.24,0,0,1,2.63,1.54l8.88,30a2,2,0,0,1-1.4,2.55L51.11,50.06a2.24,2.24,0,0,1-2.63-1.54l-8.89-30A2,2,0,0,1,41,16ZM71.16,96.53l35-9.23a5,5,0,1,1,2.53,9.6l-33.92,9a20.93,20.93,0,0,0-3.56-9.33Zm-17.31,8.4a3.54,3.54,0,1,1-3.54,3.54,3.53,3.53,0,0,1,3.54-3.54Z"/></svg>
+    <%= link_to suppliers_path, class: "flex items-center justify-start px-4 py-3 min-h-[48px] rounded-lg transition-all duration-300 mb-2 #{active_class(suppliers_path)}", title: "Fornecedores", data: { sidebarTarget: "link" } do %>
+      <svg class="w-5 h-5 flex-shrink-0 min-w-[1.25rem]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/>
       </svg>
-     Fornecedores
+      <span class="ml-3 whitespace-nowrap transition-all duration-500 ease-in-out" data-sidebar-target="text">Fornecedores</span>
     <% end %>
 
-    <!-- Guarantors -->
-    <%= link_to customers_path, class: "flex items-center px-4 py-3 text-gray-300 hover:bg-gray-800 rounded-lg transition-colors mb-2" do %>
-      <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <svg xmlns="http://www.w3.org/2000/svg"><path fill="#c5c9d1" d="M20 11q-.425 0-.713-.288T19 10q0-.425.288-.713T20 9q.425 0 .713.288T21 10q0 .425-.288.713T20 11Zm0-3q-.425 0-.713-.288T19 7V4q0-.425.288-.713T20 3q.425 0 .713.288T21 4v3q0 .425-.288.713T20 8ZM9 12q-1.65 0-2.825-1.175T5 8q0-1.65 1.175-2.825T9 4q1.65 0 2.825 1.175T13 8q0 1.65-1.175 2.825T9 12Zm-8 6v-.8q0-.85.438-1.563T2.6 14.55q1.55-.775 3.15-1.163T9 13q1.65 0 3.25.388t3.15 1.162q.725.375 1.163 1.088T17 17.2v.8q0 .825-.588 1.413T15 20H3q-.825 0-1.413-.588T1 18Zm2 0h12v-.8q0-.275-.138-.5t-.362-.35q-1.35-.675-2.725-1.012T9 15q-1.4 0-2.775.338T3.5 16.35q-.225.125-.363.35T3 17.2v.8Zm6-8q.825 0 1.413-.588T11 8q0-.825-.588-1.413T9 6q-.825 0-1.413.588T7 8q0 .825.588 1.413T9 10Zm0-2Zm0 10Z"/></svg>
+    <%= link_to guarantors_path, class: "flex items-center justify-start px-4 py-3 min-h-[48px] rounded-lg transition-all duration-300 mb-2 #{active_class(guarantors_path)}", title: "Fiadores", data: { sidebarTarget: "link" } do %>
+      <svg class="w-5 h-5 flex-shrink-0 min-w-[1.25rem]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>
       </svg>
-     Fiadores
+      <span class="ml-3 whitespace-nowrap transition-all duration-500 ease-in-out" data-sidebar-target="text">Fiadores</span>
     <% end %>
+
+    <% if current_user.admin? %>
+      <%= link_to admin_users_path, class: "flex items-center justify-start px-4 py-3 min-h-[48px] rounded-lg transition-all duration-300 mb-2 #{active_class(admin_users_path)}", title: "Usuários", data: { sidebarTarget: "link" } do %>
+        <svg class="w-5 h-5 flex-shrink-0 min-w-[1.25rem]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+        </svg>
+        <span class="ml-3 whitespace-nowrap transition-all duration-500 ease-in-out" data-sidebar-target="text">Usuários</span>
+      <% end %>
+    <% end %>
+
+    <%= link_to admin_access_requests_path, class: "flex items-center justify-start px-4 py-3 min-h-[48px] rounded-lg transition-all duration-300 mb-2 #{active_class(admin_access_requests_path)}", title: "Solicitações", data: { sidebarTarget: "link" } do %>
+      <svg class="w-5 h-5 flex-shrink-0 min-w-[1.25rem]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+      </svg>
+      <span class="ml-3 whitespace-nowrap transition-all duration-500 ease-in-out" data-sidebar-target="text">
+        Solicitações
+        <% pending_count = AccessRequest.pending.count %>
+        <% if pending_count > 0 %>
+          <span class="ml-1 bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full"><%= pending_count %></span>
+        <% end %>
+      </span>
+    <% end %>
+
   </nav>
 
-  <!-- Footer - Fixed -->
-  <div class="border-t border-gray-700 p-4 space-y-2">
-    <!-- Settings -->
-    <%= link_to customers_path, class: "flex items-center px-4 py-3 text-gray-300 hover:bg-gray-800 rounded-lg transition-colors mb-2" do %>
-      <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+  <div class="border-t border-gray-700 py-4 px-3 space-y-2">
+
+    <%= link_to edit_user_registration_path, class: "flex items-center justify-start px-4 py-3 min-h-[48px] rounded-lg transition-all duration-300 mb-2 #{active_class(edit_user_registration_path)}", title: "Configurações", data: { sidebarTarget: "link" } do %>
+      <svg class="w-5 h-5 flex-shrink-0 min-w-[1.25rem]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
       </svg>
-     Configurações
+      <span class="ml-3 whitespace-nowrap transition-all duration-500 ease-in-out" data-sidebar-target="text">Configurações</span>
     <% end %>
 
-    <%= button_to destroy_user_session_path, method: :delete, class: "flex items-center w-full px-4 py-3 text-gray-300 hover:text-white hover:bg-red-800 rounded-lg transition-colors" do %>
-      <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <%= button_to destroy_user_session_path, method: :delete, class: "flex items-center justify-start w-full px-4 py-3 min-h-[48px] text-gray-300 hover:bg-red-800 hover:text-white rounded-lg transition-all duration-300", title: "Sair", data: { sidebarTarget: "link" } do %>
+      <svg class="w-5 h-5 flex-shrink-0 min-w-[1.25rem]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
       </svg>
-      Sair
+      <span class="ml-3 whitespace-nowrap transition-all duration-500 ease-in-out" data-sidebar-target="text">Sair</span>
     <% end %>
+
   </div>
 </aside>

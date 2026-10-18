@@ -1,0 +1,232 @@
+<div class="max-w-6xl mx-auto space-y-6">
+  <div class="flex justify-between items-start">
+    <div>
+      <h1 class="text-3xl font-bold text-gray-900"><%= @supplier.display_name %></h1>
+      <% if @supplier.trade_name != @supplier.legal_name %>
+        <p class="mt-2 text-gray-600"><%= @supplier.legal_name %></p>
+      <% end %>
+      <span class="inline-block mt-2 px-4 py-2 text-sm font-medium rounded-full <%= @supplier.category_badge_color %>">
+        <%= @supplier.product_category&.titleize || 'Categoria não definida' %>
+      </span>
+    </div>
+    <div class="flex space-x-3">
+
+      <%= link_to edit_supplier_path(@supplier), class: "bg-black hover:bg-gray-700 text-white px-8 py-2 rounded-lg font-medium" do %>
+        Editar
+      <% end %>
+
+      <% if @supplier.ativo_status? %>
+        <%= button_to "Inativar Fornecedor",
+                      supplier_path(@supplier),
+                      method: :delete,
+                      form: { data: { controller: "submit-once" } },
+                      data: { confirm: "Tem certeza que deseja inativar este fornecedor?" },
+                      class: "bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium" %>
+      <% else %>
+        <%= button_to "Reativar Fornecedor",
+                      reactivate_supplier_path(@supplier),
+                      method: :patch,
+                      form: { data: { controller: "submit-once" } },
+                      data: { confirm: "Deseja reativar este fornecedor?" },
+                      class: "bg-green-600 hover:bg-green-500 text-white px-4 py-2 rounded-lg font-medium" %>
+      <% end %>
+
+      <%= link_to "javascript:history.back()", class: "bg-gray-300 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg font-medium flex items-center gap-2" do %>
+
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+            stroke="currentColor" stroke-width="2" fill="none"
+            class="w-5 h-5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7 7-7M3 12h18" />
+        </svg>
+
+        Voltar
+      <% end %>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <!-- Card Total de Itens -->
+    <div class="bg-white rounded-lg border border-gray-200 p-4">
+      <div class="flex items-start">
+        <div class="flex-shrink-0 bg-blue-100 rounded-lg p-3">
+          <svg class="w-6 h-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="m21 7.5-9-5.25L3 7.5m18 0-9 5.25m9-5.25v9l-9 5.25M3 7.5l9 5.25M3 7.5v9l9 5.25m0-9v9" />
+          </svg>
+        </div>
+        <div class="ml-3 flex-1">
+          <p class="text-xs text-gray-500 font-medium">Total de Itens</p>
+          <% if @supplier.respond_to?(:total_items_supplied) && @supplier.respond_to?(:items_in_stock) %>
+            <p class="text-2xl font-bold text-gray-900 mt-1"><%= @supplier.total_items_supplied %></p>
+            <p class="text-sm text-gray-600 mt-1"><%= @supplier.items_in_stock %> em estoque</p>
+          <% else %>
+            <p class="text-2xl font-bold text-blue-600 mt-1">--</p>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card Valor Total em Estoque -->
+    <div class="bg-white rounded-lg border border-gray-200 p-4">
+      <div class="flex items-start">
+        <div class="flex-shrink-0 bg-green-100 rounded-lg p-3">
+          <svg class="w-6 h-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+          </svg>
+        </div>
+        <div class="ml-3 flex-1">
+          <p class="text-xs text-gray-500 font-medium">Valor Total em Estoque</p>
+          <p class="text-2xl font-bold text-green-600 mt-1">
+            <% if @supplier.respond_to?(:total_stock_value) %>
+              R$ <%= number_with_delimiter(@supplier.total_stock_value.to_f.round(2), delimiter: '.', separator: ',') %>
+            <% else %>
+              R$ --
+            <% end %>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card Último Fornecimento -->
+    <div class="bg-white rounded-lg border border-gray-200 p-4">
+      <div class="flex items-start">
+        <div class="flex-shrink-0 bg-gray-100 rounded-lg p-3">
+          <svg class="w-6 h-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5" />
+          </svg>
+        </div>
+        <div class="ml-3 flex-1">
+          <p class="text-xs text-gray-500 font-medium">Último Fornecimento</p>
+          <p class="text-2xl font-bold text-gray-900 mt-1">
+            <% if @supplier.respond_to?(:last_supply_date) && (date = @supplier.last_supply_date) %>
+              <%= I18n.l(date, format: :short) rescue date.strftime('%d/%m/%Y') %>
+            <% else %>
+              Nunca
+            <% end %>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+    <div class="px-6 py-4 bg-black">
+      <h2 class="text-xl font-bold text-white">Informações do Fornecedor</h2>
+    </div>
+    <div class="p-6 grid grid-cols-2 gap-6">
+      <div>
+        <p class="text-sm font-medium text-gray-500">Telefone</p>
+        <p class="mt-1 text-lg text-gray-900"><%= @supplier.formatted_phone %></p>
+      </div>
+      <div>
+        <p class="text-sm font-medium text-gray-500">E-mail</p>
+        <p class="mt-1 text-lg text-gray-900"><%= @supplier.email || '-' %></p>
+      </div>
+      <div>
+        <p class="text-sm font-medium text-gray-500">Status</p>
+        <p class="mt-1">
+          <% if @supplier.ativo_status? %>
+            <span class="inline-block px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+              Ativo
+            </span>
+          <% else %>
+            <span class="inline-block px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800">
+              Inativo
+            </span>
+          <% end %>
+        </p>
+      </div>
+
+      <% if @supplier.full_address.present? %>
+        <div class="col-span-2">
+          <p class="text-sm font-medium text-gray-500">Endereço</p>
+          <p class="mt-1 text-gray-900"><%= @supplier.full_address %></p>
+        </div>
+      <% end %>
+
+      <% if @supplier.notes.present? %>
+        <div class="col-span-2 pt-4 border-t border-gray-200">
+          <p class="text-sm font-medium text-gray-500">Observações</p>
+          <p class="mt-1 text-gray-900"><%= @supplier.notes %></p>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+    <div class="px-6 py-4 bg-black">
+      <h2 class="text-xl font-bold text-white">Itens Fornecidos</h2>
+    </div>
+    <div class="p-6">
+      <% if @supplied_items&.any? %>
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead>
+              <tr>
+                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Código</th>
+                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Nome</th>
+                <th class="px-4 py-2 text-center text-xs font-medium text-gray-500 uppercase">Quantidade</th>
+                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Preço Compra</th>
+                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Preço Venda</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200">
+              <% @supplied_items.each do |item| %>
+                <tr class="hover:bg-gray-50">
+                  <td class="px-4 py-3 text-sm font-mono"><%= item.code if item.respond_to?(:code) %></td>
+                  <td class="px-4 py-3 text-sm"><%= item.name %></td>
+                  <td class="px-4 py-3 text-sm text-center">
+                    <span class="font-bold <%= item.stock_status_color if item.respond_to?(:stock_status_color) %>">
+                      <%= item.quantity if item.respond_to?(:quantity) %> <%= item.unit if item.respond_to?(:unit) %>
+                    </span>
+                  </td>
+                  <td class="px-4 py-3 text-sm"><%= item.formatted_purchase_price if item.respond_to?(:formatted_purchase_price) %></td>
+                  <td class="px-4 py-3 text-sm font-medium"><%= item.formatted_sale_price if item.respond_to?(:formatted_sale_price) %></td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      <% else %>
+        <p class="text-gray-500 text-center py-8">Nenhum item cadastrado para este fornecedor</p>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+    <div class="px-6 py-4 bg-black">
+      <h2 class="text-xl font-bold text-white">Movimentações Recentes</h2>
+    </div>
+    <div class="p-6">
+      <% if @recent_movements&.any? %>
+        <div class="space-y-3">
+          <% @recent_movements.each do |movement| %>
+            <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg border">
+              <div class="flex items-center space-x-3">
+                <span class="<%= movement.movement_type_color if movement.respond_to?(:movement_type_color) %> text-2xl">
+                  <%= '📥' if movement.respond_to?(:entrada?) && movement.entrada? %>
+                  <%= '📤' if movement.respond_to?(:saida?) && movement.saida? %>
+                </span>
+                <div>
+                  <p class="font-medium text-gray-900"><%= movement.stock_item&.name || 'Item não encontrado' %></p>
+                  <p class="text-sm text-gray-600"><%= movement.formatted_date if movement.respond_to?(:formatted_date) %></p>
+                  <% if movement.respond_to?(:notes) && movement.notes.present? %>
+                    <p class="text-xs text-gray-500"><%= movement.notes %></p>
+                  <% end %>
+                </div>
+              </div>
+              <div class="text-right">
+                <p class="text-xl font-bold <%= movement.movement_type_color if movement.respond_to?(:movement_type_color) %>">
+                  <%= '+' if movement.respond_to?(:entrada?) && movement.entrada? %>
+                  <%= '-' if movement.respond_to?(:saida?) && movement.saida? %>
+                  <%= movement.quantity if movement.respond_to?(:quantity) %>
+                </p>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <p class="text-gray-500 text-center py-8">Nenhuma movimentação registrada</p>
+      <% end %>
+    </div>
+  </div>
+</div>

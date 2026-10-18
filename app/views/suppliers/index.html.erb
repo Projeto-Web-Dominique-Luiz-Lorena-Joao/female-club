@@ -1,0 +1,205 @@
+<div class="space-y-6">
+  <!-- Header -->
+  <div class="flex justify-between items-center">
+    <div>
+      <h1 class="text-3xl font-bold text-gray-900">Fornecedores</h1>
+      <p class="mt-2 text-gray-600">Gerenciar fornecedores e parceiros</p>
+    </div>
+    <%= link_to new_supplier_path, class: "bg-black hover:bg-gray-700 text-white px-6 py-3 rounded-lg font-medium shadow-lg transition duration-200 inline-flex items-center" do %>
+      Novo Fornecedor
+    <% end %>
+  </div>
+
+<!-- Estatísticas -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+  
+  <!-- Card Total de Fornecedores -->
+  <div class="bg-white rounded-lg border border-gray-200 p-4">
+    <div class="flex items-start">
+      <div class="flex-shrink-0 bg-gray-100 rounded-lg p-3">
+        <!-- Heroicon: user-group -->
+        <svg class="h-6 w-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 8.986 8.986 0 0 0 3.74.477m.94-3.197a5.971 5.971 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z" />
+        </svg>
+      </div>
+      <div class="ml-3 flex-1">
+        <p class="text-xs text-gray-500 font-medium">Total de Fornecedores</p>
+        <p class="text-2xl font-bold text-gray-900 mt-1"><%= @total_suppliers %></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card Fornecedores Ativos -->
+  <div class="bg-white rounded-lg border border-gray-200 p-4">
+    <div class="flex items-start">
+      <div class="flex-shrink-0 bg-green-100 rounded-lg p-3">
+        <!-- Heroicon: check-circle -->
+        <svg class="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+        </svg>
+      </div>
+      <div class="ml-3 flex-1">
+        <p class="text-xs text-gray-500 font-medium">Fornecedores Ativos</p>
+        <p class="text-2xl font-bold text-green-600 mt-1"><%= Supplier.active.count %></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card Fornecedores Inativos -->
+  <div class="bg-white rounded-lg border border-gray-200 p-4">
+    <div class="flex items-start">
+      <div class="flex-shrink-0 bg-red-100 rounded-lg p-3">
+        <!-- Heroicon: x-circle -->
+        <svg class="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+        </svg>
+      </div>
+      <div class="ml-3 flex-1">
+        <p class="text-xs text-gray-500 font-medium">Fornecedores Inativos</p>
+        <p class="text-2xl font-bold text-red-600 mt-1"><%= Supplier.inactive.count %></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card Itens Fornecidos -->
+  <div class="bg-white rounded-lg border border-gray-200 p-4">
+    <div class="flex items-start">
+      <div class="flex-shrink-0 bg-blue-100 rounded-lg p-3">
+        <!-- Heroicon: cube -->
+        <svg class="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="m21 7.5-9-5.25L3 7.5m18 0-9 5.25m9-5.25v9l-9 5.25M3 7.5l9 5.25M3 7.5v9l9 5.25m0-9v9" />
+        </svg>
+      </div>
+      <div class="ml-3 flex-1">
+        <p class="text-xs text-gray-500 font-medium">Itens Fornecidos</p>
+        <p class="text-2xl font-bold text-blue-600 mt-1"><%= @total_items %></p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+  <!-- Filtros -->
+  <div class="bg-white rounded-lg shadow p-6">
+    <%= form_with url: suppliers_path, method: :get, class: "space-y-4" do %>
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div class="md:col-span-2">
+          <%= text_field_tag :search, params[:search],
+              placeholder: "Buscar por nome ou razão social...",
+              class: "w-full px-4 py-2 border border-gray-300 rounded-lg " %>
+        </div>
+
+        <div>
+          <%= select_tag :category,
+              options_for_select([
+                ['Todas as Categorias', ''],
+                ['Cosméticos', 'cosmeticos'],
+                ['Maquiagem', 'maquiagem'],
+                ['Perfumaria', 'perfumaria'],
+                ['Cabelo', 'cabelo'],
+                ['Unhas', 'unhas'],
+                ['Pele', 'pele'],
+                ['Acessórios', 'acessorios'],
+                ['Equipamentos', 'equipamentos'],
+                ['Diversos', 'diversos']
+              ], params[:category]),
+              class: "w-full px-4 py-2 border border-gray-300 rounded-lg " %>
+        </div>
+
+        <div>
+          <%= select_tag :status,
+              options_for_select([
+                ['Todos os Status', ''],
+                ['Ativo', 'ativo'],
+                ['Inativo', 'inativo']
+              ], params[:status]),
+              class: "w-full px-4 py-2 border border-gray-300 rounded-lg " %>
+        </div>
+      </div>
+
+      <div class="flex space-x-2">
+        <%= submit_tag "Buscar", class: "bg-black hover:bg-gray-700 text-white px-6 py-2 rounded-lg font-medium transition duration-200" %>
+        <%= link_to "Limpar", suppliers_path, class: "bg-gray-300 hover:bg-gray-200 text-gray-700 px-6 py-2 rounded-lg font-medium transition duration-200" %>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Lista -->
+  <!-- Paginação Topo -->
+  <% if @suppliers.any? %>
+    <%= render "shared/pagination_top", collection: @suppliers %>
+  <% end %>
+
+  <div class="bg-white rounded-lg shadow overflow-hidden">
+    <% if @suppliers.any? %>
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-black">
+          <tr>
+            <th class="px-6 py-3 text-center text-xs font-medium text-white uppercase">Fornecedor</th>
+            <th class="px-6 py-3 text-center text-xs font-medium text-white uppercase">Categoria</th>
+            <th class="px-6 py-3 text-center text-xs font-medium text-white uppercase">Status</th>
+            <th class="px-6 py-3 text-center text-xs font-medium text-white uppercase">Contato</th>
+            <th class="px-6 py-3 text-center text-xs font-medium text-white uppercase">Itens</th>
+            <th class="px-6 py-3 text-center text-xs font-medium text-white uppercase">Ações</th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          <% @suppliers.each do |supplier| %>
+            <tr class="hover:bg-gray-50">
+
+              <td class="px-6 py-4 text-center">
+                <p class="text-sm font-medium text-gray-900"><%= supplier.display_name %></p>
+                <% if supplier.trade_name != supplier.legal_name %>
+                  <p class="text-xs text-gray-500"><%= supplier.legal_name %></p>
+                <% end %>
+              </td>
+
+              <td class="px-6 py-4 text-center">
+                <span class="px-3 py-1 text-xs font-medium rounded-full <%= supplier.category_badge_color %>">
+                  <%= supplier.product_category&.titleize || 'Não definida' %>
+                </span>
+              </td>
+              
+              <td class="px-6 py-4 text-center">
+                <% if supplier.ativo_status? %>
+                  <span class="px-3 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800">
+                    Ativo
+                  </span>
+                <% else %>
+                  <span class="px-3 py-1 text-xs font-medium rounded-full bg-red-100 text-red-800">
+                    Inativo
+                  </span>
+                <% end %>
+              </td>
+              
+              <td class="px-6 py-4 text-sm text-center text-gray-900">
+                <p><%= supplier.formatted_phone %></p>
+                <p class="text-xs text-gray-500"><%= supplier.email || '-' %></p>
+              </td>
+
+              <td class="px-6 py-4 text-center">
+                <p class="text-lg font-bold text-gray-900"><%# supplier.total_items_supplied %></p>
+                <p class="text-xs text-gray-500"><%# supplier.items_in_stock %> em estoque</p>
+              </td>
+
+              <td class="px-6 py-4 text-center space-x-2">
+                <div class="flex flex-col items-center space-y-2 w-full">
+                <%= link_to "Visualizar", supplier_path(supplier), class: "bg-blue-200 text-blue-700 px-5 py-2 rounded-lg hover:bg-blue-100 text-center text-sm font-medium" %>
+                </div>
+              </td>
+
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    <% else %>
+      <div class="text-center py-12">
+        <p class="mt-4 text-xl text-gray-600">Nenhum fornecedor cadastrado</p>
+        <%= link_to "Cadastrar primeiro fornecedor", new_supplier_path,
+            class: "mt-4 inline-block bg-black hover:bg-gray-700 text-white px-6 py-3 rounded-lg font-medium transition duration-200" %>
+      </div>
+    <% end %>
+  </div>
+
+  <%= render "shared/pagination_top", collection: @suppliers %>
+</div>

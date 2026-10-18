@@ -1,0 +1,15 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  full_name: MyString
+  cpf: "12345678901"
+  phone: "11999999999"
+  address: MyText
+  relationship: pai
+
+two:
+  full_name: MyString
+  cpf: "98765432100"
+  phone: "21999999999"
+  address: MyText
+  relationship: mae

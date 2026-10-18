@@ -1,0 +1,37 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  supplier: one
+  name: MyString
+  description: MyText
+  price: 9.99
+  active: MyString
+  brand: MyString
+  color: MyString
+  quantity: 1.5
+  purchase_price: 9.99
+  sale_price: 9.99
+  category: MyString
+  min_stock: 1
+  location: MyText
+  notes: MyText
+  unit: MyString
+  code: MyString
+
+two:
+  supplier: two
+  name: MyString
+  description: MyText
+  price: 9.99
+  active: MyString
+  brand: MyString
+  color: MyString
+  quantity: 1.5
+  purchase_price: 9.99
+  sale_price: 9.99
+  category: MyString
+  min_stock: 1
+  location: MyText
+  notes: MyText
+  unit: MyString
+  code: MyString

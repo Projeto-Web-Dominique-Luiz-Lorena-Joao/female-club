@@ -1,0 +1,158 @@
+<div class="space-y-6">
+  <div class="flex justify-between items-center">
+    <div>
+      <h1 class="text-3xl font-bold text-gray-900">Fiadores</h1>
+      <p class="mt-2 text-gray-600">Gerenciar todos os fiadores cadastrados no sistema</p>
+    </div>
+    <div class="flex gap-3">
+      <%= link_to new_guarantor_path, class: "bg-black hover:bg-gray-700 text-white px-6 py-3 rounded-lg font-medium shadow-lg transition duration-200 inline-flex items-center" do %>
+        Novo Fiador
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Cards de Estatísticas -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <!-- Total de Fiadores -->
+    <div class="bg-white rounded-lg border border-gray-200 p-4">
+      <div class="flex items-start">
+        <div class="flex-shrink-0 bg-gray-100 rounded-lg p-3">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" />
+          </svg>
+        </div>
+        <div class="ml-3 flex-1">
+          <p class="text-xs text-gray-500 font-medium">Total de Fiadores</p>
+          <p class="text-2xl font-bold text-gray-900 mt-1"><%= @total_guarantors %></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Fiadores Ativos -->
+    <div class="bg-white rounded-lg border border-gray-200 p-4">
+      <div class="flex items-start">
+        <div class="flex-shrink-0 bg-green-100 rounded-lg p-3">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+        <div class="ml-3 flex-1">
+          <p class="text-xs text-gray-500 font-medium">Fiadores Ativos</p>
+          <p class="text-2xl font-bold text-green-600 mt-1"><%= @active_guarantors %></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filtros de Busca -->
+  <div class="bg-white rounded-lg shadow p-6">
+    <%= form_with url: guarantors_path, method: :get, class: "space-y-4", local: true do %>
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
+
+        <div class="md:col-span-6">
+          <%= text_field_tag :search, params[:search],
+            placeholder: "Buscar por nome, CPF, telefone ou cliente",
+            class: "w-full px-4 py-2 border border-gray-300 rounded-lg" %>
+        </div>
+
+        <div class="md:col-span-3">
+          <%= select_tag :status,
+              options_for_select([
+                ['Todos os Status', ''],
+                ['Ativos', 'ativo'],
+                ['Inativos', 'inativo']
+              ], params[:status]),
+              class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-black-900" %>
+        </div>
+
+        <div class="md:col-span-2 flex space-x-2 ml-4">
+          <%= submit_tag "Buscar",
+              class: "flex-1 bg-black hover:bg-gray-700 text-white px-6 py-2 rounded-lg font-medium transition duration-200" %>
+
+          <%= link_to "Limpar", guarantors_path,
+              class: "flex-1 bg-gray-300 hover:bg-gray-200 text-gray-700 px-6 py-2 rounded-lg font-medium transition duration-200" %>
+        </div>
+
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Paginação Topo -->
+  <% if @guarantors.any? %>
+    <%= render "shared/pagination_top", collection: @guarantors %>
+  <% end %>
+
+  <!-- Lista de Fiadores -->
+  <div class="bg-white rounded-lg shadow overflow-hidden">
+    <% if @guarantors.any? %>
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-black">
+          <tr>
+            <th class="px-6 py-3 text-center text-xs font-medium text-white uppercase">Nome</th>
+            <th class="px-6 py-3 text-center text-xs font-medium text-white uppercase">Cliente</th>
+            <th class="px-6 py-3 text-center text-xs font-medium text-white uppercase">CPF</th>
+            <th class="px-6 py-3 text-center text-xs font-medium text-white uppercase">Telefone</th>
+            <th class="px-6 py-3 text-center text-xs font-medium text-white uppercase">Parentesco</th>
+            <th class="px-6 py-3 text-center text-xs font-medium text-white uppercase">Status</th>
+            <th class="px-6 py-3 text-center text-xs font-medium text-white uppercase w-32">Ações</th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          <% @guarantors.each do |guarantor| %>
+            <tr class="hover:bg-gray-50">
+              <td class="px-6 py-4">
+                <p class="text-sm text-center font-medium text-gray-900"><%= guarantor.full_name %></p>
+              </td>
+              <td class="px-6 py-4 text-sm text-center text-gray-900">
+                <% if guarantor.customer.present? %>
+                  <%= link_to guarantor.customer.full_name, customer_path(guarantor.customer), class: "text-blue-600 hover:underline" %>
+                <% else %>
+                  <span class="text-gray-400 italic text-xs">Sem cliente</span>
+                <% end %>
+              </td>
+              <td class="px-6 py-4 text-sm text-center text-gray-900">
+                <%= guarantor.formatted_cpf || '-' %>
+              </td>
+              <td class="px-6 py-4 text-sm text-center text-gray-900">
+                <%= guarantor.formatted_phone || '-' %>
+              </td>
+              <td class="px-6 py-4 text-center">
+                <% if guarantor.relationship.present? %>
+                  <span class="px-3 py-1 text-xs font-medium rounded-full bg-purple-100 text-purple-800">
+                    <%= guarantor.relationship.titleize %>
+                  </span>
+                <% else %>
+                  <span class="text-gray-400">-</span>
+                <% end %>
+              </td>
+              <td class="px-6 py-4 text-center">
+                <% if guarantor.ativo? %>
+                  <span class="px-3 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800">
+                    Ativo
+                  </span>
+                <% elsif guarantor.inativo? %>
+                  <span class="px-3 py-1 text-xs font-medium rounded-full bg-red-100 text-red-800">
+                    Inativo
+                  </span>
+                <% end %>
+              </td>
+              <td class="px-6 py-4 text-center space-x-2">
+                <div class="flex flex-col items-end space-y-2 w-full">
+                  <%= link_to "Visualizar", guarantor_path(guarantor), class: "bg-blue-200 text-blue-700 px-5 py-2 rounded-lg hover:bg-blue-100 text-center text-sm font-medium" %>
+                </div>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    <% else %>
+      <div class="text-center py-12">
+        <p class="mt-4 text-xl text-gray-600">Nenhum fiador cadastrado</p>
+        <%= link_to "Cadastrar primeiro fiador", new_guarantor_path,
+            class: "mt-4 inline-block bg-black hover:bg-gray-700 text-white px-6 py-3 rounded-lg font-medium transition duration-200" %>
+      </div>
+    <% end %>
+  </div>
+
+  <%= render "shared/pagination_top", collection: @guarantors %>
+</div>

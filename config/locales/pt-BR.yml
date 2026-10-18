@@ -1,0 +1,122 @@
+pt-BR:
+  errors:
+    messages:
+      not_saved:
+        one: "1 erro impediu que este %{resource} fosse salvo:"
+        other: "%{count} erros impediram que este %{resource} fosse salvo:"
+
+  time:
+    formats:
+      default: "%d de %B de %Y às %H:%M"
+      short: "%d de %b de %Y"
+      long: "%A, %d de %B de %Y às %H:%M"
+    am_pm:
+      am: "AM"
+      pm: "PM"
+    days:
+      monday: "Segunda-feira"
+      tuesday: "Terça-feira"
+      wednesday: "Quarta-feira"
+      thursday: "Quinta-feira"
+      friday: "Sexta-feira"
+      saturday: "Sábado"
+      sunday: "Domingo"
+    months:
+      january: "Janeiro"
+      february: "Fevereiro"
+      march: "Março"
+      april: "Abril"
+      may: "Maio"
+      june: "Junho"
+      july: "Julho"
+      august: "Agosto"
+      september: "Setembro"
+      october: "Outubro"
+      november: "Novembro"
+      december: "Dezembro"
+
+  date:
+    formats:
+      default: "%d/%m/%Y"
+      short: "%d de %b de %Y"
+      long: "%A, %d de %B de %Y"
+    order:
+      - :day
+      - :month
+      - :year
+    day_names:
+      - Domingo
+      - Segunda-feira
+      - Terça-feira
+      - Quarta-feira
+      - Quinta-feira
+      - Sexta-feira
+      - Sábado
+    abbr_day_names:
+      - Dom
+      - Seg
+      - Ter
+      - Qua
+      - Qui
+      - Sex
+      - Sab
+    month_names:
+      -
+      - Janeiro
+      - Fevereiro
+      - Março
+      - Abril
+      - Maio
+      - Junho
+      - Julho
+      - Agosto
+      - Setembro
+      - Outubro
+      - Novembro
+      - Dezembro
+    abbr_month_names:
+      -
+      - Jan
+      - Fev
+      - Mar
+      - Abr
+      - Mai
+      - Jun
+      - Jul
+      - Ago
+      - Set
+      - Out
+      - Nov
+      - Dez
+
+  views:
+    pagination:
+      first: "Primeira"
+      last: "Última"
+      previous: "Anterior"
+      next: "Próxima"
+      truncate: "..."
+
+  activerecord:
+    models:
+      user: "usuário"
+      customer: "cliente"
+      employee: "funcionário"
+      product: "produto"
+      service: "serviço"
+      supplier: "fornecedor"
+      guarantor: "fiador"
+      expense: "despesa"
+      sale: "venda"
+      service_appointment: "agendamento"
+    errors:
+      messages:
+        record_invalid: "Validação falhou: %{errors}"
+        restrict_dependent_destroy:
+          one: "Não é possível excluir o registro pois existe um %{record} dependente"
+          other: "Não é possível excluir o registro pois existem %{record} dependentes"
+      models:
+        service_appointment:
+          attributes:
+            appointment_date:
+              comparison: "Data e hora não pode ser no passado"

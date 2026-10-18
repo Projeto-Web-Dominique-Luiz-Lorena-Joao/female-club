@@ -1,34 +1,29 @@
 default: &default
   adapter: postgresql
   encoding: unicode
-  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
-
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 }.to_i + 5 %>
+  checkout_timeout: 5
+  reaping_frequency: 10
+  idle_timeout: 300
+  prepared_statements: true
+  advisory_locks: true
 
 development:
   <<: *default
   database: female_club_development
-
+  username: <%= ENV["DB_USERNAME"] %>
+  password: <%= ENV["DB_PASSWORD"] %>
+  host: <%= ENV.fetch("DB_HOST", "localhost") %>
 
 test:
   <<: *default
   database: female_club_test
-
+  username: <%= ENV["DB_USERNAME"] %>
+  password: <%= ENV["DB_PASSWORD"] %>
+  host: <%= ENV.fetch("DB_HOST", "localhost") %>
 
 production:
-  primary: &primary_production
-    <<: *default
-    database: female_club_production
-    username: female_club
-    password: <%= ENV["FEMALE_CLUB_DATABASE_PASSWORD"] %>
-  cache:
-    <<: *primary_production
-    database: female_club_production_cache
-    migrations_paths: db/cache_migrate
-  queue:
-    <<: *primary_production
-    database: female_club_production_queue
-    migrations_paths: db/queue_migrate
-  cable:
-    <<: *primary_production
-    database: female_club_production_cable
-    migrations_paths: db/cable_migrate
+  <<: *default
+  url: <%= ENV["DATABASE_URL"] %>
+  variables:
+    statement_timeout: 30s

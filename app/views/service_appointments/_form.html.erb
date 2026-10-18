@@ -1,0 +1,160 @@
+<div class="space-y-6" data-controller="appointment-conflict" data-appointment-conflict-exclude-id-value="<%= service_appointment.persisted? ? service_appointment.id : '' %>">
+  <%= form_with(model: service_appointment, local: true, class: "space-y-8 max-w-4xl mx-auto", data: { controller: "submit-once" }) do |form| %>
+    
+    <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+      <div class="px-6 py-4 bg-black border-b border-gray-200">
+        <h2 class="text-xl font-bold text-white">Dados do Agendamento</h2>
+      </div>
+
+      <div class="p-6">
+        <% if service_appointment.errors.any? %>
+          <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded-md mb-6">
+            <div class="flex">
+              <span class="text-red-500 text-xl">⚠️</span>
+              <div class="ml-3">
+                <h3 class="text-sm font-medium text-red-800">
+                  <%= pluralize(service_appointment.errors.count, "erro") %> ao salvar:
+                </h3>
+                <ul class="mt-2 text-sm text-red-700 list-disc list-inside">
+                  <% service_appointment.errors.full_messages.each do |message| %>
+                    <li><%= message %></li>
+                  <% end %>
+                </ul>
+              </div>
+            </div>
+          </div>
+        <% end %>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+          <div data-controller="sales-autocomplete"
+               data-sales-autocomplete-search-url-value="/service_appointments/search_services"
+               data-sales-autocomplete-allow-create-value="false"
+               id="service_autocomplete">
+            <div>
+              <%= form.label :service_id, "Serviço *", class: "block text-sm font-medium text-gray-700 mb-2" %>
+              <div class="relative">
+                <input type="text"
+                       placeholder="Digite o nome do serviço..."
+                       value="<%= service_appointment.service&.name %>"
+                       class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 focus:ring-2 focus:ring-gray-900 focus:border-transparent"
+                       autocomplete="off"
+                       data-sales-autocomplete-target="searchInput"
+                       data-action="input->sales-autocomplete#search focus->sales-autocomplete#focus click->sales-autocomplete#focus">
+                <div class="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg hidden max-h-48 overflow-y-auto"
+                     data-sales-autocomplete-target="results"></div>
+              </div>
+              <%= form.hidden_field :service_id, id: "service_appointment_service_id", data: { "sales-autocomplete-target": "hiddenInput" } %>
+              <small class="text-gray-500 text-xs mt-1 block">Selecionado: <span class="font-medium" data-sales-autocomplete-target="selectedDisplay"><%= service_appointment.service&.name || 'Nenhum' %></span></small>
+            </div>
+          </div>
+
+          <div data-controller="sales-autocomplete"
+               data-sales-autocomplete-search-url-value="/service_appointments/search_employees"
+               data-sales-autocomplete-allow-create-value="false"
+               id="employee_autocomplete">
+            <div>
+              <%= form.label :employee_id, "Funcionário *", class: "block text-sm font-medium text-gray-700 mb-2" %>
+              <div class="relative">
+                <input type="text"
+                       placeholder="Digite o nome do funcionário..."
+                       value="<%= service_appointment.employee&.full_name %>"
+                       class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 focus:ring-2 focus:ring-gray-900 focus:border-transparent"
+                       autocomplete="off"
+                       data-sales-autocomplete-target="searchInput"
+                       data-action="input->sales-autocomplete#search focus->sales-autocomplete#focus click->sales-autocomplete#focus">
+                <div class="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg hidden max-h-48 overflow-y-auto"
+                     data-sales-autocomplete-target="results"></div>
+              </div>
+              <%= form.hidden_field :employee_id, id: "service_appointment_employee_id", data: { "sales-autocomplete-target": "hiddenInput", action: "change->appointment-conflict#checkConflict" } %>
+              <small class="text-gray-500 text-xs mt-1 block">Selecionado: <span class="font-medium" data-sales-autocomplete-target="selectedDisplay"><%= service_appointment.employee&.full_name || 'Nenhum' %></span></small>
+            </div>
+          </div>
+
+          <div class="md:col-span-2"
+               data-controller="sales-autocomplete"
+               data-sales-autocomplete-search-url-value="/service_appointments/search_customers"
+               data-sales-autocomplete-allow-create-value="true"
+               id="customer_autocomplete">
+            <div>
+              <%= form.label :customer_id, "Cliente *", class: "block text-sm font-medium text-gray-700 mb-2" %>
+              <div class="relative">
+                <input type="text"
+                       placeholder="Digite o nome do cliente..."
+                       value="<%= service_appointment.customer&.full_name %>"
+                       class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 focus:ring-2 focus:ring-gray-900 focus:border-transparent"
+                       autocomplete="off"
+                       data-sales-autocomplete-target="searchInput"
+                       data-action="input->sales-autocomplete#search focus->sales-autocomplete#focus click->sales-autocomplete#focus">
+                <div class="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg hidden max-h-48 overflow-y-auto"
+                     data-sales-autocomplete-target="results"></div>
+              </div>
+              <%= form.hidden_field :customer_id, id: "service_appointment_customer_id", data: { "sales-autocomplete-target": "hiddenInput" } %>
+              <small class="text-gray-500 text-xs mt-1 block">Selecionado: <span class="font-medium" data-sales-autocomplete-target="selectedDisplay"><%= service_appointment.customer&.full_name || 'Nenhum' %></span></small>
+            </div>
+          </div>
+
+          <div>
+            <%= form.label :appointment_date, "Data e Hora *", class: "block text-sm font-medium text-gray-700 mb-2" %>
+            <% min_datetime = Time.current.strftime('%Y-%m-%dT%H:%M') %>
+            <%= form.datetime_local_field :appointment_date,
+                min: min_datetime,
+                id: "appointment_date_field",
+                class: "w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 focus:ring-2 focus:ring-gray-900 focus:border-transparent",
+                data: { action: "change->appointment-conflict#checkConflict" } %>
+            <p class="mt-1 text-xs text-gray-500">Horário comercial (08:00 - 23:59)</p>
+          </div>
+
+          <div>
+            <%= form.label :duration_minutes, "Tempo de Atendimento *", class: "block text-sm font-medium text-gray-700 mb-2" %>
+            <%= form.select :duration_minutes,
+                ServiceAppointment::DURATION_OPTIONS,
+                { selected: service_appointment.duration_minutes || 60 },
+                id: "duration_minutes_field",
+                class: "w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 focus:ring-2 focus:ring-gray-900 focus:border-transparent",
+                data: { action: "change->appointment-conflict#checkConflict" } %>
+            <p class="mt-1 text-xs text-gray-500">Duração estimada do serviço</p>
+          </div>
+
+          <div>
+            <%= form.label :status, "Status *", class: "block text-sm font-medium text-gray-700 mb-2" %>
+            <%= form.select :status,
+                [
+                  ["Agendado", "agendado"],
+                  ["Concluído", "concluido"],
+                  ["Cancelado", "cancelado"],
+                  ["Não Compareceu", "nao_compareceu"]
+                ],
+                { prompt: "Selecione um status" },
+                class: "w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 focus:ring-2 focus:ring-gray-900 focus:border-transparent" %>
+          </div>
+
+          <!-- Alerta de Conflito -->
+          <div class="md:col-span-2 hidden" id="conflict_alert">
+            <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded-md">
+              <div class="flex">
+                <svg class="h-5 w-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                <div class="ml-3">
+                  <h3 class="text-sm font-medium text-red-800" id="conflict_title">Conflito de Horário</h3>
+                  <p class="mt-1 text-sm text-red-700" id="conflict_message"></p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex justify-between items-center pt-2">
+            <div class="text-xs text-gray-500">* campos obrigatórios</div>
+          </div>
+
+        </div>
+    </div>
+    </div>
+    
+    <div class="flex justify-end space-x-3 pt-6 border-t border-gray-200">
+      <%= link_to "Cancelar", service_appointments_path, class: "px-6 py-3 rounded-lg bg-gray-200 border border-gray-300 hover:bg-white text-gray-700 font-medium transition" %>
+      <%= form.submit "Salvar Agendamento", class: "px-6 py-3 bg-green-600 hover:bg-green-500 text-white rounded-lg font-medium shadow-lg transition cursor-pointer" %>
+    </div>
+  <% end %>
+</div>

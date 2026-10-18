@@ -1,0 +1,36 @@
+<div class="flex items-center justify-between py-4 px-6 bg-white border-t border-gray-200"
+     data-controller="pagination"
+     data-pagination-update-path-value="<%= update_pagination_preference_path %>">
+  <!-- Seletores de registros por página e padrão -->
+  <div class="flex items-center gap-4">
+    <!-- Registros por página -->
+    <div class="flex items-center gap-2">
+      <label for="per_page_top_select" class="text-sm text-gray-700 whitespace-nowrap">Itens/pág:</label>
+      <select id="per_page_top_select"
+              class="px-3 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 cursor-pointer"
+              data-action="change->pagination#changePerPage">
+        <% [10, 15, 20, 25, 50].each do |num| %>
+          <option value="<%= num %>" <%= 'selected' if (params[:per_page] || per_page).to_i == num %>><%= num %></option>
+        <% end %>
+      </select>
+    </div>
+
+    <!-- Padrão -->
+    <% if user_signed_in? %>
+      <div class="flex items-center gap-2">
+        <label for="default_per_page_select" class="text-sm text-gray-700 whitespace-nowrap">Padrão:</label>
+        <select id="default_per_page_select"
+                class="px-3 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-white text-gray-900 cursor-pointer"
+                data-action="change->pagination#changeDefault">
+          <option value="" <%= 'selected' if current_user.items_per_page.nil? %>>Sistema (15)</option>
+          <% [10, 15, 20, 25, 50].each do |num| %>
+            <option value="<%= num %>" <%= 'selected' if current_user.items_per_page == num %>><%= num %> registros</option>
+          <% end %>
+        </select>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Navegação de páginas -->
+  <%= paginate collection, window: 2, outer_window: 1 %>
+</div>

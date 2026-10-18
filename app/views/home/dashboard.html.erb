@@ -4,25 +4,79 @@
       <p class="text-gray-600 mt-1">Visão geral do seu negócio</p>
     </div>
 
-    <!-- KPI Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <!-- KPI Cards - Linha 1 -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
       <!-- Vendas do Mês -->
       <div class="bg-white rounded-lg shadow p-6">
         <div class="flex items-center justify-between mb-4">
-          <h3 class="text-gray-600 text-sm font-medium">Vendas do Mês</h3>
+          <h3 class="text-gray-600 text-sm font-medium">Vendas do Ano</h3>
           <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
           </svg>
         </div>
-        <p class="text-2xl font-bold text-gray-900 mb-2">R$ <%= @vendas_mes %></p>
-        <p class="text-sm text-green-600 flex items-center">
-          <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/>
-          </svg>
-          12.5% vs mês anterior
+        <p class="text-2xl font-bold text-gray-900 mb-2">R$ <%= number_with_precision(@vendas_ano, precision: 2, delimiter: '.', separator: ',') %></p>
+        <p class="text-sm <%= @variacao_vendas >= 0 ? 'text-green-600' : 'text-red-600' %> flex items-center">
+          <% if @variacao_vendas >= 0 %>
+            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/></svg>
+          <% else %>
+            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/></svg>
+          <% end %>
+          <%= @variacao_vendas.abs %>% vs ano anterior
         </p>
       </div>
 
+      <!-- Despesas do Mês -->
+      <div class="bg-white rounded-lg shadow p-6">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-gray-600 text-sm font-medium">Despesas do Ano</h3>
+          <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+          </svg>
+        </div>
+        <p class="text-2xl font-bold text-gray-900 mb-2">R$ <%= number_with_precision(@despesas_ano, precision: 2, delimiter: '.', separator: ',') %></p>
+        <p class="text-sm <%= @variacao_despesas <= 0 ? 'text-green-600' : 'text-red-600' %> flex items-center">
+          <% if @variacao_despesas <= 0 %>
+            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/></svg>
+          <% else %>
+            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/></svg>
+          <% end %>
+          <%= @variacao_despesas.abs %>% vs ano anterior
+        </p>
+      </div>
+
+      <!-- Lucro Estimado -->
+      <div class="bg-white rounded-lg shadow p-6">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-gray-600 text-sm font-medium">Lucro Estimado</h3>
+          <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+          </svg>
+        </div>
+        <p class="text-2xl font-bold <%= @lucro_ano >= 0 ? 'text-green-600' : 'text-red-600' %> mb-2">R$ <%= number_with_precision(@lucro_ano, precision: 2, delimiter: '.', separator: ',') %></p>
+        <p class="text-sm text-gray-500">Vendas - Despesas</p>
+      </div>
+
+      <!-- Agendamentos Hoje -->
+      <div class="bg-white rounded-lg shadow p-6">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-gray-600 text-sm font-medium">Agendamentos Hoje</h3>
+          <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+          </svg>
+        </div>
+        <p class="text-2xl font-bold text-gray-900 mb-2"><%= @agendamentos_hoje %></p>
+        <p class="text-sm text-gray-500 flex items-center">
+          <% if @vendas_pendentes > 0 %>
+            <span class="text-yellow-600"><%= @vendas_pendentes %> venda<%= @vendas_pendentes > 1 ? 's' : '' %> pendente<%= @vendas_pendentes > 1 ? 's' : '' %></span>
+          <% else %>
+            Nenhuma venda pendente
+          <% end %>
+        </p>
+      </div>
+    </div>
+
+    <!-- KPI Cards - Linha 2 -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
       <!-- Total de Vendas -->
       <div class="bg-white rounded-lg shadow p-6">
         <div class="flex items-center justify-between mb-4">
@@ -32,11 +86,13 @@
           </svg>
         </div>
         <p class="text-2xl font-bold text-gray-900 mb-2"><%= @total_vendas %></p>
-        <p class="text-sm text-green-600 flex items-center">
-          <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/>
-          </svg>
-          8.2% vs mês anterior
+        <p class="text-sm <%= @variacao_total >= 0 ? 'text-green-600' : 'text-red-600' %> flex items-center">
+          <% if @variacao_total >= 0 %>
+            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/></svg>
+          <% else %>
+            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/></svg>
+          <% end %>
+          <%= @variacao_total.abs %>% vs ano anterior
         </p>
       </div>
 
@@ -49,11 +105,13 @@
           </svg>
         </div>
         <p class="text-2xl font-bold text-gray-900 mb-2"><%= @clientes_ativos %></p>
-        <p class="text-sm text-green-600 flex items-center">
-          <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/>
-          </svg>
-          5.3% vs mês anterior
+        <p class="text-sm <%= @variacao_clientes >= 0 ? 'text-green-600' : 'text-red-600' %> flex items-center">
+          <% if @variacao_clientes >= 0 %>
+            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/></svg>
+          <% else %>
+            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/></svg>
+          <% end %>
+          <%= @variacao_clientes.abs %>% vs ano anterior
         </p>
       </div>
 
@@ -66,20 +124,38 @@
           </svg>
         </div>
         <p class="text-2xl font-bold text-gray-900 mb-2"><%= @estoque_baixo %> itens</p>
-        <p class="text-sm text-red-600 flex items-center">
-          <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
+        <% if @estoque_baixo > 0 %>
+          <p class="text-sm text-red-600 flex items-center">
+            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4.5c-.77-.833-2.694-.833-3.464 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg>
+            Requer atenção
+          </p>
+        <% else %>
+          <p class="text-sm text-green-600">Estoque normalizado</p>
+        <% end %>
+      </div>
+
+      <!-- Agendamentos do Ano -->
+      <div class="bg-white rounded-lg shadow p-6">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-gray-600 text-sm font-medium">Agendamentos do Ano</h3>
+          <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
           </svg>
-          Requer atenção
-        </p>
+        </div>
+        <p class="text-2xl font-bold text-gray-900 mb-2"><%= @agendamentos_total_ano %></p>
+        <div class="flex items-center gap-3 text-xs">
+          <span class="text-green-600"><%= @agendamentos_concluidos %> concluídos</span>
+          <span class="text-yellow-600"><%= @agendamentos_pendentes %> agendados</span>
+          <span class="text-red-600"><%= @agendamentos_cancelados %> cancelados</span>
+        </div>
       </div>
     </div>
 
     <!-- Charts Section -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      <!-- Desempenho de Vendas -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+      <!-- Desempenho Financeiro -->
       <div class="lg:col-span-2 bg-white rounded-lg shadow p-6">
-        <h3 class="text-lg font-semibold text-gray-900 mb-4">Desempenho de Vendas</h3>
+        <h3 class="text-lg font-semibold text-gray-900 mb-4">Desempenho Financeiro</h3>
         <canvas id="salesChart" height="80"></canvas>
       </div>
 
@@ -87,78 +163,277 @@
       <div class="bg-white rounded-lg shadow p-6">
         <h3 class="text-lg font-semibold text-gray-900 mb-4">Produtos Mais Vendidos</h3>
         <div class="space-y-4">
-          <% @produtos_mais_vendidos.each_with_index do |produto, index| %>
-            <div class="flex items-center justify-between">
-              <div class="flex items-center">
-                <div class="w-8 h-8 bg-gray-900 text-white rounded-full flex items-center justify-center font-semibold text-sm mr-3">
-                  <%= index + 1 %>
+          <% if @produtos_mais_vendidos.any? %>
+            <% @produtos_mais_vendidos.each_with_index do |produto, index| %>
+              <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                  <div class="w-8 h-8 bg-gray-900 text-white rounded-full flex items-center justify-center font-semibold text-sm mr-3">
+                    <%= index + 1 %>
+                  </div>
+                  <div>
+                    <p class="font-medium text-gray-900"><%= produto[:nome] %></p>
+                    <p class="text-sm text-gray-500"><%= produto[:unidades] %> unidades</p>
+                  </div>
                 </div>
-                <div>
-                  <p class="font-medium text-gray-900"><%= produto[:nome] %></p>
-                  <p class="text-sm text-gray-500"><%= produto[:unidades] %> unidades</p>
-                </div>
+                <p class="font-semibold text-gray-900">R$ <%= number_with_precision(produto[:valor], precision: 2, delimiter: '.', separator: ',') %></p>
               </div>
-              <p class="font-semibold text-gray-900">R$ <%= produto[:valor] %></p>
-            </div>
+            <% end %>
+          <% else %>
+            <p class="text-gray-500 text-center py-4">Nenhuma venda de produto neste ano</p>
           <% end %>
         </div>
       </div>
     </div>
- 
+
+    <!-- Seção inferior: Agendamentos + Vendas Recentes + Despesas -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+      <!-- Próximos Agendamentos -->
+      <div class="bg-white rounded-lg shadow p-6">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-lg font-semibold text-gray-900">Próximos Agendamentos</h3>
+          <%= link_to service_appointments_path, class: "text-sm text-gray-500 hover:text-gray-900" do %>
+            Ver todos
+          <% end %>
+        </div>
+        <div class="space-y-3">
+          <% if @proximos_agendamentos.any? %>
+            <% @proximos_agendamentos.each do |agendamento| %>
+              <div class="flex items-start gap-3 p-3 rounded-lg bg-gray-50">
+                <div class="flex-shrink-0 w-12 text-center">
+                  <p class="text-xs font-medium text-gray-500"><%= I18n.l(agendamento.appointment_date, format: '%d/%m') %></p>
+                  <p class="text-sm font-bold text-gray-900"><%= agendamento.formatted_time %></p>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <p class="text-sm font-medium text-gray-900 truncate"><%= agendamento.customer&.full_name || '-' %></p>
+                  <p class="text-xs text-gray-500 truncate"><%= agendamento.service&.name %></p>
+                  <p class="text-xs text-gray-400"><%= agendamento.employee&.full_name %> &middot; <%= agendamento.formatted_duration %></p>
+                </div>
+                <span class="flex-shrink-0 text-xs px-2 py-0.5 rounded-full <%= agendamento.status_badge_class %>">
+                  <%= agendamento.status&.titleize %>
+                </span>
+              </div>
+            <% end %>
+          <% else %>
+            <p class="text-gray-500 text-center py-4">Nenhum agendamento próximo</p>
+          <% end %>
+        </div>
+      </div>
+
+      <!-- Vendas Recentes -->
+      <div class="bg-white rounded-lg shadow p-6">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-lg font-semibold text-gray-900">Vendas Recentes</h3>
+          <%= link_to sales_path, class: "text-sm text-gray-500 hover:text-gray-900" do %>
+            Ver todas
+          <% end %>
+        </div>
+        <div class="space-y-3">
+          <% if @vendas_recentes.any? %>
+            <% @vendas_recentes.each do |venda| %>
+              <div class="flex items-center justify-between p-3 rounded-lg bg-gray-50">
+                <div class="min-w-0 flex-1">
+                  <p class="text-sm font-medium text-gray-900 truncate"><%= venda.customer&.full_name || 'Cliente Avulso' %></p>
+                  <p class="text-xs text-gray-500"><%= I18n.l(venda.sale_date, format: :short) %> &middot; <%= venda.employee&.full_name %></p>
+                </div>
+                <div class="text-right flex-shrink-0 ml-3">
+                  <p class="text-sm font-bold text-gray-900">R$ <%= number_with_precision(venda.total_amount, precision: 2, delimiter: '.', separator: ',') %></p>
+                  <span class="text-xs px-2 py-0.5 rounded-full
+                    <%= case venda.status
+                        when 'pago' then 'bg-green-100 text-green-800'
+                        when 'pendente' then 'bg-yellow-100 text-yellow-800'
+                        when 'expirado' then 'bg-red-100 text-red-800'
+                        else 'bg-gray-100 text-gray-800'
+                        end %>">
+                    <%= venda.status&.titleize %>
+                  </span>
+                </div>
+              </div>
+            <% end %>
+          <% else %>
+            <p class="text-gray-500 text-center py-4">Nenhuma venda registrada</p>
+          <% end %>
+        </div>
+      </div>
+
+      <!-- Despesas por Tipo -->
+      <div class="bg-white rounded-lg shadow p-6">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-lg font-semibold text-gray-900">Despesas por Tipo</h3>
+          <%= link_to expenses_path, class: "text-sm text-gray-500 hover:text-gray-900" do %>
+            Ver todas
+          <% end %>
+        </div>
+        <div class="space-y-3">
+          <% if @despesas_por_tipo.any? %>
+            <% @despesas_por_tipo.each do |tipo, valor| %>
+              <div class="flex items-center justify-between p-3 rounded-lg bg-gray-50">
+                <div>
+                  <p class="text-sm font-medium text-gray-900"><%= Expense.expense_type_labels[tipo.to_sym] || tipo.titleize %></p>
+                  <div class="w-32 bg-gray-200 rounded-full h-1.5 mt-1">
+                    <% max_despesa = @despesas_por_tipo.map(&:last).max %>
+                    <div class="bg-gray-900 h-1.5 rounded-full" style="width: <%= max_despesa > 0 ? (valor.to_f / max_despesa * 100).round : 0 %>%"></div>
+                  </div>
+                </div>
+                <p class="text-sm font-bold text-gray-900">R$ <%= number_with_precision(valor, precision: 2, delimiter: '.', separator: ',') %></p>
+              </div>
+            <% end %>
+          <% else %>
+            <p class="text-gray-500 text-center py-4">Nenhuma despesa neste ano</p>
+          <% end %>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Vendas Vencidas + Aniversariantes do Mês -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+
+      <!-- Vendas Vencidas -->
+      <div class="bg-white rounded-lg shadow p-6">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h3 class="text-lg font-semibold text-gray-900">Vendas Vencidas</h3>
+            <% if @total_vendas_vencidas > 0 %>
+              <p class="text-xs text-red-600 mt-0.5">
+                <%= @total_vendas_vencidas %> venda<%= @total_vendas_vencidas > 1 ? "s" : "" %> &middot;
+                R$ <%= number_with_precision(@valor_total_vencido, precision: 2, delimiter: '.', separator: ',') %> em atraso
+              </p>
+            <% end %>
+          </div>
+          <%= link_to sales_path(status: "pendente"), class: "text-sm text-gray-500 hover:text-gray-900" do %>
+            Ver todas
+          <% end %>
+        </div>
+        <div class="space-y-3">
+          <% if @vendas_vencidas.any? %>
+            <% @vendas_vencidas.each do |venda| %>
+              <%= link_to sale_path(venda), class: "flex items-center justify-between p-3 rounded-lg bg-red-50 hover:bg-red-100 transition" do %>
+                <div class="min-w-0 flex-1">
+                  <p class="text-sm font-medium text-gray-900 truncate"><%= venda.customer&.full_name || "Cliente Avulso" %></p>
+                  <p class="text-xs text-red-600">Venceu em <%= I18n.l(venda.due_date, format: :short) %> &middot; <%= venda.days_overdue %>d de atraso</p>
+                </div>
+                <p class="text-sm font-bold text-gray-900 flex-shrink-0 ml-3">R$ <%= number_with_precision(venda.total_amount, precision: 2, delimiter: '.', separator: ',') %></p>
+              <% end %>
+            <% end %>
+          <% else %>
+            <p class="text-gray-500 text-center py-4">Nenhuma venda vencida</p>
+          <% end %>
+        </div>
+      </div>
+
+      <!-- Aniversariantes do Mês -->
+      <div class="bg-white rounded-lg shadow p-6">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-lg font-semibold text-gray-900">Aniversariantes do Mês</h3>
+          <%= link_to customers_path, class: "text-sm text-gray-500 hover:text-gray-900" do %>
+            Ver todos
+          <% end %>
+        </div>
+        <div class="space-y-3">
+          <% if @aniversariantes_mes.any? %>
+            <% @aniversariantes_mes.each do |cliente| %>
+              <%= link_to customer_path(cliente), class: "flex items-center justify-between p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition" do %>
+                <div class="min-w-0 flex-1">
+                  <p class="text-sm font-medium text-gray-900 truncate"><%= cliente.full_name %></p>
+                  <p class="text-xs text-gray-500"><%= cliente.phone_number.present? ? cliente.formatted_phone : cliente.email %></p>
+                </div>
+                <span class="flex-shrink-0 text-xs px-2 py-1 rounded-full bg-pink-100 text-pink-800 font-medium ml-3">
+                  <%= I18n.l(cliente.birth_date, format: "%d/%m") %>
+                </span>
+              <% end %>
+            <% end %>
+          <% else %>
+            <p class="text-gray-500 text-center py-4">Nenhum aniversariante este mês</p>
+          <% end %>
+        </div>
+      </div>
+
+    </div>
+</div>
 
 <script>
-  document.addEventListener('DOMContentLoaded', function() {
+  document.addEventListener('turbo:load', function() {
     const ctx = document.getElementById('salesChart');
     if (ctx) {
+      // Destruir instância anterior se existir (navegação Turbo)
+      const existingChart = Chart.getChart(ctx);
+      if (existingChart) existingChart.destroy();
+
       new Chart(ctx.getContext('2d'), {
         type: 'line',
         data: {
-          labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago'],
-          datasets: [{
-            label: 'Vendas',
-            data: <%= raw @vendas_data.to_json %>,
-            borderColor: 'rgb(0, 0, 0)',
-            backgroundColor: 'transparent',
-            tension: 0.4,
-            borderWidth: 2,
-            pointRadius: 5,
-            pointBackgroundColor: 'rgb(255, 255, 255)',
-            pointBorderColor: 'rgb(0, 0, 0)',
-            pointBorderWidth: 2,
-            pointHoverRadius: 6,
-            fill: false
-          }]
+          labels: <%= raw @chart_labels.to_json %>,
+          datasets: [
+            {
+              label: 'Vendas',
+              data: <%= raw @vendas_data.to_json %>,
+              borderColor: 'rgb(34, 197, 94)',
+              backgroundColor: 'rgba(34, 197, 94, 0.1)',
+              tension: 0.4,
+              borderWidth: 2,
+              pointRadius: 4,
+              pointBackgroundColor: 'rgb(255, 255, 255)',
+              pointBorderColor: 'rgb(34, 197, 94)',
+              pointBorderWidth: 2,
+              fill: true
+            },
+            {
+              label: 'Despesas',
+              data: <%= raw @despesas_data.to_json %>,
+              borderColor: 'rgb(239, 68, 68)',
+              backgroundColor: 'rgba(239, 68, 68, 0.1)',
+              tension: 0.4,
+              borderWidth: 2,
+              pointRadius: 4,
+              pointBackgroundColor: 'rgb(255, 255, 255)',
+              pointBorderColor: 'rgb(239, 68, 68)',
+              pointBorderWidth: 2,
+              fill: true
+            }
+          ]
         },
         options: {
           responsive: true,
           maintainAspectRatio: true,
           plugins: {
             legend: {
-              display: false
+              display: true,
+              position: 'top',
+              labels: {
+                usePointStyle: true,
+                padding: 20
+              }
+            },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  return context.dataset.label + ': R$ ' + context.parsed.y.toLocaleString('pt-BR', {minimumFractionDigits: 2});
+                }
+              }
             }
           },
           scales: {
             y: {
               beginAtZero: true,
               grid: {
-                color: 'rgba(0, 0, 0, 0.08)',
+                color: 'rgba(0, 0, 0, 0.06)',
                 drawBorder: false
               },
               ticks: {
-                font: {
-                  size: 11
+                font: { size: 11 },
+                callback: function(value) {
+                  return 'R$ ' + value.toLocaleString('pt-BR');
                 }
               }
             },
             x: {
               grid: {
-                color: 'rgba(0, 0, 0, 0.08)',
+                color: 'rgba(0, 0, 0, 0.06)',
                 drawBorder: false
               },
               ticks: {
-                font: {
-                  size: 11
-                }
+                font: { size: 11 }
               }
             }
           },

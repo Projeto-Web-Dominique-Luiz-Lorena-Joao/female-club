@@ -1,0 +1,238 @@
+<div class="space-y-6">
+
+  <div class="flex justify-between items-center">
+    <div>
+      <h1 class="text-3xl font-bold text-gray-900">Vendas</h1>
+      <p class="mt-2 text-gray-600">Gerenciar vendas</p>
+    </div>
+    <%= link_to new_sale_path,
+        class: "bg-black hover:bg-gray-700 text-white px-6 py-3 rounded-lg font-medium shadow-lg transition duration-200 inline-flex items-center" do %>
+      Nova Venda
+    <% end %>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+
+    <!-- Total de Vendas (excluindo canceladas) -->
+    <div class="bg-white rounded-lg border border-gray-200 p-4" title="Total de vendas registradas (não inclui vendas canceladas)">
+      <div class="flex items-start">
+        <div class="flex-shrink-0 bg-gray-100 rounded-lg p-3">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+          </svg>
+        </div>
+        <div class="ml-3 flex-1">
+          <p class="text-xs text-gray-500 font-medium">Total de Vendas</p>
+          <p class="text-2xl font-bold text-gray-900 mt-1"><%= Sale.where.not(status: 'cancelado').count %></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Vendas Pagas -->
+    <div class="bg-white rounded-lg border border-gray-200 p-4" title="Vendas que foram completamente pagas">
+      <div class="flex items-start">
+        <div class="flex-shrink-0 bg-green-100 rounded-lg p-3">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+          </svg>
+        </div>
+        <div class="ml-3 flex-1">
+          <p class="text-xs text-gray-500 font-medium">Pagas</p>
+          <p class="text-2xl font-bold text-green-600 mt-1"><%= Sale.by_status('pago').count %></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Vendas Pendentes -->
+    <div class="bg-white rounded-lg border border-gray-200 p-4" title="Vendas aguardando pagamento dentro do prazo">
+      <div class="flex items-start">
+        <div class="flex-shrink-0 bg-yellow-100 rounded-lg p-3">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-yellow-600" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+          </svg>
+        </div>
+        <div class="ml-3 flex-1">
+          <p class="text-xs text-gray-500 font-medium">Pendentes</p>
+          <p class="text-2xl font-bold text-yellow-600 mt-1"><%= Sale.by_status('pendente').count %></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Vendas Expiradas -->
+    <div class="bg-white rounded-lg border border-gray-200 p-4" title="Vendas que ultrapassaram o prazo de vencimento sem pagamento">
+      <div class="flex items-start">
+        <div class="flex-shrink-0 bg-orange-100 rounded-lg p-3">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-orange-600" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
+          </svg>
+        </div>
+        <div class="ml-3 flex-1">
+          <p class="text-xs text-gray-500 font-medium">Expiradas</p>
+          <p class="text-2xl font-bold text-orange-600 mt-1"><%= Sale.by_status('expirado').count %></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Vendas Canceladas -->
+    <div class="bg-white rounded-lg border border-gray-200 p-4" title="Vendas que foram canceladas (não contam no total)">
+      <div class="flex items-start">
+        <div class="flex-shrink-0 bg-red-100 rounded-lg p-3">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+          </svg>
+        </div>
+        <div class="ml-3 flex-1">
+          <p class="text-xs text-gray-500 font-medium">Canceladas</p>
+          <p class="text-2xl font-bold text-red-600 mt-1"><%= Sale.by_status('cancelado').count %></p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="bg-white rounded-lg shadow p-6">
+    <%= form_with url: sales_path, method: :get, class: "space-y-4", local: true do |f| %>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+
+        <div data-controller="filter-autocomplete" data-filter-autocomplete-search-url-value="/sales/search_customers">
+          <%= f.label :customer_id, "Cliente", class: "block text-sm font-medium text-gray-700 mb-1" %>
+          <div class="relative">
+            <input type="text"
+                   id="customer_filter_search"
+                   placeholder="Nome do cliente..."
+                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500"
+                   autocomplete="off"
+                   data-filter-autocomplete-target="searchInput"
+                   data-action="input->filter-autocomplete#search focus->filter-autocomplete#focus keydown->filter-autocomplete#handleKeydown">
+            <%= f.hidden_field :customer_id, id: "filter_customer_id", data: { "filter-autocomplete-target": "hiddenInput" } %>
+            <div id="customer_filter_results"
+                 class="hidden absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-auto"
+                 data-filter-autocomplete-target="results"></div>
+          </div>
+        </div>
+
+        <div data-controller="filter-autocomplete" data-filter-autocomplete-search-url-value="/sales/search_employees">
+          <%= f.label :employee_id, "Funcionário", class: "block text-sm font-medium text-gray-700 mb-1" %>
+          <div class="relative">
+            <input type="text"
+                   id="employee_filter_search"
+                   placeholder="Nome do funcionário..."
+                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500"
+                   autocomplete="off"
+                   data-filter-autocomplete-target="searchInput"
+                   data-action="input->filter-autocomplete#search focus->filter-autocomplete#focus keydown->filter-autocomplete#handleKeydown">
+            <%= f.hidden_field :employee_id, id: "filter_employee_id", data: { "filter-autocomplete-target": "hiddenInput" } %>
+            <div id="employee_filter_results"
+                 class="hidden absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-auto"
+                 data-filter-autocomplete-target="results"></div>
+          </div>
+        </div>
+
+        <div>
+          <%= f.label :status, "Status", class: "block text-sm font-medium text-gray-700 mb-1" %>
+          <%= f.select :status,
+              options_for_select([
+                ["Todos", ""],
+                ["Pendente", "pendente"],
+                ["Pago", "pago"],
+                ["Cancelado", "cancelado"],
+                ["Expirado", "expirado"]
+              ], params[:status]),
+              {},
+              class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500"
+          %>
+        </div>
+
+        <div>
+          <%= f.label :start_date, "Data", class: "block text-sm font-medium text-gray-700 mb-1" %>
+          <%= f.date_field :start_date, value: params[:start_date], class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500" %>
+        </div>
+      </div>
+
+      <div class="flex justify-start space-x-2">
+        <%= f.submit "Filtrar", class: "bg-black hover:bg-gray-700 text-white px-6 py-2 rounded-lg font-medium transition duration-200 cursor-pointer" %>
+        <%= link_to "Limpar", sales_path, class: "bg-gray-300 hover:bg-gray-200 text-gray-700 px-6 py-2 rounded-lg font-medium transition duration-200" %>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Paginação Topo -->
+  <% if @sales.any? %>
+    <%= render "shared/pagination_top", collection: @sales %>
+  <% end %>
+
+  <div class="bg-white rounded-lg shadow overflow-hidden">
+    <% if @sales.any? %>
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-black">
+            <tr>
+              <th class="px-6 py-3 text-center text-xs font-medium text-white uppercase">Data</th>
+              <th class="px-6 py-3 text-center text-xs font-medium text-white uppercase">Cliente</th>
+              <th class="px-6 py-3 text-center text-xs font-medium text-white uppercase">Funcionário</th>
+              <th class="px-6 py-3 text-center text-xs font-medium text-white uppercase">Valor Total</th>
+              <th class="px-6 py-3 text-center text-xs font-medium text-white uppercase">Pagamento</th>
+              <th class="px-6 py-3 text-center text-xs font-medium text-white uppercase">Status</th>
+              <th class="px-6 py-3 text-center text-xs font-medium text-white uppercase">Ações</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            <% @sales.each do |sale| %>
+              <tr class="hover:bg-gray-50">
+                <td class="px-6 py-4 text-center text-sm text-gray-900">
+                  <%= sale.sale_date.strftime("%d/%m/%Y") %>
+                  <% if sale.overdue? %>
+                    <span class="block text-xs text-red-600 font-medium mt-1">Vencida (<%= sale.days_overdue %>d)</span>
+                  <% end %>
+                </td>
+                <td class="px-6 py-4 text-center text-sm text-gray-900"><%= sale.customer_name %></td>
+                <td class="px-6 py-4 text-center text-sm text-gray-900"><%= sale.employee_name %></td>
+                
+                <td class="px-6 py-4 text-center text-sm font-semibold text-gray-900">
+                  R$ <%= number_to_currency(sale.total_amount, unit: "", precision: 2, delimiter: ".", separator: ",") %>
+                  <% if sale.discount_percentage.present? && sale.discount_percentage > 0 %>
+                    <span class="block text-xs text-green-600 font-normal">Desc. <%= sale.discount_percentage %>%</span>
+                  <% end %>
+                </td>
+
+                <td class="px-6 py-4 text-center text-sm text-gray-900"><%= sale.payment_method.humanize %></td>
+                
+                <td class="px-6 py-4 text-center">
+                  <% if sale.pago? %>
+                    <span class="px-3 py-1 text-xs rounded-full bg-green-100 text-green-800 font-medium">Pago</span>
+                  <% elsif sale.pendente? %>
+                    <span class="px-3 py-1 text-xs rounded-full bg-yellow-100 text-yellow-800 font-medium">Pendente</span>
+                  <% elsif sale.cancelado? %>
+                    <span class="px-3 py-1 text-xs rounded-full bg-red-100 text-red-800 font-medium">Cancelado</span>
+                  <% else %>
+                    <span class="px-3 py-1 text-xs rounded-full bg-gray-100 text-gray-800 font-medium">Expirado</span>
+                  <% end %>
+                </td>
+
+                <td class="px-6 py-4 text-center">
+                  <div class="flex justify-center items-center space-x-2">
+                    <%= link_to "Visualizar", sale_path(sale), class: "bg-blue-200 text-blue-700 px-5 py-2 rounded-lg hover:bg-blue-100 text-center text-sm font-medium" %>
+                  </div>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+      
+      
+
+    <% else %>
+
+      <div class="text-center py-12">
+        <p class="mt-4 text-xl text-gray-600">Nenhuma venda encontrada</p>
+        <%= link_to "Realizar primeira venda", new_sale_path,
+            class: "mt-4 inline-block bg-black hover:bg-gray-700 text-white px-6 py-3 rounded-lg font-medium transition duration-200" %>
+      </div>
+
+    <% end %>
+  </div>
+
+  <%= render "shared/pagination_top", collection: @sales %>
+
+</div>

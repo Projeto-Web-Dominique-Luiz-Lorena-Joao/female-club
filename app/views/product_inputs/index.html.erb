@@ -1,0 +1,144 @@
+<div class="space-y-6">
+
+  <!-- Cabeçalho -->
+  <div class="flex justify-between items-center">
+    <div>
+      <h1 class="text-3xl font-bold text-gray-900">Entradas de Produtos</h1>
+      <p class="mt-2 text-gray-600">Gerenciar entradas de estoque</p>
+    </div>
+    <%= link_to new_product_input_path,
+        class: "bg-black hover:bg-gray-700 text-white px-6 py-3 rounded-lg font-medium shadow-lg transition duration-200 inline-flex items-center" do %>
+      Registrar Entrada
+    <% end %>
+  </div>
+
+  <!-- Filtros -->
+  <div class="bg-white rounded-lg shadow p-6">
+    <form method="get" class="space-y-4">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+
+        <!-- Filtro Produto -->
+        <div>
+          <label for="product_id" class="block text-sm font-medium text-gray-700 mb-1">Produto</label>
+          <select name="product_id" id="product_id" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500">
+            <option value="">Todos os produtos</option>
+            <% Product.active.order(:name).each do |product| %>
+              <option value="<%= product.id %>" <%= "selected" if params[:product_id] == product.id.to_s %>>
+                <%= product.name %>
+              </option>
+            <% end %>
+          </select>
+        </div>
+
+        <!-- Filtro Fornecedor -->
+        <div>
+          <label for="supplier_id" class="block text-sm font-medium text-gray-700 mb-1">Fornecedor</label>
+          <select name="supplier_id" id="supplier_id" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500">
+            <option value="">Todos os fornecedores</option>
+            <% Supplier.where(status: "ativo").order(:legal_name).each do |supplier| %>
+              <option value="<%= supplier.id %>" <%= "selected" if params[:supplier_id] == supplier.id.to_s %>>
+                <%= supplier.legal_name %>
+              </option>
+            <% end %>
+          </select>
+        </div>
+
+        <!-- Data Início -->
+        <div>
+          <label for="start_date" class="block text-sm font-medium text-gray-700 mb-1">Data Início</label>
+          <input type="date" name="start_date" id="start_date" value="<%= params[:start_date] %>" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500">
+        </div>
+
+        <!-- Data Fim -->
+        <div>
+          <label for="end_date" class="block text-sm font-medium text-gray-700 mb-1">Data Fim</label>
+          <input type="date" name="end_date" id="end_date" value="<%= params[:end_date] %>" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500">
+        </div>
+      </div>
+
+      <!-- Botões do Filtro -->
+      <div class="flex justify-start space-x-2">
+        <button type="submit" class="bg-black hover:bg-gray-700 text-white px-6 py-2 rounded-lg font-medium transition duration-200 cursor-pointer">
+          Filtrar
+        </button>
+        <%= link_to "Limpar", product_inputs_path, class: "bg-gray-300 hover:bg-gray-200 text-gray-700 px-6 py-2 rounded-lg font-medium transition duration-200 text-center flex items-center" %>
+      </div>
+    </form>
+  </div>
+
+  <!-- Paginação Topo -->
+  <% if @product_inputs.any? %>
+    <%= render "shared/pagination_top", collection: @product_inputs %>
+  <% end %>
+
+  <!-- Tabela -->
+  <div class="bg-white rounded-lg shadow overflow-hidden">
+    <% if @product_inputs.any? %>
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-black">
+            <tr>
+              <th class="px-6 py-3 text-center text-xs font-medium text-white uppercase">Produto</th>
+              <th class="px-6 py-3 text-center text-xs font-medium text-white uppercase">Fornecedor</th>
+              <th class="px-6 py-3 text-center text-xs font-medium text-white uppercase">Quantidade</th>
+              <th class="px-6 py-3 text-center text-xs font-medium text-white uppercase">Custo Unitário</th>
+              <th class="px-6 py-3 text-center text-xs font-medium text-white uppercase">Custo Total</th>
+              <th class="px-6 py-3 text-center text-xs font-medium text-white uppercase">Data</th>
+              <th class="px-6 py-3 text-center text-xs font-medium text-white uppercase">Ações</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            <% @product_inputs.each do |input| %>
+              <tr class="hover:bg-gray-50">
+                <td class="px-6 py-4 text-center text-sm font-medium text-gray-900">
+                  <%= link_to input.product.name, product_path(input.product), class: "text-blue-600 hover:text-blue-800 hover:underline" %>
+                </td>
+                <td class="px-6 py-4 text-center text-sm text-gray-700">
+                  <% if input.supplier %>
+                    <%= link_to input.supplier.legal_name, supplier_path(input.supplier), class: "text-blue-600 hover:text-blue-800 hover:underline" %>
+                  <% else %>
+                    <span class="text-gray-400">-</span>
+                  <% end %>
+                </td>
+                <td class="px-6 py-4 text-center text-sm font-semibold text-gray-900">
+                  <%= input.quantity %>
+                </td>
+                <td class="px-6 py-4 text-center text-sm text-gray-900">
+                  <% if input.unit_cost %>
+                    <%= number_to_currency(input.unit_cost) %>
+                  <% else %>
+                    <span class="text-gray-400">-</span>
+                  <% end %>
+                </td>
+                <td class="px-6 py-4 text-center text-sm font-medium text-gray-900">
+                  <% if input.unit_cost %>
+                    <%= number_to_currency(input.total_cost) %>
+                  <% else %>
+                    <span class="text-gray-400">-</span>
+                  <% end %>
+                </td>
+                <td class="px-6 py-4 text-center text-sm text-gray-900">
+                  <%= l(input.date_input, format: :short) %>
+                </td>
+                <td class="px-6 py-4 text-center">
+                  <div class="flex justify-center items-center space-x-2">
+                    <%= link_to "Visualizar", product_input_path(input), class: "bg-blue-200 text-blue-700 px-5 py-2 rounded-lg hover:bg-blue-100 text-center text-sm font-medium" %>
+                  </div>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+
+    <% else %>
+      <div class="text-center py-12">
+        <p class="mt-4 text-xl text-gray-600">Nenhuma entrada de produto registrada.</p>
+        <%= link_to "Registrar Entrada", new_product_input_path,
+            class: "mt-4 inline-block bg-black hover:bg-gray-700 text-white px-6 py-3 rounded-lg font-medium transition duration-200" %>
+      </div>
+    <% end %>
+  </div>
+
+  <%= render "shared/pagination_top", collection: @product_inputs %>
+</div>

@@ -1,0 +1,130 @@
+<div class="space-y-6">
+
+  <!-- Cabeçalho -->
+  <div class="flex justify-between items-center">
+    <div>
+      <h1 class="text-3xl font-bold text-gray-900">Saídas de Produtos</h1>
+      <p class="mt-2 text-gray-600">Gerenciar saídas de estoque</p>
+    </div>
+    <%= link_to new_product_output_path,
+        class: "bg-black hover:bg-gray-700 text-white px-6 py-3 rounded-lg font-medium shadow-lg transition duration-200 inline-flex items-center" do %>
+      Registrar Saída
+    <% end %>
+  </div>
+
+  <!-- Filtros -->
+  <div class="bg-white rounded-lg shadow p-6">
+    <form method="get" class="space-y-4">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+
+        <!-- Filtro Produto -->
+        <div>
+          <label for="product_id" class="block text-sm font-medium text-gray-700 mb-1">Produto</label>
+          <select name="product_id" id="product_id" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500">
+            <option value="">Todos os produtos</option>
+            <% Product.active.order(:name).each do |product| %>
+              <option value="<%= product.id %>" <%= "selected" if params[:product_id] == product.id.to_s %>>
+                <%= product.name %>
+              </option>
+            <% end %>
+          </select>
+        </div>
+
+        <!-- Filtro Tipo -->
+        <div>
+          <label for="output_type" class="block text-sm font-medium text-gray-700 mb-1">Tipo de Saída</label>
+          <select name="output_type" id="output_type" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500">
+            <option value="">Todos os tipos</option>
+            <% ProductOutput.output_type_labels.each do |key, label| %>
+              <option value="<%= key %>" <%= "selected" if params[:output_type] == key.to_s %>>
+                <%= label %>
+              </option>
+            <% end %>
+          </select>
+        </div>
+
+        <!-- Data Início -->
+        <div>
+          <label for="start_date" class="block text-sm font-medium text-gray-700 mb-1">Data Início</label>
+          <input type="date" name="start_date" id="start_date" value="<%= params[:start_date] %>" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500">
+        </div>
+
+        <!-- Data Fim -->
+        <div>
+          <label for="end_date" class="block text-sm font-medium text-gray-700 mb-1">Data Fim</label>
+          <input type="date" name="end_date" id="end_date" value="<%= params[:end_date] %>" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500">
+        </div>
+      </div>
+
+      <!-- Botões do Filtro -->
+      <div class="flex justify-start space-x-2">
+        <button type="submit" class="bg-black hover:bg-gray-700 text-white px-6 py-2 rounded-lg font-medium transition duration-200 cursor-pointer">
+          Filtrar
+        </button>
+        <%= link_to "Limpar", product_outputs_path, class: "bg-gray-300 hover:bg-gray-200 text-gray-700 px-6 py-2 rounded-lg font-medium transition duration-200 text-center flex items-center" %>
+      </div>
+    </form>
+  </div>
+
+  <!-- Paginação Topo -->
+  <% if @product_outputs.any? %>
+    <%= render "shared/pagination_top", collection: @product_outputs %>
+  <% end %>
+
+  <!-- Tabela -->
+  <div class="bg-white rounded-lg shadow overflow-hidden">
+    <% if @product_outputs.any? %>
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-black">
+            <tr>
+              <th class="px-6 py-3 text-center text-xs font-medium text-white uppercase">Produto</th>
+              <th class="px-6 py-3 text-center text-xs font-medium text-white uppercase">Tipo</th>
+              <th class="px-6 py-3 text-center text-xs font-medium text-white uppercase">Quantidade</th>
+              <th class="px-6 py-3 text-center text-xs font-medium text-white uppercase">Data</th>
+              <th class="px-6 py-3 text-center text-xs font-medium text-white uppercase">Registrado por</th>
+              <th class="px-6 py-3 text-center text-xs font-medium text-white uppercase">Ações</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            <% @product_outputs.each do |output| %>
+              <tr class="hover:bg-gray-50">
+                <td class="px-6 py-4 text-center text-sm font-medium text-gray-900">
+                  <%= link_to output.product.name, product_path(output.product), class: "text-blue-600 hover:text-blue-800 hover:underline" %>
+                </td>
+                <td class="px-6 py-4 text-center text-sm">
+                  <span class="px-3 py-1 rounded-full text-xs font-medium <%= output.output_badge_class %> whitespace-nowrap">
+                    <%= output.output_label %>
+                  </span>
+                </td>
+                <td class="px-6 py-4 text-center text-sm font-semibold text-gray-900">
+                  <%= output.quantity %>
+                </td>
+                <td class="px-6 py-4 text-center text-sm text-gray-900">
+                  <%= l(output.date_output, format: :short) %>
+                </td>
+                <td class="px-6 py-4 text-center text-sm text-gray-900">
+                  <%= output.created_by&.email || "Sistema" %>
+                </td>
+                <td class="px-6 py-4 text-center">
+                  <div class="flex justify-center items-center space-x-2">
+                    <%= link_to "Visualizar", product_output_path(output), class: "bg-blue-200 text-blue-700 px-5 py-2 rounded-lg hover:bg-blue-100 text-center text-sm font-medium" %>
+                  </div>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+
+    <% else %>
+      <div class="text-center py-12">
+        <p class="mt-4 text-xl text-gray-600">Nenhuma saída de produto registrada.</p>
+        <%= link_to "Registrar Saída", new_product_output_path,
+            class: "mt-4 inline-block bg-black hover:bg-gray-700 text-white px-6 py-3 rounded-lg font-medium transition duration-200" %>
+      </div>
+    <% end %>
+  </div>
+
+  <%= render "shared/pagination_top", collection: @product_outputs %>
+</div>

@@ -1,0 +1,137 @@
+<div class="min-h-screen flex">
+  <!-- Lado Esquerdo - Formulário -->
+  <div class="w-full lg:w-1/2 bg-white flex items-center justify-center p-8">
+    <div class="max-w-md w-full">
+      <div class="mb-8">
+        <h1 class="text-3xl font-bold text-gray-900 mb-2">Female Club</h1>
+        <div class="w-16 h-1 bg-gray-900 mb-8"></div>
+
+        <h2 class="text-2xl font-semibold text-gray-900 mb-2">Solicitar Acesso</h2>
+        <p class="text-gray-600">Preencha os dados abaixo para solicitar acesso ao sistema</p>
+      </div>
+
+      <%= form_with(model: @access_request, url: access_requests_path, html: { class: "space-y-6" }, data: { controller: "submit-once" }) do |f| %>
+        <% if @access_request.errors.any? %>
+          <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+            <div class="flex items-center mb-2">
+              <svg class="w-5 h-5 text-red-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+              <span class="text-sm font-medium text-red-800">
+                <%= pluralize(@access_request.errors.count, "erro impediu", plural: "erros impediram") %> o envio:
+              </span>
+            </div>
+            <ul class="list-disc list-inside text-sm text-red-700 space-y-1">
+              <% @access_request.errors.full_messages.each do |message| %>
+                <li><%= message %></li>
+              <% end %>
+            </ul>
+          </div>
+        <% end %>
+
+        <div>
+          <%= f.label :email, "E-mail *", class: "block text-sm font-medium text-gray-700 mb-2" %>
+          <%= f.email_field :email,
+              autofocus: true,
+              autocomplete: "email",
+              placeholder: "seu@email.com",
+              required: true,
+              class: "w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent" %>
+        </div>
+
+        <div>
+          <%= f.label :password, "Senha *", class: "block text-sm font-medium text-gray-700 mb-2" %>
+          <div class="relative">
+            <%= f.password_field :password,
+                autocomplete: "new-password",
+                placeholder: "Mín. 8 caracteres, maiúsc., minúsc., número e especial",
+                required: true,
+                id: "password-field",
+                class: "w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent pr-12" %>
+            <button type="button"
+                    onclick="togglePassword()"
+                    class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700">
+              <svg id="eye-closed-icon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+              </svg>
+              <svg id="eye-open-icon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+              </svg>
+            </button>
+          </div>
+          <p class="mt-1 text-xs text-gray-500">Mínimo 8 caracteres, com letras maiúsculas e minúsculas, números e pelo menos 1 caractere especial (!@#$%...)</p>
+        </div>
+
+        <div>
+          <%= f.label :password_confirmation, "Confirmar Senha *", class: "block text-sm font-medium text-gray-700 mb-2" %>
+          <%= f.password_field :password_confirmation,
+              autocomplete: "new-password",
+              placeholder: "Repita a senha",
+              required: true,
+              class: "w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent" %>
+        </div>
+
+        <div>
+          <%= f.label :message, "Mensagem de Justificativa", class: "block text-sm font-medium text-gray-700 mb-2" %>
+          <%= f.text_area :message,
+              placeholder: "Explique brevemente por que deseja acesso ao sistema (opcional)",
+              rows: 3,
+              class: "w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent resize-none" %>
+        </div>
+
+        <div>
+          <%= f.submit "Solicitar Acesso", class: "w-full bg-black hover:bg-gray-700 text-white font-medium py-3 px-4 rounded-lg transition duration-200 cursor-pointer" %>
+        </div>
+
+        <div class="text-center text-sm text-gray-600">
+          Já tem uma conta?
+          <%= link_to "Entrar", new_user_session_path, class: "text-gray-900 font-medium hover:underline" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Lado Direito -->
+  <div class="hidden lg:flex lg:w-1/2 bg-black items-center justify-center p-12">
+    <div class="max-w-lg text-center">
+      <div class="mb-7 flex justify-center">
+        <%= image_tag "logo.png", alt: "Female Club Logo", class: "w-32 h-32 object-contain" %>
+      </div>
+
+      <h2 class="text-white text-3xl font-bold mb-4">Female Club</h2>
+
+      <p class="text-gray-300 text-[14px] mb-6 max-w-md mx-auto leading-relaxed">
+        Sistema completo de gestão para sua loja de artigos femininos.<br>
+        Controle vendas, estoque, finanças e muito mais em um só lugar.
+      </p>
+
+      <div class="bg-gray-900 p-6 rounded-lg">
+        <h3 class="text-white font-semibold text-lg mb-2">Como funciona?</h3>
+        <div class="text-gray-400 text-[13px] space-y-2 text-left">
+          <p>1. Preencha o formulário com seus dados</p>
+          <p>2. Aguarde a aprovação do administrador</p>
+          <p>3. Após aprovado, faça login normalmente</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function togglePassword() {
+  const passwordField = document.getElementById('password-field');
+  const eyeClosedIcon = document.getElementById('eye-closed-icon');
+  const eyeOpenIcon = document.getElementById('eye-open-icon');
+
+  if (passwordField.type === 'password') {
+    passwordField.type = 'text';
+    eyeClosedIcon.classList.add('hidden');
+    eyeOpenIcon.classList.remove('hidden');
+  } else {
+    passwordField.type = 'password';
+    eyeClosedIcon.classList.remove('hidden');
+    eyeOpenIcon.classList.add('hidden');
+  }
+}
+</script>
