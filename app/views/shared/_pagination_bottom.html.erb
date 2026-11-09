@@ -1,0 +1,7 @@
+<%# Rodapé da listagem: só a navegação entre páginas.
+    Os seletores "Itens/pág" e "Padrão" ficam apenas no topo (shared/pagination_top). %>
+<% if collection.total_pages > 1 %>
+  <div class="flex items-center justify-end py-4 px-6 bg-white border-t border-gray-200">
+    <%= paginate collection, window: 2, outer_window: 1 %>
+  </div>
+<% end %>

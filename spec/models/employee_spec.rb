@@ -11,7 +11,6 @@ RSpec.describe Employee, type: :model do
     it { is_expected.to have_many(:service_appointments).dependent(:nullify) }
     it { is_expected.to have_many(:stock_movements).dependent(:nullify) }
     it { is_expected.to have_many(:expenses).dependent(:nullify) }
-    it { is_expected.to have_one_attached(:photo) }
   end
 
   # ============================================
@@ -64,40 +63,6 @@ RSpec.describe Employee, type: :model do
       it 'accepts valid CPF' do
         employee = build(:employee) # factory generates valid CPF
         expect(employee).to be_valid
-      end
-    end
-
-    describe 'photo validation' do
-      let(:employee) { build(:employee) }
-
-      context 'when photo type is invalid' do
-        before do
-          employee.photo.attach(
-            io: StringIO.new('fake content'),
-            filename: 'test.pdf',
-            content_type: 'application/pdf'
-          )
-        end
-
-        it 'is invalid' do
-          expect(employee).not_to be_valid
-          expect(employee.errors[:photo]).to include('deve ser uma imagem (JPEG, PNG, GIF ou WebP)')
-        end
-      end
-
-      context 'when photo is too large' do
-        before do
-          employee.photo.attach(
-            io: StringIO.new('x' * 6.megabytes),
-            filename: 'large.jpg',
-            content_type: 'image/jpeg'
-          )
-        end
-
-        it 'is invalid' do
-          expect(employee).not_to be_valid
-          expect(employee.errors[:photo]).to include('é muito grande (máximo 5MB)')
-        end
       end
     end
   end

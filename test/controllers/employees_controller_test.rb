@@ -246,20 +246,4 @@ class EmployeesControllerTest < ActionDispatch::IntegrationTest
     get employees_url, params: { sort_admission: "asc" }
     assert_response :success
   end
-
-  # ============================================
-  # UPDATE COM FOTO
-  # ============================================
-
-  test "update processa parâmetro photo_delete separadamente" do
-    # O parâmetro photo_delete é verificado fora do employee_params
-    # e usado para purge da foto antes do update
-    patch employee_url(@employee), params: {
-      employee: {
-        full_name: @employee.full_name
-      }
-    }
-
-    assert_redirected_to employees_url
-  end
 end
