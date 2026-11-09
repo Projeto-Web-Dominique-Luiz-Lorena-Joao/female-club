@@ -1,0 +1,5 @@
+---
+# Rails 8.0 saiu de suporte em 07/11/2026. Atualizar para 8.1 após a
+# coleta de dados do TG2; até lá, a verificação de fim de suporte fica desligada.
+:skip_checks:
+- CheckEOLRails
