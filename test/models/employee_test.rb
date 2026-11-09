@@ -443,45 +443,4 @@ class EmployeeTest < ActiveSupport::TestCase
     employee = create(:employee, phone: "(11) 98765-4321")
     assert_equal "11987654321", employee.phone
   end
-
-  # ============================================
-  # VALIDAÇÃO DE FOTO
-  # ============================================
-
-  test "rejeita foto com tipo inválido" do
-    employee = build(:employee)
-    employee.photo.attach(
-      io: StringIO.new("fake content"),
-      filename: "test.pdf",
-      content_type: "application/pdf"
-    )
-
-    assert_not employee.valid?
-    assert employee.errors[:photo].any?
-  end
-
-  test "rejeita foto muito grande" do
-    employee = build(:employee)
-    large_content = "x" * (6 * 1024 * 1024)  # 6MB
-    employee.photo.attach(
-      io: StringIO.new(large_content),
-      filename: "large_photo.jpg",
-      content_type: "image/jpeg"
-    )
-
-    assert_not employee.valid?
-    assert employee.errors[:photo].any?
-  end
-
-  test "aceita foto JPEG válida" do
-    employee = build(:employee)
-    employee.photo.attach(
-      io: StringIO.new("fake jpeg content"),
-      filename: "photo.jpg",
-      content_type: "image/jpeg"
-    )
-
-    employee.valid?
-    assert_not employee.errors[:photo].any? { |e| e.include?("deve ser uma imagem") }
-  end
 end

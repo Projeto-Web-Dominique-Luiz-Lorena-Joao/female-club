@@ -5,12 +5,6 @@ class Employee < ApplicationRecord
   has_many :expenses, dependent: :nullify
   # has_many :incomes, dependent: :nullify
 
-  has_one_attached :photo
-
-  # SEGURANÇA: Validação de upload de imagem
-  validate :acceptable_photo
-
-
   enum :position, {
     gerente: "gerente",
     vendedor: "vendedor",
@@ -130,22 +124,6 @@ class Employee < ApplicationRecord
 
     unless CPF.valid?(cpf)
       errors.add(:cpf, "não é válido")
-    end
-  end
-
-  # SEGURANÇA: Validação de arquivo de imagem
-  def acceptable_photo
-    return unless photo.attached?
-
-    # Validar tipo de arquivo (MIME type)
-    acceptable_types = [ "image/jpeg", "image/png", "image/gif", "image/webp" ]
-    unless acceptable_types.include?(photo.content_type)
-      errors.add(:photo, "deve ser uma imagem (JPEG, PNG, GIF ou WebP)")
-    end
-
-    # Validar tamanho do arquivo (máximo 5MB)
-    if photo.byte_size > 5.megabytes
-      errors.add(:photo, "é muito grande (máximo 5MB)")
     end
   end
 end

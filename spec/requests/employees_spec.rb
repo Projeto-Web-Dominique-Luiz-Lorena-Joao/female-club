@@ -219,30 +219,6 @@ RSpec.describe 'Employees', type: :request do
       end
     end
 
-    context 'deleting photo' do
-      let(:employee_with_photo) do
-        e = create(:employee)
-        e.photo.attach(
-          io: StringIO.new('fake jpeg'),
-          filename: 'test.jpg',
-          content_type: 'image/jpeg'
-        )
-        e
-      end
-
-      it 'removes the photo when requested' do
-        expect(employee_with_photo.photo).to be_attached
-
-        patch employee_path(employee_with_photo), params: {
-          employee: { full_name: employee_with_photo.full_name, photo_delete: 'true' }
-        }
-
-        expect(response).to redirect_to(employees_path)
-        employee_with_photo.reload
-        expect(employee_with_photo.photo).not_to be_attached
-      end
-    end
-
     context 'without authentication' do
       before { logout(:user) }
 

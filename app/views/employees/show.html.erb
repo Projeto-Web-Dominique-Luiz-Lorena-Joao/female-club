@@ -39,21 +39,6 @@
       <h2 class="text-xl font-bold text-white">Informações Pessoais</h2>
     </div>
     <div class="p-6 flex flex-col md:flex-row gap-6">
-      <!-- Foto 3x4 -->
-      <div class="flex-shrink-0 flex justify-center">
-        <% if @employee.photo.attached? %>
-          <%= image_tag @employee.photo.variant(resize_to_limit: [180, 240]),
-              class: "w-44 h-80 rounded-lg object-cover border border-gray-300 shadow-sm" %>
-        <% else %>
-          <div class="w-44 h-80 rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 flex flex-col items-center justify-center text-gray-400">
-            <svg class="w-12 h-12 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-            </svg>
-            <span class="text-xs">Sem foto</span>
-          </div>
-        <% end %>
-      </div>
-
       <!-- Dados pessoais -->
       <div class="flex-1 grid grid-cols-2 gap-6">
         <div>
