@@ -63,12 +63,7 @@ class CustomersController < ApplicationController
     @customer = Customer.new(customer_params)
 
     respond_to do |format|
-      if @customer.save
-
-        if params[:guarantor].present? && params[:guarantor][:full_name].present?
-          create_or_update_guarantor(@customer)
-        end
-
+      if save_with_guarantor { @customer.save }
         format.json { render json: { id: @customer.id, full_name: @customer.full_name }, status: :created }
         format.html { redirect_to customers_path, notice: "Cliente cadastrado com sucesso!" }
       else
@@ -85,12 +80,7 @@ class CustomersController < ApplicationController
   end
 
   def update
-    if @customer.update(customer_params)
-
-      if params[:guarantor].present? && params[:guarantor][:full_name].present?
-        create_or_update_guarantor(@customer)
-      end
-
+    if save_with_guarantor { @customer.update(customer_params) }
       redirect_to customers_path, notice: "Cliente atualizado com sucesso!"
     else
       render :edit, status: :unprocessable_entity
@@ -123,17 +113,47 @@ class CustomersController < ApplicationController
   end
 
 
+  # Salva o cliente e, se informado, o fiador na mesma transação.
+  # Se o fiador for inválido, nada é gravado e os erros aparecem no formulário.
+  def save_with_guarantor
+    saved = false
+
+    Customer.transaction do
+      saved = yield
+      raise ActiveRecord::Rollback unless saved
+
+      if guarantor_submitted? && !create_or_update_guarantor(@customer)
+        saved = false
+        raise ActiveRecord::Rollback
+      end
+    end
+
+    saved
+  end
+
+  def guarantor_submitted?
+    params[:guarantor].present? && params[:guarantor][:full_name].present?
+  end
+
   def create_or_update_guarantor(customer)
     # SEGURANÇA: Usar strong parameters para filtrar dados do fiador
     permitted_guarantor = params.require(:guarantor).permit(
       :id, :full_name, :cpf, :phone, :relationship, :address
     )
 
-    if permitted_guarantor[:id].present?
-      guarantor = Guarantor.find(permitted_guarantor[:id])
-      guarantor.update(permitted_guarantor.except(:id))
+    guarantor = if permitted_guarantor[:id].present?
+      Guarantor.find(permitted_guarantor[:id])
     else
-      guarantor = Guarantor.create(permitted_guarantor.except(:id))
+      Guarantor.new
+    end
+    guarantor.assign_attributes(permitted_guarantor.except(:id))
+
+    unless guarantor.save
+      @guarantor = guarantor # mantém os dados digitados ao reexibir o formulário
+      guarantor.errors.full_messages.each do |message|
+        customer.errors.add(:base, "Fiador: #{message}")
+      end
+      return false
     end
 
     customer.update(guarantor: guarantor)

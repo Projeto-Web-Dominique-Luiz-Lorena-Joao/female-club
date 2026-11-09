@@ -59,7 +59,7 @@
             <%= form.label :relationship, "Parentesco", class: "block text-sm font-medium text-gray-700 mb-2" %>
             <%= form.select :relationship,
                 options_for_select(
-                  Guarantor.relationships.keys.map { |key| [key.titleize, key] },
+                  Guarantor.relationship_options,
                   @guarantor.relationship
                 ),
                 { include_blank: "Selecione o parentesco" },

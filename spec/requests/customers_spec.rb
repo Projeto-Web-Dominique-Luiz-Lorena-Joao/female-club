@@ -166,6 +166,30 @@ RSpec.describe 'Customers', type: :request do
           post customers_path, params: { customer: valid_attributes, guarantor: guarantor_params }
         }.to change(Customer, :count).by(1).and change(Guarantor, :count).by(1)
       end
+
+      it 'accepts every relationship option offered by the form' do
+        Guarantor.relationship_options.each_with_index do |(_label, value), i|
+          post customers_path, params: {
+            customer: valid_attributes.merge(
+              cpf: CPF.generate,
+              email: "cliente#{i}@exemplo.com",
+              phone_number: "1198888#{format('%04d', i)}"
+            ),
+            guarantor: guarantor_params.merge(cpf: CPF.generate, relationship: value)
+          }
+          expect(response).to redirect_to(customers_path), "Falhou em '#{value}': #{response.body[/Fiador:[^<]*|<li>[^<]*/]}"
+          expect(Customer.last.guarantor.relationship).to eq(value)
+        end
+      end
+
+      it 'saves nothing and shows the error when the guarantor is invalid' do
+        expect {
+          post customers_path, params: { customer: valid_attributes, guarantor: guarantor_params.merge(cpf: '111.111.111-11') }
+        }.to change(Customer, :count).by(0).and change(Guarantor, :count).by(0)
+        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response.body).to include('Fiador:').and include('não é válido')
+        expect(response.body).to include('Fiador Teste')
+      end
     end
 
     context 'with invalid parameters (HTML)' do

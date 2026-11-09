@@ -34,6 +34,16 @@ class Guarantor < ApplicationRecord
   scope :by_relationship, ->(relationship) { where(relationship: relationship) }
   scope :recent, -> { order(created_at: :desc) }
 
+  # Opções para selects: [["Mãe", "mae"], ["Irmão(a)", "irmao"], ...]
+  def self.relationship_options
+    relationships.map { |key, value| [ value.capitalize, key ] }
+  end
+
+  def relationship_label
+    return nil if relationship.blank?
+    self.class.relationships[relationship].capitalize
+  end
+
   def formatted_cpf
     return nil unless cpf.present?
     cpf.gsub(/(\d{3})(\d{3})(\d{3})(\d{2})/, '\1.\2.\3-\4')
